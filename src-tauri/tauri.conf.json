@@ -38,7 +38,7 @@
         "fullscreen": false,
         "resizable": true,
         "title": "s-hub",
-        "width": 800,
+        "width": 880,
         "height": 500,
         "center": true
       }
