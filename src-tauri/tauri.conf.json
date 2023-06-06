@@ -37,9 +37,9 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "s-hub",
-        "width": 880,
-        "height": 500,
+        "title": "FileHub",
+        "width": 1080,
+        "height": 600,
         "center": true
       }
     ]

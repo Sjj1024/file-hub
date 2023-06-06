@@ -9,7 +9,7 @@ import { ref, reactive } from 'vue'
 <style scoped lang="scss">
 .main-box{
   flex: 20;
-  background-color: orange;
+  // background-color: orange;
   height: 100%;
 }
 </style>
