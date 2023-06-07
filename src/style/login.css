@@ -114,6 +114,7 @@
   border-bottom: 1px solid #a0a5a8;
   line-height: 2;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .title {

@@ -19,7 +19,7 @@
             <div class="login-info">
                 <a class="form__link" @click="forgetPassword">忘记密码了？</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <a class="form__link" @click="switchModel('token')"
+                <a class="form__link" href="https://www.baidu.com/" target="_blank"
                     >获取Token教程</a
                 >
                 &nbsp;&nbsp;&nbsp;&nbsp;
