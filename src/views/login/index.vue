@@ -94,6 +94,10 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter()
 
 // 忘记密码提示
 const forgetPassword = () => {
@@ -128,6 +132,8 @@ const loginAction = () => {
             message: `欢迎换来：${loginForm.userName}`,
             type: 'success',
         })
+        // 跳转到登陆页面
+        router.push("/index")
     } else {
         console.log('登陆失败，账号密码不对')
         ElMessage.error('登陆失败，账号密码不对')

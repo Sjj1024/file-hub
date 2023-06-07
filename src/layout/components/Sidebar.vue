@@ -1,54 +1,76 @@
 <template>
     <el-menu
-        default-active="2"
+        default-active="1"
         class="el-menu-vertical"
-        @open="handleOpen"
-        @close="handleClose"
     >
-        <el-sub-menu index="1">
-            <template #title>
-                <el-icon><location /></el-icon>
-                <span>Navigator One</span>
-            </template>
-            <el-menu-item index="1-1">item one</el-menu-item>
-            <el-menu-item index="1-2">item two</el-menu-item>
-            <el-menu-item-group title="Group Two">
-                <el-menu-item index="1-3">item three</el-menu-item>
-            </el-menu-item-group>
-        </el-sub-menu>
-        <el-menu-item index="2">
-            <el-icon><icon-menu /></el-icon>
-            <span>Navigator Two</span>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
-            <el-icon><document /></el-icon>
-            <span>Navigator Three</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-            <el-icon><setting /></el-icon>
-            <span>Navigator Four</span>
-        </el-menu-item>
+        <div v-for="(item, index) in routes[1].children" :key="index">
+            <el-sub-menu
+                :index="index.toString()"
+                v-if="item.children && item.meta!.show"
+            >
+                <template #title>
+                    <el-icon>
+                        <component :is="item.meta!.icon"></component>
+                    </el-icon>
+                    <span>{{ item.meta!.title }}</span>
+                </template>
+                <el-menu-item
+                    :index="`${index.toString()}-${cid.toString()}`"
+                    v-for="(chil, cid) in item.children"
+                    :key="cid"
+                    @click="clickMenu(`${item.path}/${chil.path}`)"
+                >
+                    {{ chil.meta!.title }}
+                </el-menu-item>
+            </el-sub-menu>
+            <el-menu-item
+                :index="index.toString()"
+                v-else-if="item.meta!.show"
+                @click="clickMenu(`${item.path}`)"
+            >
+                <el-icon>
+                    <component :is="item.meta!.icon"></component>
+                </el-icon>
+                <span>{{ item.meta!.title }}</span>
+            </el-menu-item>
+        </div>
     </el-menu>
 </template>
 
 <script lang="ts" setup>
-import {
-    Document,
-    Menu as IconMenu,
-    Location,
-    Setting,
-} from '@element-plus/icons-vue'
-const handleOpen = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
+import { routes } from '@/route/index'
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter()
+
+console.log('routes----', routes)
+
+const clickMenu = (menuPath: string) => {
+    console.log('点击了菜单--', "/index/" + menuPath)
+    router.push("/index/" + menuPath)
 }
 </script>
 
-
 <style scoped lang="scss">
-.el-menu-vertical{
-  border-bottom: 1px solid rgb(188, 187, 187);
+.el-menu-vertical {
+    border-bottom: 1px solid rgb(188, 187, 187);
+    background-color: unset;
+}
+
+:deep(.el-menu) {
+    background-color: unset;
+}
+
+:deep(.el-menu-item.is-active) {
+    background-color: rgba(9, 30, 66, 0.08);
+}
+
+:deep(.el-menu-item) {
+    margin-top: 1px;
+}
+
+:deep(.el-menu-item:hover) {
+    background-color: rgba(9, 30, 66, 0.08);
 }
 </style>

@@ -1,5 +1,7 @@
 <template>
-    <div class="main-box">主要区域</div>
+    <div class="main-box">
+      <router-view></router-view>
+    </div>
 </template>
 
 <script setup lang="ts">
