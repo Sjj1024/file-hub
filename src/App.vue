@@ -7,8 +7,8 @@
 import { useUserStore } from './stores/user';
 
 
-const user = useUserStore()
-console.log("用户信息：", user.name);
+// const user = useUserStore()
+// console.log("用户信息：", user.name);
 
 
 </script>

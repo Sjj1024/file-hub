@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "tauri": "tauri dev",
+    "develop": "tauri dev",
     "bundle": "tauri build"
   },
   "dependencies": {
