@@ -1,6 +1,6 @@
 <template>
 <div>
-设置配置页面
+设置中心页面
 </div>
 </template>
 

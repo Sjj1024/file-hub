@@ -1,6 +1,6 @@
 <template>
 <div>
-文章列表
+web主题样式
 </div>
 </template>
 

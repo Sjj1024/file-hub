@@ -1,6 +1,6 @@
 <template>
 <div>
-  web网站配置下面的分类配置
+  文章分类配置
 </div>
 </template>
 

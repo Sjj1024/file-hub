@@ -1,6 +1,7 @@
 <template>
     <el-menu
-        default-active="1"
+        default-active="0"
+        unique-opened
         class="el-menu-vertical"
     >
         <div v-for="(item, index) in routes[1].children" :key="index">

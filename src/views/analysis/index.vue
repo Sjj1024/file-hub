@@ -1,6 +1,6 @@
 <template>
 <div>
-文章列表
+网站统计管理
 </div>
 </template>
 
