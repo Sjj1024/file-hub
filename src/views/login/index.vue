@@ -1,13 +1,26 @@
 <!-- sign_up -->
 <template>
-    <i class="iconfont language">&#xe602;</i>
+    <div class="language">
+        <el-dropdown>
+            <span class="el-dropdown-link">
+                <i class="iconfont lang">&#xe584;</i>
+            </span>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item @click="changeLang('en')">English</el-dropdown-item>
+                    <el-dropdown-item @click="changeLang('zh')">简体中文</el-dropdown-item>
+                    <el-dropdown-item>繁体中文</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+    </div>
     <div
         v-if="loginModel === '注册'"
         class="container a-container"
         id="a-container"
     >
         <form class="form" id="a-form" method="" action="">
-            <h2 class="form_title title">欢迎使用FileHub</h2>
+            <h2 class="form_title title">{{ $t('welcomeToFileHub') }}</h2>
             <div class="form__icons">
                 <img class="form__icon" src=" " />
                 <img class="form__icon" src=" " />
@@ -30,7 +43,7 @@
                 >
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <a class="form__link" @click="switchModel('登陆')"
-                    >使用账号登陆
+                    >{{$t('loginwithanaccount')}}
                 </a>
             </div>
             <button
@@ -47,7 +60,9 @@
         id="b-container"
     >
         <form class="form" id="b-form" method="" action="">
-            <h2 class="form_title title">欢迎登陆FileHub</h2>
+            <h2 class="form_title title">
+              {{ $t('welcomeLoginFileHub') }}
+            </h2>
             <!-- <i class="iconfont">&#xe602;</i> -->
             <div class="form__icons">
                 <img class="form__icon" src=" " />
@@ -82,13 +97,13 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <template v-if="loginModel === '登陆'">
                     <a class="form__link" @click.prevent="switchModel('token')"
-                        >使用Token登陆
+                        >{{ $t('LoginusingToken') }}
                     </a>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                 </template>
                 <template v-if="loginModel === 'token'">
                     <a class="form__link" @click.prevent="switchModel('登陆')"
-                        >使用账号登陆
+                        >{{$t('loginwithanaccount')}}
                     </a>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                 </template>
@@ -107,6 +122,13 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+const { locale } = useI18n()
+ 
+const changeLang = (lang: string) => {
+  locale.value = lang
+  localStorage.setItem('lang', lang)
+}
 
 const router = useRouter()
 
@@ -163,5 +185,11 @@ const loginAction = () => {
     position: fixed;
     top: 50px;
     right: 60px;
+    cursor: pointer;
+    font-size: 28px;
+}
+
+.lang {
+    font-size: 28px;
 }
 </style>
