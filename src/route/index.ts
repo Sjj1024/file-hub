@@ -54,12 +54,57 @@ const routes: Array<RouteRecordRaw> = [
                         component: () => import('@/views/article/index.vue'),
                     },
                     {
+                        path: 'list',
+                        name: 'list',
+                        meta: {
+                            requiresAuth: false,
+                            show: true,
+                            title: '文章列表',
+                            icon: 'Document',
+                        },
+                        component: () => import('@/views/article/index.vue'),
+                    },
+                    {
                         path: 'category',
                         name: 'category',
                         meta: {
                             requiresAuth: false,
                             show: true,
                             title: '分类管理',
+                            icon: 'MessageBox',
+                        },
+                        component: () => import('@/views/category/index.vue'),
+                    },
+                ],
+            },
+            {
+                path: 'web',
+                name: 'web',
+                meta: {
+                    requiresAuth: false,
+                    show: true,
+                    title: '网站管理',
+                    icon: 'Monitor',
+                },
+                children: [
+                    {
+                        path: 'style',
+                        name: 'list',
+                        meta: {
+                            requiresAuth: false,
+                            show: true,
+                            title: '外观样式',
+                            icon: 'Document',
+                        },
+                        component: () => import('@/views/article/index.vue'),
+                    },
+                    {
+                        path: 'category',
+                        name: 'category',
+                        meta: {
+                            requiresAuth: false,
+                            show: true,
+                            title: '统计管理',
                             icon: 'MessageBox',
                         },
                         component: () => import('@/views/category/index.vue'),
@@ -75,6 +120,17 @@ const routes: Array<RouteRecordRaw> = [
                     show: true,
                     title: '设置中心',
                     icon: 'Setting',
+                },
+            },
+            {
+                path: 'help',
+                name: 'help',
+                component: () => import('@/views/help/index.vue'),
+                meta: {
+                    requiresAuth: false,
+                    show: true,
+                    title: '帮助反馈',
+                    icon: 'Service',
                 },
             },
         ],
