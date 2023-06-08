@@ -26,6 +26,9 @@ dependencies:
   vue:
     specifier: ^3.3.2
     version: registry.npmmirror.com/vue@3.3.2
+  vue-i18n:
+    specifier: 9.3.0-beta.19
+    version: registry.npmmirror.com/vue-i18n@9.3.0-beta.19(vue@3.3.2)
   vue-router:
     specifier: ^4.1.6
     version: registry.npmmirror.com/vue-router@4.1.6(vue@3.3.2)
@@ -355,6 +358,54 @@ packages:
     version: 1.2.9
     dependencies:
       '@floating-ui/core': registry.npmmirror.com/@floating-ui/core@1.2.6
+    dev: false
+
+  registry.npmmirror.com/@intlify/core-base@9.3.0-beta.19:
+    resolution: {integrity: sha512-mlpVZ1w6ZwnP9QZAs+RzGuFMCuYjZPboX3hX7JzhV49vUcsLj0R4667cmcLpPZzXJguIy/zaqbIyoUvLV8HONQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@intlify/core-base/-/core-base-9.3.0-beta.19.tgz}
+    name: '@intlify/core-base'
+    version: 9.3.0-beta.19
+    engines: {node: '>= 16'}
+    dependencies:
+      '@intlify/devtools-if': registry.npmmirror.com/@intlify/devtools-if@9.3.0-beta.19
+      '@intlify/message-compiler': registry.npmmirror.com/@intlify/message-compiler@9.3.0-beta.19
+      '@intlify/shared': registry.npmmirror.com/@intlify/shared@9.3.0-beta.19
+      '@intlify/vue-devtools': registry.npmmirror.com/@intlify/vue-devtools@9.3.0-beta.19
+    dev: false
+
+  registry.npmmirror.com/@intlify/devtools-if@9.3.0-beta.19:
+    resolution: {integrity: sha512-L4NyqMcuQURejKy9XX0m/2kb37f56NAUvbiXKRx96pahSBclY6T+E0TrKXup0Hx6T0qY55QYGRwyVLeHXIHAMA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@intlify/devtools-if/-/devtools-if-9.3.0-beta.19.tgz}
+    name: '@intlify/devtools-if'
+    version: 9.3.0-beta.19
+    engines: {node: '>= 16'}
+    dependencies:
+      '@intlify/shared': registry.npmmirror.com/@intlify/shared@9.3.0-beta.19
+    dev: false
+
+  registry.npmmirror.com/@intlify/message-compiler@9.3.0-beta.19:
+    resolution: {integrity: sha512-5RBn5tMOsWh5FqM65IfEJvfpRS8R0lHEUVNDa2rNc9Y7oGEI7swezlbFqU9Kc5FyHy5Kx2jHtdgFIipDwnIYFQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@intlify/message-compiler/-/message-compiler-9.3.0-beta.19.tgz}
+    name: '@intlify/message-compiler'
+    version: 9.3.0-beta.19
+    engines: {node: '>= 16'}
+    dependencies:
+      '@intlify/shared': registry.npmmirror.com/@intlify/shared@9.3.0-beta.19
+      source-map: registry.npmmirror.com/source-map@0.6.1
+    dev: false
+
+  registry.npmmirror.com/@intlify/shared@9.3.0-beta.19:
+    resolution: {integrity: sha512-+lhQggrLvlQ/O5OmIYAc9gadcYXMoaDi0Doef+X/f6TLZFr9PTMjOpBWmpwNNHi026e54jckntUn6GzqDtIN4w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@intlify/shared/-/shared-9.3.0-beta.19.tgz}
+    name: '@intlify/shared'
+    version: 9.3.0-beta.19
+    engines: {node: '>= 16'}
+    dev: false
+
+  registry.npmmirror.com/@intlify/vue-devtools@9.3.0-beta.19:
+    resolution: {integrity: sha512-7yz8sUbovPUIf8sCX3+sMdw/xEyeHKBCc7Agxcxv54PiQz3zwsVl0hC1X+JXUy46FiPsMEoFfY8O27xOFLupaw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@intlify/vue-devtools/-/vue-devtools-9.3.0-beta.19.tgz}
+    name: '@intlify/vue-devtools'
+    version: 9.3.0-beta.19
+    engines: {node: '>= 16'}
+    dependencies:
+      '@intlify/core-base': registry.npmmirror.com/@intlify/core-base@9.3.0-beta.19
+      '@intlify/shared': registry.npmmirror.com/@intlify/shared@9.3.0-beta.19
     dev: false
 
   registry.npmmirror.com/@jridgewell/gen-mapping@0.3.3:
@@ -1914,6 +1965,22 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
+      vue: registry.npmmirror.com/vue@3.3.2
+    dev: false
+
+  registry.npmmirror.com/vue-i18n@9.3.0-beta.19(vue@3.3.2):
+    resolution: {integrity: sha512-1pbEcoAbxaAPuR5hODnQJ5CtIimnVD+aUVnCztuuRaOZPLP1i4FxkWVvb1lu8JIRC5pePyODZxi3yoy3PUYheA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-i18n/-/vue-i18n-9.3.0-beta.19.tgz}
+    id: registry.npmmirror.com/vue-i18n/9.3.0-beta.19
+    name: vue-i18n
+    version: 9.3.0-beta.19
+    engines: {node: '>= 16'}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      '@intlify/core-base': registry.npmmirror.com/@intlify/core-base@9.3.0-beta.19
+      '@intlify/shared': registry.npmmirror.com/@intlify/shared@9.3.0-beta.19
+      '@intlify/vue-devtools': registry.npmmirror.com/@intlify/vue-devtools@9.3.0-beta.19
+      '@vue/devtools-api': registry.npmmirror.com/@vue/devtools-api@6.5.0
       vue: registry.npmmirror.com/vue@3.3.2
     dev: false
 

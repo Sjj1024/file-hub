@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "9940272",
+      "name": "language",
+      "font_class": "language",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "11399049",
+      "name": "language",
+      "font_class": "language1",
+      "unicode": "e584",
+      "unicode_decimal": 58756
+    },
+    {
+      "icon_id": "34452880",
+      "name": "message-multi-language-fill",
+      "font_class": "message-multi-language-fill",
+      "unicode": "e82e",
+      "unicode_decimal": 59438
+    }
+  ]
+}

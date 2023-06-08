@@ -1,5 +1,6 @@
 <!-- sign_up -->
 <template>
+    <i class="iconfont language">&#xe602;</i>
     <div
         v-if="loginModel === '注册'"
         class="container a-container"
@@ -17,9 +18,14 @@
             <input class="form__input" type="password" placeholder="密码" />
             <input class="form__input" type="text" placeholder="Token" />
             <div class="login-info">
-                <a class="form__link" @click="forgetPassword">忘记密码了？</a>
+                <a class="form__link" @click="forgetPassword">{{
+                    $t('forgetPassword')
+                }}</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <a class="form__link" href="https://www.baidu.com/" target="_blank"
+                <a
+                    class="form__link"
+                    href="https://www.baidu.com/"
+                    target="_blank"
                     >获取Token教程</a
                 >
                 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -27,7 +33,10 @@
                     >使用账号登陆
                 </a>
             </div>
-            <button class="form__button button submit" @click.prevent="loginAction">
+            <button
+                class="form__button button submit"
+                @click.prevent="loginAction"
+            >
                 注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;册
             </button>
         </form>
@@ -39,6 +48,7 @@
     >
         <form class="form" id="b-form" method="" action="">
             <h2 class="form_title title">欢迎登陆FileHub</h2>
+            <!-- <i class="iconfont">&#xe602;</i> -->
             <div class="form__icons">
                 <img class="form__icon" src=" " />
                 <img class="form__icon" src=" " />
@@ -66,7 +76,9 @@
                 placeholder="Token"
             />
             <div class="login-info">
-                <a class="form__link" @click.prevent="forgetPassword">忘记密码了？</a>
+                <a class="form__link" @click.prevent="forgetPassword">{{
+                    $t('forgetPassword')
+                }}</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <template v-if="loginModel === '登陆'">
                     <a class="form__link" @click.prevent="switchModel('token')"
@@ -94,8 +106,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router';
-
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -133,7 +144,7 @@ const loginAction = () => {
             type: 'success',
         })
         // 跳转到登陆页面
-        router.push("/index/source")
+        router.push('/index/source')
     } else {
         console.log('登陆失败，账号密码不对')
         ElMessage.error('登陆失败，账号密码不对')
@@ -141,10 +152,16 @@ const loginAction = () => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 @import '@/style/login.css';
 
 .login-info {
     margin-top: 10px;
+}
+
+.language {
+    position: fixed;
+    top: 50px;
+    right: 60px;
 }
 </style>
