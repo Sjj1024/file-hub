@@ -133,7 +133,7 @@ const loginAction = () => {
             type: 'success',
         })
         // 跳转到登陆页面
-        router.push("/index")
+        router.push("/index/source")
     } else {
         console.log('登陆失败，账号密码不对')
         ElMessage.error('登陆失败，账号密码不对')

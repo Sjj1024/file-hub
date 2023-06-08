@@ -59,7 +59,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             requiresAuth: false,
                             show: true,
-                            title: '文章列表',
+                            title: '发布文章',
                             icon: 'Document',
                         },
                         component: () => import('@/views/article/index.vue'),
