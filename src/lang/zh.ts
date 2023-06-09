@@ -1,6 +1,7 @@
 export default {
     login: {
-        login: '登录',
+        login: '登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;陆',
+        register: "注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;册",
         userName: '用户名',
         password: '密码',
     },
@@ -8,6 +9,7 @@ export default {
     welcomeLoginFileHub: "欢迎登陆FileHub",
     loginwithanaccount:"使用账号登陆",
     LoginusingToken: "使用Token登陆",
+    Registeranewaccount:"注册新账户",
     captcha: '验证码',
     forgetPassword: '忘记密码了？',
     loginTip: '当前登录结果随机。验证码随便填',
