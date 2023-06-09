@@ -1,9 +1,23 @@
 <!-- sign_up -->
 <template>
+    <div class="theme">
+        <el-dropdown>
+            <span class="el-dropdown-link">
+                <i class="iconfont theme-i">&#xe645;</i>
+            </span>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item>暗黑主题</el-dropdown-item>
+                    <el-dropdown-item>亮白主题</el-dropdown-item>
+                    <el-dropdown-item>橙色主题</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+    </div>
     <div class="language">
         <el-dropdown>
             <span class="el-dropdown-link">
-                <i class="iconfont lang">&#xe584;</i>
+                <i class="iconfont lang">&#xe616;</i>
             </span>
             <template #dropdown>
                 <el-dropdown-menu>
@@ -138,6 +152,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 const { locale } = useI18n()
 
+// 语言切换
 const changeLang = (lang: string) => {
     locale.value = lang
     localStorage.setItem('lang', lang)
@@ -171,6 +186,7 @@ const loginForm: loginType = reactive({
     gitToken: '',
 })
 
+// 登陆行为
 const loginAction = () => {
     if (loginForm.userName === 'admin' && loginForm.password === 'admin') {
         console.log('登陆成功')
@@ -194,6 +210,14 @@ const loginAction = () => {
     margin-top: 10px;
 }
 
+.theme {
+    position: fixed;
+    top: 50px;
+    right: 120px;
+    cursor: pointer;
+    font-size: 28px;
+}
+
 .language {
     position: fixed;
     top: 50px;
@@ -202,7 +226,13 @@ const loginAction = () => {
     font-size: 28px;
 }
 
+.theme-i {
+    font-size: 28px;
+    color: #409eff;
+}
+
 .lang {
     font-size: 28px;
+    color: #409eff;
 }
 </style>

@@ -108,7 +108,7 @@
   margin-bottom: 12px;
 }
 .form__link {
-  color: #181818;
+  /* color: #181818; */
   font-size: 15px;
   margin-top: 25px;
   border-bottom: 1px solid #a0a5a8;
@@ -121,7 +121,7 @@
   font-size: 34px;
   font-weight: 700;
   line-height: 3;
-  color: #181818;
+  /* color: #181818; */
 }
 
 .description {

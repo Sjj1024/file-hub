@@ -1,6 +1,8 @@
 @font-face {
-  font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1686221551867') format('truetype');
+  font-family: "iconfont"; /* Project id 4113094 */
+  src: url('iconfont.woff2?t=1686280219453') format('woff2'),
+       url('iconfont.woff?t=1686280219453') format('woff'),
+       url('iconfont.ttf?t=1686280219453') format('truetype');
 }
 
 .iconfont {
@@ -11,15 +13,23 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-pifu:before {
+  content: "\e645";
+}
+
+.icon-43_zhuti:before {
+  content: "\e679";
+}
+
 .icon-language:before {
   content: "\e602";
 }
 
 .icon-language1:before {
-  content: "\e584";
+  content: "\e600";
 }
 
-.icon-message-multi-language-fill:before {
-  content: "\e82e";
+.icon-zhongyingwenqiehuan-yingwen:before {
+  content: "\e616";
 }
 
