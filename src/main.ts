@@ -15,6 +15,9 @@ import i18n from './lang/index'
 
 const app = createApp(App)
 
+// 使用pinia
+const pinia = createPinia()
+app.use(pinia)
 // 使用elementUi
 app.use(ElementPlus)
 app.use(router)
@@ -23,7 +26,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 // 国际化
 app.use(i18n)
-// 使用pinia
-const pinia = createPinia()
-app.use(pinia)
 app.mount('#app')

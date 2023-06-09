@@ -1,7 +1,13 @@
 <template>
     <div class="header">
         <div class="logo">
-            <img :src="logo" alt="" class="logo-img" />
+            <img
+                v-if="userStore.theme === 'light'"
+                :src="logoLight"
+                alt=""
+                class="logo-img"
+            />
+            <img v-else :src="logoDark" alt="" class="logo-img" />
         </div>
         <div class="user-info">
             <el-dropdown>
@@ -16,7 +22,9 @@
                                 >个人资料</a
                             >
                         </el-dropdown-item>
-                        <el-dropdown-item @click="loginOut">退出登陆</el-dropdown-item>
+                        <el-dropdown-item @click="loginOut"
+                            >退出登陆</el-dropdown-item
+                        >
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -25,18 +33,19 @@
 </template>
 
 <script setup lang="ts">
-import logo from '@/assets/image/fileHub.png'
+import logoLight from '@/assets/image/fileHub.png'
+import logoDark from '@/assets/image/fileHubDark.png'
 import user from '@/assets/image/user2.jpg'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
 
 const router = useRouter()
-
 // 退出登录
-const loginOut = ()=>{
-  router.push("/")
+const loginOut = () => {
+    router.push('/')
 }
-
 </script>
 
 <style scoped lang="scss">
