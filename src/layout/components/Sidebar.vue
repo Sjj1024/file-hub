@@ -1,9 +1,5 @@
 <template>
-    <el-menu
-        default-active="0"
-        unique-opened
-        class="el-menu-vertical"
-    >
+    <el-menu default-active="0" unique-opened class="el-menu-vertical">
         <div v-for="(item, index) in routes[1].children" :key="index">
             <el-sub-menu
                 :index="index.toString()"
@@ -40,22 +36,21 @@
 
 <script lang="ts" setup>
 import { routes } from '@/route/index'
-import { useRouter } from 'vue-router';
-
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 console.log('routes----', routes)
 
 const clickMenu = (menuPath: string) => {
-    console.log('点击了菜单--', "/index/" + menuPath)
-    router.push("/index/" + menuPath)
+    console.log('点击了菜单--', '/index/' + menuPath)
+    router.push('/index/' + menuPath)
 }
 </script>
 
 <style scoped lang="scss">
 .el-menu-vertical {
-    border-bottom: 1px solid rgb(188, 187, 187);
+    // border-bottom: 1px solid rgb(188, 187, 187);
     background-color: unset;
 }
 
@@ -64,14 +59,15 @@ const clickMenu = (menuPath: string) => {
 }
 
 :deep(.el-menu-item.is-active) {
-    background-color: rgba(9, 30, 66, 0.08);
+    // background-color: rgba(9, 30, 66, 0.08);
+    background-color: var(--menu-ative-bg);
 }
 
 :deep(.el-menu-item) {
-    margin-top: 1px;
+    margin-bottom: 1px;
 }
 
 :deep(.el-menu-item:hover) {
-    background-color: rgba(9, 30, 66, 0.08);
+    background-color: var(--menu-ative-bg);
 }
 </style>

@@ -43,7 +43,7 @@ const loginOut = ()=>{
 .header {
     /* background-color: green; */
     height: 40px;
-    border-bottom: 1px solid rgb(204, 204, 204);
+    border-bottom: solid 1px var(--el-menu-border-color);
     display: flex;
     justify-content: space-between;
 

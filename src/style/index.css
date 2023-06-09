@@ -4,14 +4,16 @@
     box-sizing: border-box;
 }
 
-#app {
-    height: 100vh;
-    background-color: #ecf0f3;
-}
-
 a {
     color: var(--el-text-color-regular);
     text-decoration: none;
+}
+
+
+#app {
+  height: 100vh;
+  background-color: var(--bg-color)
+  /* background-color: #ecf0f3; */
 }
 
 

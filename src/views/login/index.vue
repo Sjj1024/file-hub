@@ -7,9 +7,12 @@
             </span>
             <template #dropdown>
                 <el-dropdown-menu>
-                    <el-dropdown-item>暗黑主题</el-dropdown-item>
-                    <el-dropdown-item>亮白主题</el-dropdown-item>
-                    <el-dropdown-item>橙色主题</el-dropdown-item>
+                    <el-dropdown-item @click="useTheme('dark')"
+                        >暗黑主题</el-dropdown-item
+                    >
+                    <el-dropdown-item @click="useTheme('light')"
+                        >亮白主题</el-dropdown-item
+                    >
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
@@ -151,6 +154,7 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 const { locale } = useI18n()
+import useTheme  from "@/hooks/theme"
 
 // 语言切换
 const changeLang = (lang: string) => {

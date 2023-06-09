@@ -1,18 +1,11 @@
 <template>
-  <router-view></router-view>
+    <router-view></router-view>
 </template>
 
-
 <script setup lang="ts">
-import { useUserStore } from './stores/user';
+import useTheme from '@/hooks/theme'
 
-
-// const user = useUserStore()
-// console.log("用户信息：", user.name);
-
-
+useTheme()
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>
