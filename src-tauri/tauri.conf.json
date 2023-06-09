@@ -35,6 +35,7 @@
     },
     "windows": [
       {
+        "label": "customization",
         "fullscreen": false,
         "resizable": true,
         "title": "FileHub",
