@@ -4,16 +4,16 @@
 Pinia状态管理等等功能，开箱即用
 
 ## 亮白主题页面展示
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.wdxftpygwb4.webp)
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.7irr7w7zyk80.webp)
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.1djowvtnpsao.webp)
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.6bszgmhjmas0.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.wdxftpygwb4.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.7irr7w7zyk80.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.1djowvtnpsao.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.6bszgmhjmas0.webp)
 
 
 ## 暗黑主题页面展示
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.78q3ir5wt3c0.webp)
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.60t27fhzd0s0.webp)
-[](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.2lxyjue1vi80.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.78q3ir5wt3c0.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.60t27fhzd0s0.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/image.2lxyjue1vi80.webp)
 
 
 ## 使用方式
