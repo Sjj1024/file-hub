@@ -815,7 +815,7 @@ $grid-gap: 5px;
         justify-content: space-evenly;
         align-items: center;
         .path-icon {
-            margin-right: 5px;
+            margin-right: 6px;
             font-size: 19px;
             cursor: pointer;
             :hover {
