@@ -154,7 +154,7 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 const { locale } = useI18n()
-import useTheme  from "@/hooks/theme"
+import useTheme from '@/hooks/theme'
 
 // 语言切换
 const changeLang = (lang: string) => {
@@ -199,7 +199,7 @@ const loginAction = () => {
             type: 'success',
         })
         // 跳转到登陆页面
-        router.push('/index/source')
+        router.push('/index/files')
     } else {
         console.log('登陆失败，账号密码不对')
         ElMessage.error('登陆失败，账号密码不对')

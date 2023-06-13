@@ -1,6 +1,6 @@
 <template>
     <div class="main-box">
-      <router-view></router-view>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -9,9 +9,24 @@ import { ref, reactive } from 'vue'
 </script>
 
 <style scoped lang="scss">
-.main-box{
-  flex: 20;
-  // background-color: orange;
-  height: 100%;
+.main-box {
+    flex: 20;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.main-box {
+    overflow-y: scroll;
+}
+.main-box::-webkit-scrollbar {
+    width: 8px;
+}
+.main-box::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: var(--scroll-thumb);
+}
+.main-box::-webkit-scrollbar-track {
+    border-radius: 0;
+    background: var(--scroll-track);
 }
 </style>

@@ -9,7 +9,7 @@ import router from './route'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/theme-chalk/dark/css-vars.css'//这句是暗黑模式切换
 import "@/style/theme.css"
-import "@/style/index.css";
+import "@/style/index.scss";
 import i18n from './lang/index'
 
 

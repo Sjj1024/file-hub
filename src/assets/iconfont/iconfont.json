@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "29606771",
+      "name": "list",
+      "font_class": "list",
+      "unicode": "e7f6",
+      "unicode_decimal": 59382
+    },
+    {
+      "icon_id": "29749475",
+      "name": "default",
+      "font_class": "morentubiao",
+      "unicode": "e7f7",
+      "unicode_decimal": 59383
+    },
+    {
       "icon_id": "3867965",
       "name": "皮肤",
       "font_class": "pifu",

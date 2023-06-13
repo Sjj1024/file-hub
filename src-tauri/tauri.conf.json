@@ -38,7 +38,7 @@
         "fullscreen": false,
         "resizable": true,
         "title": "FileHub",
-        "width": 1080,
+        "width": 1026,
         "height": 600,
         "center": true
       }

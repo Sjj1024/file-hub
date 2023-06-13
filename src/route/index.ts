@@ -22,15 +22,15 @@ const routes: Array<RouteRecordRaw> = [
         children: [
             // 上传文件嵌套进我的文件中，增加一个按钮
             {
-                path: 'source',
-                name: 'source',
+                path: 'files',
+                name: 'files',
                 meta: {
                     requiresAuth: false,
                     show: true,
                     title: '我的文件',
                     icon: 'FolderOpened',
                 },
-                component: import('@/views/source/index.vue'),
+                component: import('@/views/files/index.vue'),
             },
             {
                 path: 'article',
