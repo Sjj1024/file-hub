@@ -809,8 +809,8 @@ $grid-gap: 5px;
     z-index: 999;
     background-color: var(--bg-color);
     .path-tool {
-        height: 36px;
-        line-height: 36px;
+        height: 38px;
+        line-height: 38px;
         display: flex;
         justify-content: space-evenly;
         align-items: center;
@@ -847,7 +847,7 @@ $grid-gap: 5px;
 .file-box {
     height: auto;
     margin-top: 36px;
-    padding-bottom: 45px;
+    padding-bottom: 44px;
 }
 
 .grid-style {
