@@ -8,11 +8,11 @@
                 <span class="path">E:\2345Downloads</span>
             </div>
             <div class="action">
-                <el-button type="primary" round>
+                <el-button type="primary" round plain>
                     上传文件
                     <el-icon class="el-icon--right"><Upload /></el-icon>
                 </el-button>
-                <el-button round>
+                <el-button round plain>
                     新建文件夹
                     <el-icon class="el-icon--right"><FolderAdd /></el-icon>
                 </el-button>
