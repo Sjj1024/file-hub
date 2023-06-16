@@ -3,17 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from './stores/user'
-const user = useUserStore()
-if (user.theme !== 'dark') {
-    document.documentElement.setAttribute('theme', 'light')
-    document.querySelector('html')?.classList.remove('dark')
-    document.querySelector('html')?.classList.add('light')
-} else {
-    document.documentElement.setAttribute('theme', 'dark')
-    document.querySelector('html')?.classList.remove('light')
-    document.querySelector('html')?.classList.add('dark')
-}
 </script>
 
 <style scoped lang="scss"></style>

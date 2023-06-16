@@ -1,4 +1,4 @@
-<!-- sign_up -->
+sign_up
 <template>
     <div class="theme">
         <el-dropdown>
@@ -155,16 +155,14 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import useTheme from '@/hooks/theme'
 
-const { locale } = useI18n()
 
+const { locale } = useI18n()
 // 语言切换
 const changeLang = (lang: string) => {
     locale.value = lang
     localStorage.setItem('lang', lang)
 }
-
 const router = useRouter()
-
 // 忘记密码提示
 const forgetPassword = () => {
     ElMessage({

@@ -4,14 +4,14 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'login',
-        component: import('@/views/login/index.vue'),
+        component: () => import('@/views/login/index.vue'),
         meta: { requiresAuth: false, show: false, title: '登陆页面' },
     },
     {
         path: '/index',
         name: 'source',
         redirect: '/index/source',
-        component: import('@/layout/index.vue'),
+        component: () => import('@/layout/index.vue'),
         meta: {
             requiresAuth: false,
             show: true,
@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
                     title: '我的文件',
                     icon: 'FolderOpened',
                 },
-                component: import('@/views/files/index.vue'),
+                component: () => import('@/views/files/index.vue'),
             },
             {
                 path: 'article',
@@ -51,7 +51,7 @@ const routes: Array<RouteRecordRaw> = [
                             title: '文章列表',
                             icon: 'Document',
                         },
-                        component: import('@/views/article/index.vue'),
+                        component: () => import('@/views/article/index.vue'),
                     },
                     {
                         path: 'publish',
@@ -62,7 +62,7 @@ const routes: Array<RouteRecordRaw> = [
                             title: '发布文章',
                             icon: 'Document',
                         },
-                        component: import('@/views/publish/index.vue'),
+                        component: () => import('@/views/publish/index.vue'),
                     },
                     {
                         path: 'category',
@@ -73,7 +73,7 @@ const routes: Array<RouteRecordRaw> = [
                             title: '分类管理',
                             icon: 'MessageBox',
                         },
-                        component: import('@/views/category/index.vue'),
+                        component: () => import('@/views/category/index.vue'),
                     },
                 ],
             },
@@ -96,7 +96,7 @@ const routes: Array<RouteRecordRaw> = [
                             title: '网站设置',
                             icon: 'Document',
                         },
-                        component: import('@/views/webSet/index.vue'),
+                        component: () => import('@/views/webSet/index.vue'),
                     },
                     {
                         path: 'theme',
@@ -107,7 +107,7 @@ const routes: Array<RouteRecordRaw> = [
                             title: '主题样式',
                             icon: 'Document',
                         },
-                        component: import('@/views/theme/index.vue'),
+                        component: () => import('@/views/theme/index.vue'),
                     },
                     {
                         path: 'analysis',
@@ -118,14 +118,14 @@ const routes: Array<RouteRecordRaw> = [
                             title: '统计管理',
                             icon: 'MessageBox',
                         },
-                        component: import('@/views/analysis/index.vue'),
+                        component: () => import('@/views/analysis/index.vue'),
                     },
                 ],
             },
             {
                 path: 'tools',
                 name: 'tools',
-                component: import('@/views/tools/index.vue'),
+                component: () => import('@/views/tools/index.vue'),
                 meta: {
                     requiresAuth: false,
                     show: true,
@@ -136,7 +136,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'setting',
                 name: 'setting',
-                component: import('@/views/setting/index.vue'),
+                component: () => import('@/views/setting/index.vue'),
                 meta: {
                     requiresAuth: false,
                     show: true,
@@ -147,7 +147,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'help',
                 name: 'help',
-                component: import('@/views/help/index.vue'),
+                component: () => import('@/views/help/index.vue'),
                 meta: {
                     requiresAuth: false,
                     show: true,
