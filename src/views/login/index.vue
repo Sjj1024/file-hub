@@ -155,7 +155,6 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import useTheme from '@/hooks/theme'
 
-
 const { locale } = useI18n()
 // 语言切换
 const changeLang = (lang: string) => {

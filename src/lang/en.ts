@@ -5,6 +5,10 @@ export default {
         userName: 'userName',
         password: 'password',
     },
+    menu:{
+      MyFiles:"我的文件",
+      ArticleManagement: "文章管理"
+    },
     welcomeToFileHub: "Welcome to FileHub",
     welcomeLoginFileHub: "Welcome to FileHub",
     loginwithanaccount:"Login with account",

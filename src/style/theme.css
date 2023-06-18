@@ -7,6 +7,8 @@
     --menu-ative-bg: rgba(201, 211, 225, 0.08);
     --scroll-thumb: rgba(255, 255, 255, 0.2);
     --scroll-track: rgba(251, 249, 249, 0.1);
+    --api-process: #363637;
+    --filt-item: rgba(201, 211, 225, 0.08);
 }
 
 /* light主题 */
@@ -19,4 +21,6 @@
     --menu-ative-bg: rgba(9, 30, 66, 0.08);
     --scroll-thumb: rgba(0, 0, 0, 0.2);
     --scroll-track: rgba(0, 0, 0, 0.1);
+    --api-process: #cdcdcd;
+    --filt-item: #ecf5ff;
 }

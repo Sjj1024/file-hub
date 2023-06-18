@@ -1,9 +1,11 @@
 <template>
-    <div class="doc">文档类型</div>
+    <div class="doc">
+        <img class="preview" :src="document" alt="" />
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import document from '@/assets/image/document.png'
 </script>
 
 <style scoped lang="scss">
@@ -11,6 +13,10 @@ import { ref, reactive } from 'vue'
 
 .doc {
     height: $file-height;
-    background-color: pink;
+    padding: 7px;
+    .preview {
+        width: 100%;
+        height: 100%;
+    }
 }
 </style>

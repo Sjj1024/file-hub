@@ -45,13 +45,15 @@
                 v-if="showStyle"
                 v-for="(file, index) in fileList"
                 :key="index"
+                class="file-item"
             >
                 <document v-if="file.type === 'document'"></document>
                 <foler v-if="file.type === 'foler'"></foler>
                 <music v-if="file.type === 'music'"></music>
                 <other v-if="file.type === 'other'"></other>
-                <pic v-if="file.type === 'picture'"></pic>
+                <pic v-if="file.type === 'picture'" :imgUrl="file.path"></pic>
                 <vide v-if="file.type === 'video'"></vide>
+                <div class="file-name">{{ file.name }}</div>
             </div>
             <!-- 列表布局 -->
             <el-table
@@ -61,11 +63,11 @@
                 style="width: 100%"
             >
                 <el-table-column type="selection" width="25" />
-                <el-table-column
-                    property="name"
-                    label="文件名"
-                    show-overflow-tooltip
-                />
+                <el-table-column label="文件名">
+                    <template #default="scope">
+                        <div class="list-name">{{ scope.row.name }}</div>
+                    </template>
+                </el-table-column>
                 <el-table-column label="修改日期" width="130">
                     <template #default="scope">{{
                         scope.row.creatTime
@@ -91,6 +93,7 @@ import music from '@/views/files/component/music.vue'
 import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
 import vide from '@/views/files/component/video.vue'
+import gitApis from '@/apis/mock'
 
 // 搜索
 const search = ref('')
@@ -141,661 +144,717 @@ const fileTypes = {
 
 interface fileRes {
     name: string
+    path: string
     type: string
     size: string
     openLink: string
     downLink: string
+    htmlLink: string
     creatTime: string
 }
 
+// 根据类型和文件名返回真实的文件类型
+const getType = (fileType: string, fileName: string) => {
+    if (fileType === 'dir') {
+        return 'foler'
+    } else {
+        const fileLast = fileName
+            .substring(fileName.lastIndexOf('.') + 1)
+            .toUpperCase()
+        console.log('fileLast------', fileLast)
+        if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
+            // 图片格式
+            return 'picture'
+        } else if (
+            ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP'].includes(
+                fileLast
+            )
+        ) {
+            // 视频格式
+            return 'video'
+        } else if (['WAV', 'MP3', 'WMA', 'M4A'].includes(fileLast)) {
+            // 音乐格式
+            return 'music'
+        } else if (
+            ['DOC', 'WPS', 'XLS', 'PPT', 'HTML', 'XLSX', 'DOCX'].includes(
+                fileLast
+            )
+        ) {
+            // 文档格式
+            return 'document'
+        } else {
+            // 其他格式
+            return 'other'
+        }
+    }
+}
+
+// 发送请求获取根目录文件内容
+const gitRoots = gitApis.getFiles()
+const fileList: fileRes[] = gitRoots.reduce((pre: fileRes[], cur) => {
+    pre.push({
+        name: cur.name,
+        path: cur.path,
+        type: getType(cur.type, cur.name),
+        size: (cur.size / 1024 / 1024).toFixed(2).toString(),
+        openLink: 'https://element-plus.gitee.io/',
+        downLink: 'https://element-plus.gitee.io/',
+        htmlLink: cur.html_url,
+        creatTime: '2021-08-22',
+    })
+    return pre
+}, [])
+console.log('fileList-----', fileList)
+
 // 请求到的文件列表
-const fileList: fileRes[] = [
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '生活视频',
-        type: 'video',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '今日照片',
-        type: 'picture',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '唯一',
-        type: 'music',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的简历',
-        type: 'document',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '磁力链接',
-        type: 'other',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-    {
-        name: '我的相册',
-        type: 'foler',
-        size: '0',
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        creatTime: '2021-08-22',
-    },
-]
+// const fileList: fileRes[] = [
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '生活视频',
+//         type: 'video',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '今日照片',
+//         type: 'picture',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '唯一',
+//         type: 'music',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的简历',
+//         type: 'document',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '磁力链接',
+//         type: 'other',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+//     {
+//         name: '我的相册',
+//         type: 'foler',
+//         size: '0',
+//         openLink: 'https://element-plus.gitee.io/',
+//         downLink: 'https://element-plus.gitee.io/',
+//         creatTime: '2021-08-22',
+//     },
+// ]
 </script>
 
 <style scoped lang="scss">
 $file-height: 100px;
-$grid-gap: 5px;
+$row-gap: 30px;
+$column-gap: 16px;
 .my-files {
     padding: 0 5px;
 }
@@ -805,7 +864,7 @@ $grid-gap: 5px;
     display: flex;
     justify-content: space-between;
     position: fixed;
-    top: 40px;
+    top: 36px;
     z-index: 999;
     background-color: var(--bg-color);
     .path-tool {
@@ -844,21 +903,42 @@ $grid-gap: 5px;
     }
 }
 
+.file-name {
+    text-align: center;
+    width: 100px;
+    height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.list-name {
+    height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .file-box {
     height: auto;
     margin-top: 36px;
-    padding-bottom: 44px;
+    padding-bottom: 41px;
 }
 
 .grid-style {
-    /* 设置容器布局为grid布局 */
-    display: grid;
-    /* 指定每一行的宽度 每个宽度中间用空格隔开 */
-    grid-template-rows: repeat(auto-fill, $file-height);
-    /* 指定每一列的宽度 每个宽度中间用空格隔开 */
-    grid-template-columns: repeat(auto-fill, $file-height);
-    row-gap: $grid-gap;
-    column-gap: $grid-gap;
+    display: flex;
+    flex-wrap: wrap;
+    .file-item {
+        width: 120px;
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+    }
+
+    .file-item:hover {
+        cursor: default;
+        background-color: var(--filt-item);
+    }
 }
 
 .file-type {

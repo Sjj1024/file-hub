@@ -9,18 +9,15 @@ a {
     text-decoration: none;
 }
 
-
 #app {
-  height: 100vh;
-  background-color: var(--bg-color);
-  overflow: hidden;
+    height: 100vh;
+    background-color: var(--bg-color);
+    overflow: hidden;
 }
 
-
-a:hover{
-  color: #409eff;
+a:hover {
+    color: #409eff;
 }
-
 
 // 文件列表中的文件高度
 $file-height: 100px;
