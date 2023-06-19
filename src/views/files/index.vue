@@ -341,25 +341,13 @@ $column-gap: 16px;
   }
 }
 
-@media (min-width: 700px) {
-  .tools-box {
-    top: 37px;
-  }
-}
-
-/*>=1280的设备*/
-@media (min-height: 712px) {
-  .tools-box {
-    top: 38px;
-  }
-}
-
 .tools-box {
   width: 82%;
   display: flex;
   justify-content: space-between;
   position: fixed;
   z-index: 999;
+  top: 40px;
   background-color: var(--bg-color);
 
   .path-tool {
