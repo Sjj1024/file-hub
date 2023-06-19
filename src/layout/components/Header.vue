@@ -164,7 +164,7 @@ const changeLang = (lang: string) => {
     justify-content: space-between;
     .logo {
         display: flex;
-        align-items: end;
+        align-items: center;
         .logo-img {
             width: 150px;
             height: 36px;
@@ -172,7 +172,6 @@ const changeLang = (lang: string) => {
 
         .api-pro {
             width: 150px;
-            margin-bottom: 10px;
             margin-left: 20px;
             cursor: pointer;
         }

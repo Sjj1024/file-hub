@@ -11,12 +11,12 @@ import { ref, reactive } from 'vue'
 <style scoped lang="scss">
 .main-box {
     flex: 20;
-    overflow-y: scroll;
+    overflow: scroll;
     position: relative;
 }
 
 .main-box {
-    overflow-y: scroll;
+    overflow-y: scroll !important;
 }
 .main-box::-webkit-scrollbar {
     width: 8px;

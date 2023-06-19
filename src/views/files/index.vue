@@ -59,14 +59,14 @@
         </template>
 
         <span @click="switchStyle">
-          <span v-if="showStyle" class="iconfont show">&#xe7f6;</span>
+          <span v-if="showStyle === 'grid'" class="iconfont show">&#xe7f6;</span>
           <span v-else class="iconfont show">&#xe7f7;</span>
         </span>
       </div>
     </div>
-    <div :class="{ 'file-box': true, 'grid-style': showStyle }">
+    <div :class="{ 'file-box': true, 'grid-style': showStyle === 'grid' }">
       <!-- 网格布局 -->
-      <div v-if="showStyle" v-for="(file, index) in fileList" :key="index">
+      <div v-if="showStyle === 'grid'" v-for="(file, index) in fileList" :key="index">
         <!-- 提示文件信息内容 -->
         <el-tooltip placement="bottom">
           <template #content>
@@ -100,9 +100,16 @@
         </el-tooltip>
       </div>
       <!-- 列表布局 -->
-      <el-table v-else ref="multipleTableRef" :data="fileList" style="width: 100%"
-        @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="25" />
+      <el-table v-else :data="fileList" style="width: 100%">
+        <el-table-column width="25">
+          <template #header>
+            <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="checkAllChange"></el-checkbox>
+          </template>
+          <template #default="scope">
+            <el-checkbox v-model="scope.row.selected" @change="(e) => fileSelChange(e, scope.row)">
+            </el-checkbox>
+          </template>
+        </el-table-column>
         <el-table-column label="文件名称">
           <template #default="scope">
             <el-tooltip :content="scope.row.name" placement="bottom">
@@ -120,11 +127,11 @@
             {{ fileTypes[scope.row.type] }}</template>
         </el-table-column>
         <el-table-column property="size" width="80" label="大小" />
-        <el-table-column label="操作" width="191">
+        <el-table-column label="操作" width="196" class-name="table-action">
           <template #default="scope">
-            <el-button size="small">分享</el-button>
-            <el-button size="small">下载</el-button>
-            <el-button size="small" type="danger">删除</el-button>
+            <el-button type="success" plain size="small">分享</el-button>
+            <el-button type="primary" plain size="small">下载</el-button>
+            <el-button size="small" type="danger" plain>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -188,57 +195,29 @@ const moreBtn = (e: any, file: any) => {
   console.log("点击了菜单--", e, file);
 }
 
+// 表格表头的选择框
+const checkAll = ref(false)
+// 中间状态
+const isIndeterminate = ref(false)
+// 全选事件
+const checkAllChange = (val: any) => {
+  console.log("checkAllChange--", val);
+}
+
 // 多选框选项
 const fileSelChange = (e: any, item: any) => {
-  console.log('e, item-------', moreActionShow.value)
   item.selected = e
-}
-
-const multipleTableRef = ref<InstanceType<typeof ElTable>>()
-
-const toggleSelection = (rows?: fileRes[]) => {
-  if (rows) {
-    rows.forEach((row) => {
-      multipleTableRef.value!.toggleRowSelection(row, undefined)
-    })
-  } else {
-    multipleTableRef.value!.clearSelection()
-  }
-}
-
-let multipleSelection = computed({
-  get() {
-    const tableSel: fileRes[] = []
-    const res = fileList.reduce((pre: fileRes[], cur: fileRes, index: number) => {
-      if (cur.selected) {
-        pre.push(cur)
-        tableSel.push(fileList[index])
-      }
-      return pre
-    }, [])
-    toggleSelection(tableSel)
-    return res
-  },
-  set(val) {
-    console.log("设置的值是", val);
-    return val
-  }
-
-})
-
-const handleSelectionChange = (val: fileRes[]) => {
-  multipleSelection.value = val
-  val.forEach(item => item.selected = true)
-  console.log("handleSelectionChange--", val);
+  console.log("fileSelChange---", e, item);
+  
 }
 
 // 搜索
 const search = ref('')
 // 布局格式：true网格 false列表
-let showStyle = ref(true)
+let showStyle = ref(localStorage.getItem('fileStyle') || 'grid')
 const switchStyle = () => {
-  showStyle.value = !showStyle.value
-  console.log("multipleSelection--", multipleSelection.value);
+  showStyle.value = showStyle.value === 'grid' ? 'table' : 'grid'
+  localStorage.setItem('fileStyle', showStyle.value)
 }
 
 // 所有文件下拉
@@ -441,10 +420,16 @@ $column-gap: 16px;
 
 .list-name {
   height: 20px;
-  white-space: nowrap;
+  // white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: default;
+}
+
+.table-action {
+  .el-button {
+    height: 20px;
+  }
 }
 
 .file-box {
