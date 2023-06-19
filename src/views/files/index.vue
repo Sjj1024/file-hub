@@ -100,7 +100,8 @@
         </el-tooltip>
       </div>
       <!-- 列表布局 -->
-      <el-table v-else ref="multipleTableRef" :data="fileList" style="width: 100%">
+      <el-table v-else ref="multipleTableRef" :data="fileList" style="width: 100%"
+        @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="25" />
         <el-table-column label="文件名称">
           <template #default="scope">
@@ -152,6 +153,7 @@ import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
 import vide from '@/views/files/component/video.vue'
 import gitApis from '@/apis/mock'
+import { ElTable } from 'element-plus'
 
 // 计算属性：多选下载/分享/删除按钮
 const moreActionShow = computed(() => fileList.find(item => item.selected === true))
@@ -192,12 +194,51 @@ const fileSelChange = (e: any, item: any) => {
   item.selected = e
 }
 
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+
+const toggleSelection = (rows?: fileRes[]) => {
+  if (rows) {
+    rows.forEach((row) => {
+      multipleTableRef.value!.toggleRowSelection(row, undefined)
+    })
+  } else {
+    multipleTableRef.value!.clearSelection()
+  }
+}
+
+let multipleSelection = computed({
+  get() {
+    const tableSel: fileRes[] = []
+    const res = fileList.reduce((pre: fileRes[], cur: fileRes, index: number) => {
+      if (cur.selected) {
+        pre.push(cur)
+        tableSel.push(fileList[index])
+      }
+      return pre
+    }, [])
+    toggleSelection(tableSel)
+    return res
+  },
+  set(val) {
+    console.log("设置的值是", val);
+    return val
+  }
+
+})
+
+const handleSelectionChange = (val: fileRes[]) => {
+  multipleSelection.value = val
+  val.forEach(item => item.selected = true)
+  console.log("handleSelectionChange--", val);
+}
+
 // 搜索
 const search = ref('')
 // 布局格式：true网格 false列表
 let showStyle = ref(true)
 const switchStyle = () => {
   showStyle.value = !showStyle.value
+  console.log("multipleSelection--", multipleSelection.value);
 }
 
 // 所有文件下拉
