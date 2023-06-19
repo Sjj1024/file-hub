@@ -9,6 +9,9 @@
     --scroll-track: rgba(251, 249, 249, 0.1);
     --api-process: #363637;
     --filt-item: rgba(201, 211, 225, 0.08);
+    --selected-item:rgba(218, 223, 231, 0.247);
+    --file-menu-color: #181818;
+    --file-menu-hover: rgb(145, 145, 145);
 }
 
 /* light主题 */
@@ -23,4 +26,7 @@
     --scroll-track: rgba(0, 0, 0, 0.1);
     --api-process: #cdcdcd;
     --filt-item: #ecf5ff;
+    --selected-item: #d4e7fd;
+    --file-menu-color: #181818;
+    --file-menu-hover: rgb(200, 200, 200);
 }

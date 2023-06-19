@@ -158,12 +158,10 @@ const changeLang = (lang: string) => {
 }
 
 .header {
-    /* background-color: green; */
     height: 40px;
     border-bottom: solid 1px var(--el-menu-border-color);
     display: flex;
     justify-content: space-between;
-
     .logo {
         display: flex;
         align-items: end;

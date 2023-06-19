@@ -14,9 +14,10 @@ import document from '@/assets/image/document.png'
 .doc {
     height: $file-height;
     padding: 7px;
+    text-align: center;
     .preview {
-        width: 100%;
-        height: 100%;
+        width: $pre-width;
+        height: $pre-height;
     }
 }
 </style>

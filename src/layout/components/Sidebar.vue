@@ -52,6 +52,7 @@ const clickMenu = (menuPath: string) => {
 .el-menu-vertical {
     // border-bottom: 1px solid rgb(188, 187, 187);
     background-color: unset;
+    width: 160px;
 }
 
 :deep(.el-menu) {

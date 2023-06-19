@@ -19,8 +19,6 @@ import AppMain from './components/AppMain.vue';
 <style scoped lang="scss">
 .common-layout{
   height: 100%;
-  display: flex;
-  flex-direction: column;
   .bar-main{
     height: 100%;
     display: flex;
