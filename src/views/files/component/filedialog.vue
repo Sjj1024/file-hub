@@ -1,9 +1,8 @@
 <template>
-  <el-dialog v-model="centerDialogVisible" :title="file.name" width="30%" center>
-    <span>
-      It should be noted that the content will not be aligned in center by
-      default
-    </span>
+  <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen>
+    <div class="open-content">
+      显示的内容
+    </div>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="centerDialogVisible = false">Cancel</el-button>
@@ -16,40 +15,48 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue'
-import type { fileRes } from "@/utils/useTypes"
+import { ref } from 'vue'
 
 const centerDialogVisible = ref(false)
 
-let file: fileRes = reactive({
-  name: "默认值",
-  path: "",
-  type: "",
-  size: "",
-  openLink: 'https://element-plus.gitee.io/',
-  downLink: 'https://element-plus.gitee.io/',
-  htmlLink: "",
-  creatTime: '2021-08-22',
-  selected: false,
-  showTips: false,
-  uploading: false,
+const props = defineProps({
+  file: {
+    type: Object,
+    default: {
+      name: "",
+      path: "",
+      type: "",
+      size: "",
+      openLink: '',
+      downLink: '',
+      htmlLink: "",
+      creatTime: '',
+      selected: false,
+      showTips: false,
+      uploading: false,
+    },
+  },
 })
 
-const showFileDialog = (source: fileRes) => {
+const showFileDialog = (source: Boolean) => {
   centerDialogVisible.value = true
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      file[key] = source[key]
-    }
-  }
-  // file.name = source.name
-  console.log("fiel-----", file);
+  console.log("fiel-----", source);
 }
 
 defineExpose({
   showFileDialog
 })
 
+
+
 </script>
 
-<style scoped lang='scss'></style>
+<style lang='scss'>
+:deep(.el-dialog__body){
+  height: 100%;
+}
+
+.open-content{
+  height: 100%;
+}
+</style>

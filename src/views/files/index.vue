@@ -178,7 +178,7 @@
     </ul>
   </div>
   <!-- 文件打开弹窗 -->
-  <fileDialog ref="fileLog"></fileDialog>
+  <fileDialog ref="fileLog" :file="dialogContent"></fileDialog>
 </template>
 
 <script setup lang="ts">
@@ -197,7 +197,21 @@ import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 
 // 文件弹窗
-const fileLog = ref('')
+const fileLog = ref()
+// 弹窗显示的文件
+let dialogContent: fileRes = {
+  name: "",
+  path: "",
+  type: "",
+  size: "",
+  openLink: 'https://element-plus.gitee.io/',
+  downLink: 'https://element-plus.gitee.io/',
+  htmlLink: "",
+  creatTime: '2021-08-22',
+  selected: false,
+  showTips: false,
+  uploading: false,
+}
 
 // 计算属性：多选下载/分享/删除按钮
 const moreActionShow = computed(() =>
@@ -247,6 +261,7 @@ const openMenu = (e: MouseEvent, item: any) => {
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
+  dialogContent = file
   fileLog.value.showFileDialog(true)
 }
 
@@ -297,10 +312,10 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   if (uploadFile.raw.type.includes('image') !== -1) {
     var reader = new FileReader()
     reader.readAsDataURL(uploadFile.raw)
-    reader.onload = function (event) {
+    reader.onload = function (event:any) {
       gitFileList.push({
         name: uploadFile.name,
-        path: event.target.result,
+        path: event!.target.result,
         type: getType(uploadFile.raw.type, uploadFile.name),
         size: (uploadFile.size / 1024 / 1024).toFixed(2).toString(),
         openLink: 'https://element-plus.gitee.io/',
