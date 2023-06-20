@@ -50,7 +50,7 @@
               <Share />
             </el-icon>
           </el-button>
-          <el-button type="danger" round plain style="margin-right: 10px;">
+          <el-button type="danger" round plain style="margin-right: 10px">
             删除文件
             <el-icon class="el-icon--right">
               <DeleteFilled />
@@ -79,8 +79,8 @@
         <div :class="{
           'file-item': true,
           'item-seled': file.selected,
-          'file-loading': file.uploading
-        }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="fileShowTips(file)"
+          'file-loading': file.uploading,
+        }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
           @mouseleave="fileCloseTips(file)">
           <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
           <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
@@ -144,9 +144,7 @@
         <el-table-column property="size" width="80" label="大小" />
         <el-table-column label="操作" width="196" class-name="table-action">
           <template #default="scope">
-            <div v-if="scope.row.uploading">
-              上传中......
-            </div>
+            <div v-if="scope.row.uploading">上传中......</div>
             <div v-else>
               <el-button type="success" plain size="small">分享</el-button>
               <el-button type="primary" plain size="small">下载</el-button>
@@ -177,7 +175,6 @@
       <li class="item">上传文件</li>
       <li class="item">新建文件夹</li>
       <li class="item">刷新目录</li>
-      <li class="item">删除文件</li>
     </ul>
   </div>
 </template>
@@ -190,13 +187,15 @@ import foler from '@/views/files/component/foler.vue'
 import music from '@/views/files/component/music.vue'
 import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
-import fileLoading from "@/views/files/component/uploading.vue"
+import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
 
 // 计算属性：多选下载/分享/删除按钮
-const moreActionShow = computed(() => gitFileList.find(item => item.selected === true))
+const moreActionShow = computed(() =>
+  gitFileList.find((item) => item.selected === true)
+)
 // 文件右键菜单
 const showMenu = ref(false)
 // 文件夹右键菜单
@@ -207,17 +206,24 @@ const position = ref({
 })
 
 // 鼠标进去后显示这个文件的提示
-const fileShowTips = (file: fileRes) => {
+const fileShowTips = (e: any, file: fileRes) => {
   file.showTips = true
+  console.log('e-----', e)
+  e.target.click()
 }
-// 鼠标进去后显示这个文件的提示
+// 鼠标退出后关闭提示
 const fileCloseTips = (file: fileRes) => {
   file.showTips = false
+  showMenu.value = false
 }
 // 选中的某一个文件项
 const rightClickItem = ref('')
 const openMenu = (e: MouseEvent, item: any) => {
-  console.log("打开菜单");
+  console.log('打开菜单')
+  // 如果文件是上传状态，则直接返回
+  if (item.uploading) {
+    return
+  }
   // 获取侧边菜单栏宽度和顶部栏高度
   const sideBarWidth = (
     document.querySelector('.el-menu-vertical') as HTMLDivElement
@@ -233,7 +239,7 @@ const openMenu = (e: MouseEvent, item: any) => {
 }
 
 const openDirMenu = (e: MouseEvent) => {
-  console.log("打开文件上传菜单");
+  console.log('打开文件上传菜单')
   e.preventDefault()
   // 获取侧边菜单栏宽度和顶部栏高度
   const sideBarWidth = (
@@ -253,7 +259,7 @@ const closeMenu = () => {
 }
 // 点击了文件更多操作
 const moreBtn = (e: any, file: any) => {
-  console.log("点击了菜单--", e, file);
+  console.log('点击了菜单--', e, file)
 }
 
 // 表格表头的选择框
@@ -262,23 +268,23 @@ const checkAll = ref(false)
 const isIndeterminate = ref(false)
 // 全选事件
 const checkAllChange = (val: any) => {
-  console.log("checkAllChange--", val);
+  console.log('checkAllChange--', val)
 }
 
 // 多选框选项
 const fileSelChange = (e: any, item: any) => {
   item.selected = e
-  console.log("fileSelChange---", e, item);
+  console.log('fileSelChange---', e, item)
 }
 
 // 上传文件按钮事件
 const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
-  console.log("handleUploadChange----", uploadFile, uploadFiles)
+  console.log('handleUploadChange----', uploadFile, uploadFiles)
   // 当前日期
   var date = new Date()
   if (uploadFile.raw.type.includes('image') !== -1) {
-    var reader = new FileReader();
-    reader.readAsDataURL(uploadFile.raw);
+    var reader = new FileReader()
+    reader.readAsDataURL(uploadFile.raw)
     reader.onload = function (event) {
       gitFileList.push({
         name: uploadFile.name,
@@ -288,34 +294,35 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
         openLink: 'https://element-plus.gitee.io/',
         downLink: 'https://element-plus.gitee.io/',
         htmlLink: '',
-        creatTime: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+        creatTime: `${date.getFullYear()}-${date.getMonth() + 1
+          }-${date.getDate()}`,
         selected: false,
         showTips: false,
-        uploading: true
+        uploading: true,
       })
     }
   } else {
     gitFileList.push({
       name: uploadFile.name,
-      path: "",
+      path: '',
       type: getType(uploadFile.raw.type, uploadFile.name),
       size: (uploadFile.size / 1024 / 1024).toFixed(2).toString(),
       openLink: 'https://element-plus.gitee.io/',
       downLink: 'https://element-plus.gitee.io/',
       htmlLink: '',
-      creatTime: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+      creatTime: `${date.getFullYear()}-${date.getMonth() + 1
+        }-${date.getDate()}`,
       selected: false,
       showTips: false,
-      uploading: true
+      uploading: true,
     })
   }
-  console.log("gitFileList-----", gitFileList);
+  console.log('gitFileList-----', gitFileList)
 }
 
 // 手动上传文件
 const startUpload = () => {
-  console.log("开始上传文件");
-
+  console.log('开始上传文件')
 }
 
 // 搜索
@@ -402,9 +409,17 @@ const getType = (fileType: string, fileName: string) => {
       // 音乐格式
       return 'music'
     } else if (
-      ['DOC', 'WPS', 'XLS', 'PPT', 'HTML', 'XLSX', 'DOCX', 'TXT', 'CSV'].includes(
-        fileLast
-      )
+      [
+        'DOC',
+        'WPS',
+        'XLS',
+        'PPT',
+        'HTML',
+        'XLSX',
+        'DOCX',
+        'TXT',
+        'CSV',
+      ].includes(fileLast)
     ) {
       // 文档格式
       return 'document'
@@ -430,7 +445,7 @@ const gitFileList: fileRes[] = reactive(
       creatTime: '2021-08-22',
       selected: false,
       showTips: false,
-      uploading: false
+      uploading: false,
     })
     return pre
   }, [])
@@ -612,7 +627,6 @@ $column-gap: 16px;
       background-color: var(--file-loading-mask);
     }
 
-
     :deep(.el-loading-mask:hover) {
       background-color: var(--file-loading-hover) !important;
     }
@@ -622,7 +636,6 @@ $column-gap: 16px;
     :deep(.el-loading-mask) {
       background-color: var(--file-loading-hover) !important;
     }
-
   }
 
   .item-seled {
