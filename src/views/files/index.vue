@@ -81,7 +81,7 @@
           'item-seled': file.selected,
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave="fileCloseTips(file)">
+          @mouseleave="fileCloseTips(file)" @dblclick="handleFileDblClick(file)">
           <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
           <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
           <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
@@ -177,6 +177,8 @@
       <li class="item">刷新目录</li>
     </ul>
   </div>
+  <!-- 文件打开弹窗 -->
+  <fileDialog ref="fileLog"></fileDialog>
 </template>
 
 <script setup lang="ts">
@@ -189,8 +191,13 @@ import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
+import fileDialog from "@/views/files/component/filedialog.vue"
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
+import type { fileRes } from "@/utils/useTypes"
+
+// 文件弹窗
+const fileLog = ref('')
 
 // 计算属性：多选下载/分享/删除按钮
 const moreActionShow = computed(() =>
@@ -208,7 +215,6 @@ const position = ref({
 // 鼠标进去后显示这个文件的提示
 const fileShowTips = (e: any, file: fileRes) => {
   file.showTips = true
-  console.log('e-----', e)
   e.target.click()
 }
 // 鼠标退出后关闭提示
@@ -236,6 +242,12 @@ const openMenu = (e: MouseEvent, item: any) => {
   position.value.left = e.clientX - sideBarWidth + 2
   rightClickItem.value = item
   item.showTips = false
+}
+
+// 双击文件后打开文件
+const handleFileDblClick = (file: fileRes) => {
+  console.log("双击元素---", file, fileLog);
+  fileLog.value.showFileDialog(true)
 }
 
 const openDirMenu = (e: MouseEvent) => {
@@ -371,20 +383,6 @@ const fileTypes = {
   music: '音乐',
   document: '文档',
   other: '其他',
-}
-
-interface fileRes {
-  name: string
-  path: string
-  type: string
-  size: string
-  openLink: string
-  downLink: string
-  htmlLink: string
-  creatTime: string
-  selected: boolean
-  showTips: boolean
-  uploading: boolean
 }
 
 // 根据类型和文件名返回真实的文件类型
