@@ -68,7 +68,7 @@
       <!-- 网格布局 -->
       <!-- 提示文件信息内容 -->
       <el-tooltip placement="bottom" :visible="file.showTips" v-if="showStyle === 'grid'"
-        v-for="(file, index) in fileList" :key="index">
+        v-for="(file, index) in gitFileList" :key="index">
         <template #content>
           <div class="file-tips">
             名称: {{ file.name }}<br />
@@ -79,17 +79,21 @@
         <div :class="{
           'file-item': true,
           'item-seled': file.selected,
+          'file-loading': file.uploading
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="fileShowTips(file)"
           @mouseleave="fileCloseTips(file)">
-          <docum v-if="file.type === 'document'"></docum>
-          <foler v-else-if="file.type === 'foler'"></foler>
-          <music v-else-if="file.type === 'music'"></music>
-          <pic v-else-if="file.type === 'picture'" :imgUrl="file.path"></pic>
-          <vide v-else-if="file.type === 'video'"></vide>
-          <other v-else="file.type === 'other'"></other>
+          <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
+          <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
+          <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
+          <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.path" v-loading="file.uploading">
+          </pic>
+          <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
+            v-loading="file.uploading"></fileLoading>
+          <vide v-else-if="file.type === 'video'" v-loading="file.uploading"></vide>
+          <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
           <div class="file-name">{{ file.name }}</div>
           <!-- 多选框 -->
-          <el-checkbox :class="{
+          <el-checkbox v-if="!file.uploading" :class="{
             'file-select': true,
             'check-show': file.selected,
           }" v-model="file.selected" @change="(e) => fileSelChange(e, file)"></el-checkbox>
@@ -101,26 +105,23 @@
       </el-tooltip>
       <!-- 网格布局的上传文件按钮 -->
       <div v-if="showStyle === 'grid'" class="upload-file">
-        <el-upload action="#" list-type="picture-card" :auto-upload="false" multiple>
+        <el-upload class="upload-inner" :auto-upload="false" drag multiple :on-change="handleUploadChange"
+          :show-file-list="false">
           <el-icon>
             <Plus />
           </el-icon>
-          <template #file="{ fileUp }">
-            <div>
-              <img class="el-upload-list__item-thumbnail" :src="fileUp.url" alt="" />
-            </div>
-          </template>
         </el-upload>
         <div class="upload-name">上传文件</div>
       </div>
       <!-- 列表布局 -->
-      <el-table v-else :data="fileList" style="width: 100%">
-        <el-table-column width="25">
+      <el-table v-else :data="gitFileList" style="width: 100%">
+        <el-table-column width="26">
           <template #header>
             <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="checkAllChange"></el-checkbox>
           </template>
           <template #default="scope">
-            <el-checkbox v-model="scope.row.selected" @change="(e) => fileSelChange(e, scope.row)">
+            <el-checkbox v-model="scope.row.selected" @change="(e) => fileSelChange(e, scope.row)"
+              :disabled="scope.row.uploading">
             </el-checkbox>
           </template>
         </el-table-column>
@@ -143,9 +144,14 @@
         <el-table-column property="size" width="80" label="大小" />
         <el-table-column label="操作" width="196" class-name="table-action">
           <template #default="scope">
-            <el-button type="success" plain size="small">分享</el-button>
-            <el-button type="primary" plain size="small">下载</el-button>
-            <el-button size="small" type="danger" plain>删除</el-button>
+            <div v-if="scope.row.uploading">
+              上传中......
+            </div>
+            <div v-else>
+              <el-button type="success" plain size="small">分享</el-button>
+              <el-button type="primary" plain size="small">下载</el-button>
+              <el-button size="small" type="danger" plain>删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -184,14 +190,13 @@ import foler from '@/views/files/component/foler.vue'
 import music from '@/views/files/component/music.vue'
 import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
+import fileLoading from "@/views/files/component/uploading.vue"
 import vide from '@/views/files/component/video.vue'
-import uploadFile from "./component/upload.vue"
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
-import { fa } from 'element-plus/es/locale'
 
 // 计算属性：多选下载/分享/删除按钮
-const moreActionShow = computed(() => fileList.find(item => item.selected === true))
+const moreActionShow = computed(() => gitFileList.find(item => item.selected === true))
 // 文件右键菜单
 const showMenu = ref(false)
 // 文件夹右键菜单
@@ -200,9 +205,6 @@ const position = ref({
   top: 0,
   left: 0,
 })
-
-// 文件上传
-const disabled = ref(false)
 
 // 鼠标进去后显示这个文件的提示
 const fileShowTips = (file: fileRes) => {
@@ -267,6 +269,52 @@ const checkAllChange = (val: any) => {
 const fileSelChange = (e: any, item: any) => {
   item.selected = e
   console.log("fileSelChange---", e, item);
+}
+
+// 上传文件按钮事件
+const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
+  console.log("handleUploadChange----", uploadFile, uploadFiles)
+  // 当前日期
+  var date = new Date()
+  if (uploadFile.raw.type.includes('image') !== -1) {
+    var reader = new FileReader();
+    reader.readAsDataURL(uploadFile.raw);
+    reader.onload = function (event) {
+      gitFileList.push({
+        name: uploadFile.name,
+        path: event.target.result,
+        type: getType(uploadFile.raw.type, uploadFile.name),
+        size: (uploadFile.size / 1024 / 1024).toFixed(2).toString(),
+        openLink: 'https://element-plus.gitee.io/',
+        downLink: 'https://element-plus.gitee.io/',
+        htmlLink: '',
+        creatTime: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+        selected: false,
+        showTips: false,
+        uploading: true
+      })
+    }
+  } else {
+    gitFileList.push({
+      name: uploadFile.name,
+      path: "",
+      type: getType(uploadFile.raw.type, uploadFile.name),
+      size: (uploadFile.size / 1024 / 1024).toFixed(2).toString(),
+      openLink: 'https://element-plus.gitee.io/',
+      downLink: 'https://element-plus.gitee.io/',
+      htmlLink: '',
+      creatTime: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+      selected: false,
+      showTips: false,
+      uploading: true
+    })
+  }
+  console.log("gitFileList-----", gitFileList);
+}
+
+// 手动上传文件
+const startUpload = () => {
+  console.log("开始上传文件");
 
 }
 
@@ -329,6 +377,7 @@ interface fileRes {
   creatTime: string
   selected: boolean
   showTips: boolean
+  uploading: boolean
 }
 
 // 根据类型和文件名返回真实的文件类型
@@ -339,7 +388,6 @@ const getType = (fileType: string, fileName: string) => {
     const fileLast = fileName
       .substring(fileName.lastIndexOf('.') + 1)
       .toUpperCase()
-    console.log('fileLast------', fileLast)
     if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
       // 图片格式
       return 'picture'
@@ -369,7 +417,7 @@ const getType = (fileType: string, fileName: string) => {
 
 // 发送请求获取根目录文件内容
 const gitRoots = gitApis.getFiles()
-const fileList: fileRes[] = reactive(
+const gitFileList: fileRes[] = reactive(
   gitRoots.reduce((pre: fileRes[], cur) => {
     pre.push({
       name: cur.name,
@@ -381,7 +429,8 @@ const fileList: fileRes[] = reactive(
       htmlLink: cur.html_url,
       creatTime: '2021-08-22',
       selected: false,
-      showTips: false
+      showTips: false,
+      uploading: false
     })
     return pre
   }, [])
@@ -515,13 +564,20 @@ $column-gap: 16px;
     align-items: center;
     cursor: pointer;
 
+    .upload-inner {
+      width: 60px;
+      height: 60px;
+    }
+
     .upload-name {
       margin-top: 18px;
     }
 
-    :deep(.el-upload--picture-card) {
+    :deep(.el-upload-dragger) {
       width: 60px;
       height: 60px;
+      line-height: 60px;
+      padding: unset;
     }
   }
 
@@ -549,6 +605,24 @@ $column-gap: 16px;
     .check-show {
       display: block;
     }
+  }
+
+  .file-loading {
+    :deep(.el-loading-mask) {
+      background-color: var(--file-loading-mask);
+    }
+
+
+    :deep(.el-loading-mask:hover) {
+      background-color: var(--file-loading-hover) !important;
+    }
+  }
+
+  .file-loading:hover {
+    :deep(.el-loading-mask) {
+      background-color: var(--file-loading-hover) !important;
+    }
+
   }
 
   .item-seled {
