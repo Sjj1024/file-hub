@@ -11,7 +11,7 @@ import { ref, reactive } from 'vue'
 <style scoped lang="scss">
 .main-box {
     flex: 20;
-    overflow: scroll;
+    overflow-y: scroll !important;
     position: relative;
 }
 

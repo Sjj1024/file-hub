@@ -1,5 +1,5 @@
 <template>
-  <div class="my-files">
+  <div class="my-files" @click="closeMenu">
     <div class="tools-box">
       <div class="path-tool">
         <el-icon class="path-icon">
@@ -68,7 +68,7 @@
       <!-- 网格布局 -->
       <div v-if="showStyle === 'grid'" v-for="(file, index) in fileList" :key="index">
         <!-- 提示文件信息内容 -->
-        <el-tooltip placement="bottom">
+        <el-tooltip placement="bottom" :show-after=1 :visible="file.showTips" trigger="click">
           <template #content>
             <div class="file-tips">
               名称: {{ file.name }}<br />
@@ -79,7 +79,7 @@
           <div :class="{
             'file-item': true,
             'item-seled': file.selected,
-          }" @contextmenu.prevent="openMenu($event, file)" @click="closeMenu">
+          }" @contextmenu.prevent="openMenu($event, file)">
             <docum v-if="file.type === 'document'"></docum>
             <foler v-else-if="file.type === 'foler'"></foler>
             <music v-else-if="file.type === 'music'"></music>
@@ -161,6 +161,7 @@ import pic from '@/views/files/component/picture.vue'
 import vide from '@/views/files/component/video.vue'
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
+import { fa } from 'element-plus/es/locale'
 
 // 计算属性：多选下载/分享/删除按钮
 const moreActionShow = computed(() => fileList.find(item => item.selected === true))
@@ -185,6 +186,7 @@ const openMenu = (e: MouseEvent, item: any) => {
   position.value.top = e.clientY - headerHeight - 36
   position.value.left = e.clientX - sideBarWidth + 2
   rightClickItem.value = item
+  item.showTips = false
 }
 // 点击项目后关闭右键
 const closeMenu = () => {
@@ -269,6 +271,7 @@ interface fileRes {
   htmlLink: string
   creatTime: string
   selected: boolean
+  showTips: boolean
 }
 
 // 根据类型和文件名返回真实的文件类型
@@ -321,6 +324,7 @@ const fileList: fileRes[] = reactive(
       htmlLink: cur.html_url,
       creatTime: '2021-08-22',
       selected: false,
+      showTips: false
     })
     return pre
   }, [])
