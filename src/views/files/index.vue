@@ -1,5 +1,5 @@
 <template>
-  <div class="my-files" @click="closeMenu">
+  <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu">
     <div class="tools-box">
       <div class="path-tool">
         <el-icon class="path-icon">
@@ -64,40 +64,54 @@
         </span>
       </div>
     </div>
-    <div :class="{ 'file-box': true, 'grid-style': showStyle === 'grid' }">
+    <div :class="{ 'file-box': true, 'grid-style': showStyle === 'grid' }" @contextmenu.self="openDirMenu">
       <!-- 网格布局 -->
-      <div v-if="showStyle === 'grid'" v-for="(file, index) in fileList" :key="index">
-        <!-- 提示文件信息内容 -->
-        <el-tooltip placement="bottom" :show-after=1 :visible="file.showTips" trigger="click">
-          <template #content>
-            <div class="file-tips">
-              名称: {{ file.name }}<br />
-              <span v-if="file.type !== 'foler'">大小: {{ file.size }}<br /></span>
-              时间: {{ file.creatTime }}
-            </div>
-          </template>
-          <div :class="{
-            'file-item': true,
-            'item-seled': file.selected,
-          }" @contextmenu.prevent="openMenu($event, file)">
-            <docum v-if="file.type === 'document'"></docum>
-            <foler v-else-if="file.type === 'foler'"></foler>
-            <music v-else-if="file.type === 'music'"></music>
-            <pic v-else-if="file.type === 'picture'" :imgUrl="file.path"></pic>
-            <vide v-else-if="file.type === 'video'"></vide>
-            <other v-else="file.type === 'other'"></other>
-            <div class="file-name">{{ file.name }}</div>
-            <!-- 多选框 -->
-            <el-checkbox :class="{
-              'file-select': true,
-              'check-show': file.selected,
-            }" v-model="file.selected" @change="(e) => fileSelChange(e, file)"></el-checkbox>
-            <!-- 文件属性提示符 -->
-            <!-- <el-icon class="more-action" @click="(e) => moreBtn(e, file)">
+      <!-- 提示文件信息内容 -->
+      <el-tooltip placement="bottom" :visible="file.showTips" v-if="showStyle === 'grid'"
+        v-for="(file, index) in fileList" :key="index">
+        <template #content>
+          <div class="file-tips">
+            名称: {{ file.name }}<br />
+            <span v-if="file.type !== 'foler'">大小: {{ file.size }}<br /></span>
+            时间: {{ file.creatTime }}
+          </div>
+        </template>
+        <div :class="{
+          'file-item': true,
+          'item-seled': file.selected,
+        }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="fileShowTips(file)"
+          @mouseleave="fileCloseTips(file)">
+          <docum v-if="file.type === 'document'"></docum>
+          <foler v-else-if="file.type === 'foler'"></foler>
+          <music v-else-if="file.type === 'music'"></music>
+          <pic v-else-if="file.type === 'picture'" :imgUrl="file.path"></pic>
+          <vide v-else-if="file.type === 'video'"></vide>
+          <other v-else="file.type === 'other'"></other>
+          <div class="file-name">{{ file.name }}</div>
+          <!-- 多选框 -->
+          <el-checkbox :class="{
+            'file-select': true,
+            'check-show': file.selected,
+          }" v-model="file.selected" @change="(e) => fileSelChange(e, file)"></el-checkbox>
+          <!-- 文件属性提示符 -->
+          <!-- <el-icon class="more-action" @click="(e) => moreBtn(e, file)">
               <Operation />
             </el-icon> -->
-          </div>
-        </el-tooltip>
+        </div>
+      </el-tooltip>
+      <!-- 网格布局的上传文件按钮 -->
+      <div v-if="showStyle === 'grid'" class="upload-file">
+        <el-upload action="#" list-type="picture-card" :auto-upload="false" multiple>
+          <el-icon>
+            <Plus />
+          </el-icon>
+          <template #file="{ fileUp }">
+            <div>
+              <img class="el-upload-list__item-thumbnail" :src="fileUp.url" alt="" />
+            </div>
+          </template>
+        </el-upload>
+        <div class="upload-name">上传文件</div>
       </div>
       <!-- 列表布局 -->
       <el-table v-else :data="fileList" style="width: 100%">
@@ -136,15 +150,27 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- 右键菜单部分 -->
+    <!-- 文件右键菜单部分 -->
     <ul v-show="showMenu" :style="{
       left: position.left + 'px',
       top: position.top + 'px',
       display: showMenu ? 'block' : 'none',
     }" class="filemenu">
       <li class="item">分享链接</li>
+      <li class="item">重新命名</li>
       <li class="item">下载文件</li>
       <li class="item">详细信息</li>
+      <li class="item">删除文件</li>
+    </ul>
+    <!-- 目录右键菜单 -->
+    <ul v-show="dirShowMenu" :style="{
+      left: position.left + 'px',
+      top: position.top + 'px',
+      display: dirShowMenu ? 'block' : 'none',
+    }" class="filemenu">
+      <li class="item">上传文件</li>
+      <li class="item">新建文件夹</li>
+      <li class="item">刷新目录</li>
       <li class="item">删除文件</li>
     </ul>
   </div>
@@ -159,18 +185,33 @@ import music from '@/views/files/component/music.vue'
 import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
 import vide from '@/views/files/component/video.vue'
+import uploadFile from "./component/upload.vue"
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
 import { fa } from 'element-plus/es/locale'
 
 // 计算属性：多选下载/分享/删除按钮
 const moreActionShow = computed(() => fileList.find(item => item.selected === true))
-// 右键菜单
+// 文件右键菜单
 const showMenu = ref(false)
+// 文件夹右键菜单
+const dirShowMenu = ref(false)
 const position = ref({
   top: 0,
   left: 0,
 })
+
+// 文件上传
+const disabled = ref(false)
+
+// 鼠标进去后显示这个文件的提示
+const fileShowTips = (file: fileRes) => {
+  file.showTips = true
+}
+// 鼠标进去后显示这个文件的提示
+const fileCloseTips = (file: fileRes) => {
+  file.showTips = false
+}
 // 选中的某一个文件项
 const rightClickItem = ref('')
 const openMenu = (e: MouseEvent, item: any) => {
@@ -188,9 +229,25 @@ const openMenu = (e: MouseEvent, item: any) => {
   rightClickItem.value = item
   item.showTips = false
 }
+
+const openDirMenu = (e: MouseEvent) => {
+  console.log("打开文件上传菜单");
+  e.preventDefault()
+  // 获取侧边菜单栏宽度和顶部栏高度
+  const sideBarWidth = (
+    document.querySelector('.el-menu-vertical') as HTMLDivElement
+  ).offsetWidth
+  const headerHeight = (
+    document.querySelector('.tools-box') as HTMLDivElement
+  ).offsetTop
+  dirShowMenu.value = true
+  position.value.top = e.clientY - headerHeight - 36
+  position.value.left = e.clientX - sideBarWidth + 2
+}
 // 点击项目后关闭右键
 const closeMenu = () => {
   showMenu.value = false
+  dirShowMenu.value = false
 }
 // 点击了文件更多操作
 const moreBtn = (e: any, file: any) => {
@@ -210,7 +267,7 @@ const checkAllChange = (val: any) => {
 const fileSelChange = (e: any, item: any) => {
   item.selected = e
   console.log("fileSelChange---", e, item);
-  
+
 }
 
 // 搜索
@@ -297,7 +354,7 @@ const getType = (fileType: string, fileName: string) => {
       // 音乐格式
       return 'music'
     } else if (
-      ['DOC', 'WPS', 'XLS', 'PPT', 'HTML', 'XLSX', 'DOCX'].includes(
+      ['DOC', 'WPS', 'XLS', 'PPT', 'HTML', 'XLSX', 'DOCX', 'TXT', 'CSV'].includes(
         fileLast
       )
     ) {
@@ -344,6 +401,7 @@ $column-gap: 16px;
 .my-files {
   padding: 0 5px;
   position: relative;
+  height: 90%;
 
   .filemenu {
     position: absolute;
@@ -352,11 +410,10 @@ $column-gap: 16px;
     background-color: var(--bg-color);
     border-radius: 5px;
     cursor: default;
-    padding: 3px 0;
 
     .item {
       list-style: none;
-      padding: 2px 4px;
+      padding: 4px 6px;
     }
 
     .item:hover {
@@ -415,7 +472,7 @@ $column-gap: 16px;
 
 .file-name {
   text-align: center;
-  width: 104px;
+  width: 90px;
   height: 20px;
   white-space: nowrap;
   overflow: hidden;
@@ -424,7 +481,6 @@ $column-gap: 16px;
 
 .list-name {
   height: 20px;
-  // white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: default;
@@ -450,9 +506,28 @@ $column-gap: 16px;
   display: flex;
   flex-wrap: wrap;
 
-  .file-item {
+  .upload-file {
     width: 120px;
-    padding: 10px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    .upload-name {
+      margin-top: 18px;
+    }
+
+    :deep(.el-upload--picture-card) {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .file-item {
+    width: 110px;
+    padding: 10px 15px;
     margin: 5px;
     border-radius: 5px;
     position: relative;
