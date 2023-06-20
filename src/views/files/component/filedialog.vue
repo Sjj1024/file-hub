@@ -1,13 +1,13 @@
 <template>
-  <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen>
+  <el-dialog v-model="centerDialogVisible" :title="fileName" width="100%" center top="0" fullscreen>
     <div class="open-content">
       显示的内容
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="centerDialogVisible = false">Cancel</el-button>
+        <el-button @click="centerDialogVisible = false">关闭</el-button>
         <el-button type="primary" @click="centerDialogVisible = false">
-          Confirm
+          下载
         </el-button>
       </span>
     </template>
@@ -16,47 +16,33 @@
 
 <script setup lang='ts'>
 import { ref } from 'vue'
+import type { fileRes } from "@/utils/useTypes"
 
 const centerDialogVisible = ref(false)
 
-const props = defineProps({
-  file: {
-    type: Object,
-    default: {
-      name: "",
-      path: "",
-      type: "",
-      size: "",
-      openLink: '',
-      downLink: '',
-      htmlLink: "",
-      creatTime: '',
-      selected: false,
-      showTips: false,
-      uploading: false,
-    },
-  },
-})
+let fileName = ref("默认标题")
 
-const showFileDialog = (source: Boolean) => {
+const showFileDialog = (source: Boolean, f: fileRes) => {
   centerDialogVisible.value = true
-  console.log("fiel-----", source);
+  fileName.value = f.name
+  console.log("fiel-----", source, f, fileName);
 }
+
+// 实时计算弹窗内容高度
+let dialogHeight = ref(document.body.clientHeight - 116)
+window.onresize = () => {
+  console.log(`body宽度：${document.body.clientWidth}`);
+};
 
 defineExpose({
   showFileDialog
 })
 
-
-
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 :deep(.el-dialog__body){
-  height: 100%;
-}
-
-.open-content{
-  height: 100%;
+  // height: v-bind(dialogHeight);
+  height: 1000px;
 }
 </style>

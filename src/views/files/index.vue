@@ -82,15 +82,17 @@
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
           @mouseleave="fileCloseTips(file)" @dblclick="handleFileDblClick(file)">
-          <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
-          <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
-          <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
-          <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.path" v-loading="file.uploading">
-          </pic>
-          <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
-            v-loading="file.uploading"></fileLoading>
-          <vide v-else-if="file.type === 'video'" v-loading="file.uploading"></vide>
-          <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
+          <keep-alive>
+            <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
+            <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
+            <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
+            <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.path" v-loading="file.uploading">
+            </pic>
+            <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
+              v-loading="file.uploading"></fileLoading>
+            <vide v-else-if="file.type === 'video'" v-loading="file.uploading"></vide>
+            <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
+          </keep-alive>
           <div class="file-name">{{ file.name }}</div>
           <!-- 多选框 -->
           <el-checkbox v-if="!file.uploading" :class="{
@@ -178,7 +180,7 @@
     </ul>
   </div>
   <!-- 文件打开弹窗 -->
-  <fileDialog ref="fileLog" :file="dialogContent"></fileDialog>
+  <fileDialog ref="fileLog"></fileDialog>
 </template>
 
 <script setup lang="ts">
@@ -198,20 +200,6 @@ import type { fileRes } from "@/utils/useTypes"
 
 // 文件弹窗
 const fileLog = ref()
-// 弹窗显示的文件
-let dialogContent: fileRes = {
-  name: "",
-  path: "",
-  type: "",
-  size: "",
-  openLink: 'https://element-plus.gitee.io/',
-  downLink: 'https://element-plus.gitee.io/',
-  htmlLink: "",
-  creatTime: '2021-08-22',
-  selected: false,
-  showTips: false,
-  uploading: false,
-}
 
 // 计算属性：多选下载/分享/删除按钮
 const moreActionShow = computed(() =>
@@ -261,8 +249,11 @@ const openMenu = (e: MouseEvent, item: any) => {
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
-  dialogContent = file
-  fileLog.value.showFileDialog(true)
+  // 如果是上传中，就不允许双击
+  if (file.uploading) {
+    return
+  }
+  fileLog.value.showFileDialog(true, file)
 }
 
 const openDirMenu = (e: MouseEvent) => {
@@ -312,7 +303,7 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   if (uploadFile.raw.type.includes('image') !== -1) {
     var reader = new FileReader()
     reader.readAsDataURL(uploadFile.raw)
-    reader.onload = function (event:any) {
+    reader.onload = function (event: any) {
       gitFileList.push({
         name: uploadFile.name,
         path: event!.target.result,
