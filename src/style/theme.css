@@ -14,6 +14,8 @@
     --file-menu-hover: rgb(145, 145, 145);
     --file-loading-mask: #0d1117ba;
     --file-loading-hover: rgba(201, 211, 225, 0);
+    --img-pre-btn-bg: rgb(31 45 61 / 11%);
+    --img-pre-btn-bg-hover: rgb(31 45 61 / 33%);
 }
 
 /* light主题 */
@@ -32,4 +34,6 @@
     --file-menu-hover: rgb(200, 200, 200);
     --file-loading-mask: #ecf5ff6a;
     --file-loading-hover: #ecf5ff3a;
+    --img-pre-btn-bg: rgba(31, 45, 61, 0.11);
+    --img-pre-btn-bg-hover: rgba(31, 45, 61, 0.53);
 }

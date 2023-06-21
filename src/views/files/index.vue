@@ -81,18 +81,18 @@
           'item-seled': file.selected,
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave="fileCloseTips(file)" @dblclick="handleFileDblClick(file)">
-          <keep-alive>
+          @mouseleave.self="fileCloseTips(file)" @dblclick="handleFileDblClick(file)"
+          @click.self="fileCloseTips(file)">
             <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
             <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
             <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
-            <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.path" v-loading="file.uploading">
+            <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.openLink" :srcList="imgPreList"
+              v-loading="file.uploading">
             </pic>
             <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
               v-loading="file.uploading"></fileLoading>
             <vide v-else-if="file.type === 'video'" v-loading="file.uploading"></vide>
             <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
-          </keep-alive>
           <div class="file-name">{{ file.name }}</div>
           <!-- 多选框 -->
           <el-checkbox v-if="!file.uploading" :class="{
@@ -197,6 +197,9 @@ import fileDialog from "@/views/files/component/filedialog.vue"
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 // 文件弹窗
 const fileLog = ref()
@@ -217,12 +220,14 @@ const position = ref({
 // 鼠标进去后显示这个文件的提示
 const fileShowTips = (e: any, file: fileRes) => {
   file.showTips = true
+  // 鼠标不在文件上右键后，再到文件上右键的bug
   e.target.click()
 }
 // 鼠标退出后关闭提示
 const fileCloseTips = (file: fileRes) => {
   file.showTips = false
-  showMenu.value = false
+  // 鼠标放上文件后，就给图片组件传递数据，等待预览
+  // console.log("点击文件后---", file);
 }
 // 选中的某一个文件项
 const rightClickItem = ref('')
@@ -243,16 +248,18 @@ const openMenu = (e: MouseEvent, item: any) => {
   position.value.top = e.clientY - headerHeight - 36
   position.value.left = e.clientX - sideBarWidth + 2
   rightClickItem.value = item
+  // 显示文件提示内容
   item.showTips = false
 }
 
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
-  // 如果是上传中，就不允许双击
-  if (file.uploading) {
+  // 如果是上传中或者是图片，就不允许双击
+  if (file.uploading || file.type === 'picture') {
     return
   }
+  // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
   fileLog.value.showFileDialog(true, file)
 }
 
@@ -391,16 +398,20 @@ const fileTypes = {
   other: '其他',
 }
 
+// 维护一个图片列表，用于图片预览
+const imgPreList: string[] = []
+
 // 根据类型和文件名返回真实的文件类型
-const getType = (fileType: string, fileName: string) => {
+const getType = (fileType: string, curFile: any) => {
   if (fileType === 'dir') {
     return 'foler'
   } else {
-    const fileLast = fileName
-      .substring(fileName.lastIndexOf('.') + 1)
+    const fileLast = curFile.name
+      .substring(curFile.name.lastIndexOf('.') + 1)
       .toUpperCase()
     if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
-      // 图片格式
+      // 图片格式: 加入图片预览列表
+      imgPreList.push(`${userStore.fileCdn}${curFile.path}`)
       return 'picture'
     } else if (
       ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP'].includes(
@@ -441,9 +452,9 @@ const gitFileList: fileRes[] = reactive(
     pre.push({
       name: cur.name,
       path: cur.path,
-      type: getType(cur.type, cur.name),
+      type: getType(cur.type, cur),
       size: (cur.size / 1024 / 1024).toFixed(2).toString(),
-      openLink: 'https://element-plus.gitee.io/',
+      openLink: `${userStore.fileCdn}${cur.path}`,
       downLink: 'https://element-plus.gitee.io/',
       htmlLink: cur.html_url,
       creatTime: '2021-08-22',
