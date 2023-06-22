@@ -11,18 +11,12 @@ import 'element-plus/theme-chalk/dark/css-vars.css' //这句是暗黑模式切�
 import '@/style/theme.css'
 import '@/style/index.scss'
 import i18n from './lang/index'
-import VuePlyr from 'vue-plyr'
 import 'vue-plyr/dist/vue-plyr.css'
 
 const app = createApp(App)
 
 // 使用路由
 app.use(router)
-
-// 使用视频播放器
-app.use(VuePlyr, {
-    plyr: {},
-})
 
 // 使用pinia
 const pinia = createPinia()
@@ -34,4 +28,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 // 国际化
 app.use(i18n)
+
 app.mount('#app')

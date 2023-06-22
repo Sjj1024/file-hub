@@ -4,7 +4,7 @@
       <el-image :src="imgUrl" class="preview" fit="cover" loading="lazy" lazy hide-on-click-modal
         :preview-src-list="srcList" :initial-index="preImgIndex" infinite>
         <template #placeholder>
-          <div class="image-slot">Loading...</div>
+          <img :src="loadingGif" alt="" class="preview">
         </template>
         <template #error>
           <img :src="error" alt="加载失败" style="object-fit: fill; width: 100%; height: 100%" />
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import error from '@/assets/image/error.png'
-import { ref } from 'vue';
+import loadingGif from "@/assets/image/loadColor.gif"
 // import { nextTick } from 'vue';
 
 // 父子组件传值
