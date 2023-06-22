@@ -50,6 +50,15 @@ import { ref } from 'vue'
 import loadingGif from "@/assets/image/loadColor.gif"
 import type { fileRes } from "@/utils/useTypes"
 
+/**
+ * 可以用于播放的视频
+ * https://media.vued.vanthink.cn/sparkle_your_name_am720p.mp4
+ * https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4
+ * https://media.vued.vanthink.cn/sparkle_your_name_am360p.mp4
+ * https://media.vued.vanthink.cn/y2mate.com%20-%20Weathering%20With%20You%20%5BOfficial%20Subtitled%20Trailer,%20GKIDS%5D_Q6iK6DjV_iE_1080p.mp4
+ * https://media.vued.vanthink.cn/CJ7%20-%20Trailer.mp4
+ */
+
 const centerDialogVisible = ref(false)
 
 let fileName = ref({
@@ -87,28 +96,41 @@ defineExpose({
 <style lang="scss">
 .file-dialog {
 
+  &:hover {
+    .el-dialog__header {
+      // background-color: green !important;
+      display: block;
+    }
+
+    .el-dialog__footer {
+      display: block;
+    }
+  }
+
   .el-dialog__header {
     padding: unset;
     margin-right: unset;
     position: absolute;
     z-index: 999;
     width: 100%;
-    display: block;
+    display: none;
 
     .el-dialog__headerbtn {
       display: none;
     }
   }
 
-  .el-dialog__body {
-    height: calc(100vh - 56px);
-    padding: unset !important;
+  .el-dialog__footer {
+    position: absolute;
+    bottom: 6px;
+    width: 100%;
+    z-index: 999;
+    display: none;
+  }
 
-    &:hover {
-      .el-dialog__header{
-        background-color: green !important;
-      }
-    }
+  .el-dialog__body {
+    height: calc(100vh - 0px);
+    padding: unset !important;
   }
 
   .el-carousel--horizontal,

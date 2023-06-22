@@ -29,6 +29,9 @@ dependencies:
   vue-i18n:
     specifier: 9.3.0-beta.19
     version: registry.npmmirror.com/vue-i18n@9.3.0-beta.19(vue@3.3.2)
+  vue-plyr:
+    specifier: ^7.0.0
+    version: registry.npmmirror.com/vue-plyr@7.0.0
   vue-router:
     specifier: ^4.1.6
     version: registry.npmmirror.com/vue-router@4.1.6(vue@3.3.2)
@@ -54,6 +57,18 @@ devDependencies:
     version: registry.npmmirror.com/vue-tsc@1.0.11(typescript@4.9.5)
 
 packages:
+
+  github.com/sampotts/plyr/d434c9af16e641400aaee93188594208d88f2658:
+    resolution: {commit: d434c9af16e641400aaee93188594208d88f2658, repo: git+ssh://git@github.com/sampotts/plyr.git, type: git}
+    name: plyr
+    version: 3.7.0
+    dependencies:
+      core-js: registry.npmmirror.com/core-js@3.31.0
+      custom-event-polyfill: registry.npmmirror.com/custom-event-polyfill@1.0.7
+      loadjs: registry.npmmirror.com/loadjs@4.2.0
+      rangetouch: registry.npmmirror.com/rangetouch@2.0.1
+      url-polyfill: registry.npmmirror.com/url-polyfill@1.1.12
+    dev: false
 
   registry.npmmirror.com/@babel/helper-string-parser@7.21.5:
     resolution: {integrity: sha512-5pTUx3hAJaZIdW99sJ6ZUUgWq/Y+Hja7TowEnLNMm1VivRgZQL3vpBY3qUACVsvw+yQU6+YgfBVmcbLaZtrA1w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/helper-string-parser/-/helper-string-parser-7.21.5.tgz}
@@ -753,6 +768,16 @@ packages:
       '@vue/shared': registry.npmmirror.com/@vue/shared@3.3.4
     dev: true
 
+  registry.npmmirror.com/@vue/compiler-sfc@2.7.14:
+    resolution: {integrity: sha512-aNmNHyLPsw+sVvlQFQ2/8sjNuLtK54TC6cuKnVzAY93ks4ZBrvwQSnkkIh7bsbNhum5hJBS00wSDipQ937f5DA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/compiler-sfc/-/compiler-sfc-2.7.14.tgz}
+    name: '@vue/compiler-sfc'
+    version: 2.7.14
+    dependencies:
+      '@babel/parser': registry.npmmirror.com/@babel/parser@7.22.4
+      postcss: registry.npmmirror.com/postcss@8.4.24
+      source-map: registry.npmmirror.com/source-map@0.6.1
+    dev: false
+
   registry.npmmirror.com/@vue/compiler-sfc@3.3.2:
     resolution: {integrity: sha512-jG4jQy28H4BqzEKsQqqW65BZgmo3vzdLHTBjF+35RwtDdlFE+Fk1VWJYUnDMMqkFBo6Ye1ltSKVOMPgkzYj7SQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/compiler-sfc/-/compiler-sfc-3.3.2.tgz}
     name: '@vue/compiler-sfc'
@@ -1206,10 +1231,23 @@ packages:
     version: 2.20.3
     dev: false
 
+  registry.npmmirror.com/core-js@3.31.0:
+    resolution: {integrity: sha512-NIp2TQSGfR6ba5aalZD+ZQ1fSxGhDo/s1w0nx3RYzf2pnJxt7YynxFlFScP6eV7+GZsKO95NSjGxyJsU3DZgeQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/core-js/-/core-js-3.31.0.tgz}
+    name: core-js
+    version: 3.31.0
+    requiresBuild: true
+    dev: false
+
   registry.npmmirror.com/csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/csstype/-/csstype-3.1.2.tgz}
     name: csstype
     version: 3.1.2
+
+  registry.npmmirror.com/custom-event-polyfill@1.0.7:
+    resolution: {integrity: sha512-TDDkd5DkaZxZFM8p+1I3yAlvM3rSr1wbrOliG4yJiwinMZN8z/iGL7BTlDkrJcYTmgUSb4ywVCc3ZaUtOtC76w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/custom-event-polyfill/-/custom-event-polyfill-1.0.7.tgz}
+    name: custom-event-polyfill
+    version: 1.0.7
+    dev: false
 
   registry.npmmirror.com/dayjs@1.11.7:
     resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dayjs/-/dayjs-1.11.7.tgz}
@@ -1519,6 +1557,12 @@ packages:
     engines: {node: '>=6.11.5'}
     dev: false
 
+  registry.npmmirror.com/loadjs@4.2.0:
+    resolution: {integrity: sha512-AgQGZisAlTPbTEzrHPb6q+NYBMD+DP9uvGSIjSUM5uG+0jG15cb8axWpxuOIqrmQjn6scaaH8JwloiP27b2KXA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/loadjs/-/loadjs-4.2.0.tgz}
+    name: loadjs
+    version: 4.2.0
+    dev: false
+
   registry.npmmirror.com/lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/lodash-es/-/lodash-es-4.17.21.tgz}
     name: lodash-es
@@ -1689,6 +1733,12 @@ packages:
     version: 2.1.0
     dependencies:
       safe-buffer: registry.npmmirror.com/safe-buffer@5.2.1
+    dev: false
+
+  registry.npmmirror.com/rangetouch@2.0.1:
+    resolution: {integrity: sha512-sln+pNSc8NGaHoLzwNBssFSf/rSYkqeBXzX1AtJlkJiUaVSJSbRAWJk+4omsXkN+EJalzkZhWQ3th1m0FpR5xA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/rangetouch/-/rangetouch-2.0.1.tgz}
+    name: rangetouch
+    version: 2.0.1
     dev: false
 
   registry.npmmirror.com/readdirp@3.6.0:
@@ -1912,6 +1962,12 @@ packages:
       punycode: registry.npmmirror.com/punycode@2.3.0
     dev: false
 
+  registry.npmmirror.com/url-polyfill@1.1.12:
+    resolution: {integrity: sha512-mYFmBHCapZjtcNHW0MDq9967t+z4Dmg5CJ0KqysK3+ZbyoNOWQHksGCTWwDhxGXllkWlOc10Xfko6v4a3ucM6A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/url-polyfill/-/url-polyfill-1.1.12.tgz}
+    name: url-polyfill
+    version: 1.1.12
+    dev: false
+
   registry.npmmirror.com/vite@4.2.1(@types/node@18.7.10)(sass@1.62.1):
     resolution: {integrity: sha512-7MKhqdy0ISo4wnvwtqZkjke6XN4taqQ2TBaTccLIpOKv7Vp2h4Y+NpmWCnGDeSvvn45KxvWgGyb0MkHvY1vgbg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vite/-/vite-4.2.1.tgz}
     id: registry.npmmirror.com/vite/4.2.1
@@ -1984,6 +2040,15 @@ packages:
       vue: registry.npmmirror.com/vue@3.3.2
     dev: false
 
+  registry.npmmirror.com/vue-plyr@7.0.0:
+    resolution: {integrity: sha512-NvbO/ZzV1IxlBQQbQlon5Sk8hKuGAj3k4k0XVdi7gM4oSqu8mZMhJ3WM3FfAtNfV790jbLnb8P3dHYqaBqIv6g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-plyr/-/vue-plyr-7.0.0.tgz}
+    name: vue-plyr
+    version: 7.0.0
+    dependencies:
+      plyr: github.com/sampotts/plyr/d434c9af16e641400aaee93188594208d88f2658
+      vue: registry.npmmirror.com/vue@2.7.14
+    dev: false
+
   registry.npmmirror.com/vue-router@4.1.6(vue@3.3.2):
     resolution: {integrity: sha512-DYWYwsG6xNPmLq/FmZn8Ip+qrhFEzA14EI12MsMgVxvHFDYvlr4NXpVF5hrRH1wVcDP8fGi5F4rxuJSl8/r+EQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-router/-/vue-router-4.1.6.tgz}
     id: registry.npmmirror.com/vue-router/4.1.6
@@ -2018,6 +2083,15 @@ packages:
       '@volar/vue-typescript': registry.npmmirror.com/@volar/vue-typescript@1.0.11
       typescript: registry.npmmirror.com/typescript@4.9.5
     dev: true
+
+  registry.npmmirror.com/vue@2.7.14:
+    resolution: {integrity: sha512-b2qkFyOM0kwqWFuQmgd4o+uHGU7T+2z3T+WQp8UBjADfEv2n4FEMffzBmCKNP0IGzOEEfYjvtcC62xaSKeQDrQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue/-/vue-2.7.14.tgz}
+    name: vue
+    version: 2.7.14
+    dependencies:
+      '@vue/compiler-sfc': registry.npmmirror.com/@vue/compiler-sfc@2.7.14
+      csstype: registry.npmmirror.com/csstype@3.1.2
+    dev: false
 
   registry.npmmirror.com/vue@3.3.2:
     resolution: {integrity: sha512-98hJcAhyDwZoOo2flAQBSPVYG/o0HA9ivIy2ktHshjE+6/q8IMQ+kvDKQzOZTFPxvnNMcGM+zS2A00xeZMA7tA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue/-/vue-3.3.2.tgz}
