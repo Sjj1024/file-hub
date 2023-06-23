@@ -1,6 +1,6 @@
 <template>
-  <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen
-    class="file-dialog" @close="closeDialog">
+  <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen class="file-dialog"
+    @close="closeDialog">
     <el-carousel indicator-position="none" :autoplay="false">
       <!-- 根据文件类型展示不同的内容 -->
       <el-carousel-item v-if="file.type === 'picture'">
@@ -19,18 +19,14 @@
           </template>
         </el-image>
       </el-carousel-item>
-      <el-carousel-item v-show="file.type === 'video'">
+      <el-carousel-item v-show="file.type === 'video' || file.type === 'music'">
         <div class="content">
           <VuePlyr ref="mediaPlayer" :options="options" @playing="onPlaying" @ended="onEnded" @pause="onPause"
             @ready="onReady">
-            <video :src="file.openLink" ref="videoBox"
-              id="videoBox">
+            <video :src="file.openLink" ref="videoBox" id="videoBox">
             </video>
           </VuePlyr>
         </div>
-      </el-carousel-item>
-      <el-carousel-item v-show="file.type === 'music'">
-        <div class="content">音频内容</div>
       </el-carousel-item>
       <el-carousel-item v-show="file.type === 'document'">
         <div class="content">文档内容</div>
@@ -76,8 +72,10 @@ const videoBox = ref()
 
 const options = {
   autoplay: false,
-  muted: true
+  muted: true,
+  controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay']
 }
+
 const onPlaying = () => {
   console.log('Playing...')
 }
@@ -108,7 +106,7 @@ let file = ref({
   uploading: false,
 })
 
-// 设施视频预览图
+// 设施视频预览图，如果是音乐就不设置了
 const setVideoImg = () => {
   if (videoBox.value) {
     videoBox.value.currentTime = 1
@@ -121,6 +119,37 @@ const setVideoImg = () => {
 
 }
 
+const randomBg = [
+  "https://23img.com/i/2023/06/22/zh812z.jpg",
+  "https://23img.com/i/2023/06/22/zh8bhm.jpg",
+  "https://23img.com/i/2023/06/22/zh8er1.jpg",
+  "https://23img.com/i/2023/06/22/zh8ury.jpg",
+  "https://23img.com/i/2023/06/22/zh958g.jpg",
+  "https://23img.com/i/2023/06/22/zh9cr0.jpg",
+  "https://23img.com/i/2023/06/22/zh9nft.jpg",
+  "https://23img.com/i/2023/06/22/zh9z9i.jpg",
+  "https://23img.com/i/2023/06/22/zha7ag.jpg",
+  "https://23img.com/i/2023/06/22/zhalnu.jpg",
+  "https://23img.com/i/2023/06/22/zhasi5.jpg",
+  "https://23img.com/i/2023/06/22/zhb5ap.jpg",
+  "https://23img.com/i/2023/06/22/zhbgtj.jpg",
+  "https://23img.com/i/2023/06/22/zhbvm5.jpg",
+  "https://23img.com/i/2023/06/22/zhc7du.jpg",
+  "https://23img.com/i/2023/06/22/zhcdut.jpg",
+  "https://23img.com/i/2023/06/22/zhcmc2.jpg",
+  "https://23img.com/i/2023/06/22/zhcpab.jpg",
+  "https://23img.com/i/2023/06/22/zhd8xt.jpg",
+  "https://23img.com/i/2023/06/22/zhdgs2.jpg",
+  "https://23img.com/i/2023/06/22/zhdlpn.jpg",
+  "https://23img.com/i/2023/06/22/zheqyu.jpg",
+  "https://23img.com/i/2023/06/22/zhf21x.jpg",
+  "https://23img.com/i/2023/06/22/zhfdew.jpg",
+  "https://23img.com/i/2023/06/22/zhfjg9.jpg",
+  "https://23img.com/i/2023/06/22/zhofmr.jpg",
+  "https://23img.com/i/2023/06/22/zhoptf.jpg",
+
+]
+
 const showFileDialog = (source: Boolean, f: fileRes) => {
   // 弹窗
   centerDialogVisible.value = true
@@ -130,8 +159,33 @@ const showFileDialog = (source: Boolean, f: fileRes) => {
       file.value[key] = f[key]
     }
   }
+  // 设置视频的预览图
+  const mp3BackGround = document.querySelector('.plyr__video-wrapper') as HTMLDivElement
+  if (f.type === 'video') {
+    setVideoImg()
+    setTimeout(() => {
+      if (mp3BackGround) {
+        console.log("mp3BackGround-------", mp3BackGround);
+        mp3BackGround.style.backgroundImage = 'unset'
+      } else {
+        console.log("没有查找到背景元素-------");
+      }
+    }, 1)
+  } else {
+    console.log("设置音乐播放器背景----");
+    const bg = randomBg[Math.floor((Math.random() * randomBg.length))]
+    setTimeout(() => {
+      if (mp3BackGround) {
+        console.log("mp3BackGround-------", mp3BackGround);
+        mp3BackGround.style.backgroundImage = `url(${bg})`
+        mp3BackGround.style.backgroundRepeat = "no-repeat"
+        mp3BackGround.style.backgroundPosition = 'center'
+      } else {
+        console.log("没有查找到背景元素-------");
+      }
+    }, 1)
+  }
   console.log("videoBox-----", file);
-  setVideoImg()
 }
 
 // 关闭弹窗时候的回调函数

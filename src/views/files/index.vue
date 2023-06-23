@@ -81,18 +81,17 @@
           'item-seled': file.selected,
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave.self="fileCloseTips(file)" @dblclick="handleFileDblClick(file)"
-          @click.self="fileCloseTips(file)">
-            <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
-            <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
-            <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
-            <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.openLink" :srcList="imgPreList"
-              v-loading="file.uploading">
-            </pic>
-            <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
-              v-loading="file.uploading"></fileLoading>
-            <vide v-else-if="file.type === 'video'" v-loading="file.uploading"></vide>
-            <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
+          @mouseleave.self="fileCloseTips(file)" @dblclick="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
+          <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
+          <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
+          <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
+          <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.openLink" :srcList="imgPreList"
+            v-loading="file.uploading">
+          </pic>
+          <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
+            v-loading="file.uploading"></fileLoading>
+          <vide v-else-if="file.type === 'video'" v-loading="file.uploading" :videoUrl="file.openLink"></vide>
+          <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
           <div class="file-name">{{ file.name }}</div>
           <!-- 多选框 -->
           <el-checkbox v-if="!file.uploading" :class="{
@@ -465,6 +464,23 @@ const gitFileList: fileRes[] = reactive(
     return pre
   }, [])
 )
+// 添加别的类型的假数据
+gitFileList.push(...[
+  {
+    name: "m3u8视频测试",
+    path: "",
+    type: "video",
+    size: "",
+    openLink: "https://vip.ffzy-online6.com/20230615/13580_51cfc2f1/index.m3u8",
+    downLink: 'https://element-plus.gitee.io/',
+    htmlLink: "",
+    creatTime: '2021-08-22',
+    selected: false,
+    showTips: false,
+    uploading: false,
+  }
+])
+
 </script>
 
 <style scoped lang="scss">
