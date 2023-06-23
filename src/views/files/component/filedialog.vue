@@ -73,7 +73,8 @@ const videoBox = ref()
 const options = {
   autoplay: false,
   muted: true,
-  controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay']
+  controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay'],
+  fullscreen: { enabled: false, fallback: false, iosNative: false, container: null }
 }
 
 const onPlaying = () => {
@@ -191,8 +192,13 @@ const showFileDialog = (source: Boolean, f: fileRes) => {
 // 关闭弹窗时候的回调函数
 const closeDialog = () => {
   console.log("关闭弹窗-------", mediaPlayer.value.player);
-  // 播放器暂停
-  mediaPlayer.value.player.pause()
+  // 播放器暂停:如果是视频暂停，如果是音乐，就背景播放
+  if (file.value.type === 'video') {
+    mediaPlayer.value.player.pause()
+  } else {
+    console.log("音乐播放器后台播放");
+  }
+
 }
 
 defineExpose({

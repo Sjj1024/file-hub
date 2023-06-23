@@ -49,6 +49,10 @@ const showImgPre = () => {
   height: $file-height;
   padding: 7px;
   text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   .el-image-viewer__mask {
     opacity: .9;
