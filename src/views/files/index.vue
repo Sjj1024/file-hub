@@ -192,7 +192,7 @@ import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
-import fileDialog from "@/views/files/component/filedialog.vue"
+import fileDialog from "@/views/files/component/filedialog2.vue"
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
@@ -482,6 +482,9 @@ gitFileList.push(...[
     uploading: false,
   }
 ])
+
+console.log("gitFileList--------", gitFileList);
+
 
 </script>
 

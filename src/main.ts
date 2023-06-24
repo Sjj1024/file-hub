@@ -12,6 +12,11 @@ import '@/style/theme.css'
 import '@/style/index.scss'
 import i18n from './lang/index'
 import 'vue-plyr/dist/vue-plyr.css'
+import "video.js/dist/video-js.css"
+import DPlayer from 'dplayer'
+import Hls from 'hls.js';
+
+
 
 const app = createApp(App)
 

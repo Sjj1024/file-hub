@@ -12,3 +12,9 @@ declare module 'vue-plyr' {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+declare module 'dplayer' {
+  import type { DefineComponent } from "vue";
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
+}
