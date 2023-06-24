@@ -129,7 +129,7 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     requiresAuth: false,
                     show: true,
-                    title: '插件工具',
+                    title: 'ChatGPT',
                     icon: 'SetUp',
                 },
             },

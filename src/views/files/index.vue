@@ -231,7 +231,8 @@ const fileCloseTips = (file: fileRes) => {
 // 选中的某一个文件项
 const rightClickItem = ref('')
 const openMenu = (e: MouseEvent, item: any) => {
-  console.log('打开菜单')
+  console.log('打开菜单', e)
+  dirShowMenu.value = false
   // 如果文件是上传状态，则直接返回
   if (item.uploading) {
     return
@@ -263,7 +264,8 @@ const handleFileDblClick = (file: fileRes) => {
 }
 
 const openDirMenu = (e: MouseEvent) => {
-  console.log('打开文件上传菜单')
+  console.log('打开文件上传菜单', e)
+  showMenu.value = false
   e.preventDefault()
   // 获取侧边菜单栏宽度和顶部栏高度
   const sideBarWidth = (
@@ -471,7 +473,7 @@ gitFileList.push(...[
     path: "",
     type: "video",
     size: "",
-    openLink: "https://vip.ffzy-online6.com/20230615/13580_51cfc2f1/index.m3u8",
+    openLink: "https://c.goovvg.com:2002/remote_control.php?time=1687521098&cv=14e19545cdca4cce624429db1cb60db6&lr=0&cv2=bfba2c831ea2a5dbc0dc47e451bebdf5&file=%2Fvideos%2F105000%2F105749%2F105749.mp4",
     downLink: 'https://element-plus.gitee.io/',
     htmlLink: "",
     creatTime: '2021-08-22',
