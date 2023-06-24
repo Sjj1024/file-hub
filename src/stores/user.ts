@@ -8,6 +8,7 @@ export const useUserStore = defineStore('userInfo', {
             age: 18,
             theme: localStorage.getItem('theme') || 'light',
             fileCdn:"https://sjj1024.github.io/FileHub/",
+            // fileCdn:"https://cdn.staticaly.com/gh/sjj1024/FileHub@main/",
             gitInfo: {
                 login: 'Sjj1024',
                 id: 48399687,

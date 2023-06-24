@@ -50,12 +50,14 @@ import loadingGif from "@/assets/image/loadColor.gif"
 import type { fileRes } from "@/utils/useTypes"
 import DPlayer from 'dplayer';
 import Hls from 'hls.js';
+import Flv from "flv.js"
 /**
  * 可以用于播放的视频
  * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
  * https://play.fenyucn.com/m/t/oaV-nEqiG9CAIuh84X5XRM8povMCJOSPeEa27kSydTegmk7g5GV6dc9HLcl9SPJca27YQf3-zp__DfOFU8YHMBjlzjCBj01uMBiHExNaNGk=.m3u8
  * https://play.fenyucn.com/m/t/vmmTDC4FVjoUVAhd3djXwzIlh1D0bRrwxT40-ROidyTZ4RvCWsIKKIH6raNkLMlTCvPkqaXffF6tJHSI7T60EQQRgpRWkJUT6wlSLehuF-r0-tbUasC0b5_9y-BqDJxP.m3u8
  * https://sjj1024.github.io/FileHub/root/IronMan.mp4
+ * https://static.smartisanos.cn/common/video/t1-ui.mp4
  * 
  */
 
@@ -150,7 +152,19 @@ const showFileDialog = (source: Boolean, f: fileRes) => {
         container: document.getElementById('dplayer'),
         screenshot: true,
         video: {
-          url: 'https://sjj1024.github.io/FileHub/root/IronMan.mp4',
+          url: 'https://sjj1024.github.io/FileHub/root/链表详解.flv',
+          type: 'customFlv',
+          customType: {
+            customFlv: function (video: any, player: any) {
+              const flvPlayer = Flv.createPlayer({
+                type: 'flv',
+                url: "https://sjj1024.github.io/FileHub/root/链表详解.flv",
+              });
+              flvPlayer.attachMediaElement(video);
+              flvPlayer.load();
+            }
+          }
+
           // type: 'customHls',
           // customType: {
           //   customHls: function (video: any, player: any) {

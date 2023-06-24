@@ -17,6 +17,9 @@ dependencies:
   element-plus:
     specifier: ^2.3.6
     version: registry.npmmirror.com/element-plus@2.3.6(vue@3.3.2)
+  flv.js:
+    specifier: ^1.6.2
+    version: registry.npmmirror.com/flv.js@1.6.2
   hls.js:
     specifier: ^1.4.6
     version: registry.npmmirror.com/hls.js@1.4.6
@@ -1456,6 +1459,12 @@ packages:
     version: 1.2.1
     dev: false
 
+  registry.npmmirror.com/es6-promise@4.2.8:
+    resolution: {integrity: sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/es6-promise/-/es6-promise-4.2.8.tgz}
+    name: es6-promise
+    version: 4.2.8
+    dev: false
+
   registry.npmmirror.com/esbuild@0.17.19:
     resolution: {integrity: sha512-XQ0jAPFkK/u3LcVRcvVHQcTIqD6E2H1fvZMA5dQPSOWb3suUbWbfbRf94pjc0bNzRYLfIrDRQXr7X+LHIm5oHw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/esbuild/-/esbuild-0.17.19.tgz}
     name: esbuild
@@ -1565,6 +1574,15 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       to-regex-range: registry.npmmirror.com/to-regex-range@5.0.1
+
+  registry.npmmirror.com/flv.js@1.6.2:
+    resolution: {integrity: sha512-xre4gUbX1MPtgQRKj2pxJENp/RnaHaxYvy3YToVVCrSmAWUu85b9mug6pTXF6zakUjNP2lFWZ1rkSX7gxhB/2A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/flv.js/-/flv.js-1.6.2.tgz}
+    name: flv.js
+    version: 1.6.2
+    dependencies:
+      es6-promise: registry.npmmirror.com/es6-promise@4.2.8
+      webworkify-webpack: registry.npmmirror.com/webworkify-webpack@2.1.5
+    dev: false
 
   registry.npmmirror.com/follow-redirects@1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.2.tgz}
@@ -2507,4 +2525,10 @@ packages:
       - '@swc/core'
       - esbuild
       - uglify-js
+    dev: false
+
+  registry.npmmirror.com/webworkify-webpack@2.1.5:
+    resolution: {integrity: sha512-2akF8FIyUvbiBBdD+RoHpoTbHMQF2HwjcxfDvgztAX5YwbZNyrtfUMgvfgFVsgDhDPVTlkbb5vyasqDHfIDPQw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/webworkify-webpack/-/webworkify-webpack-2.1.5.tgz}
+    name: webworkify-webpack
+    version: 2.1.5
     dev: false
