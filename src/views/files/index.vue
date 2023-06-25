@@ -90,7 +90,8 @@
           </pic>
           <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
             v-loading="file.uploading"></fileLoading>
-          <vide v-else-if="file.type === 'video'" v-loading="file.uploading" :videoUrl="file.openLink"></vide>
+          <vide v-else-if="file.type === 'video'" v-loading="file.uploading" :videoUrl="file.openLink"
+            :videoIndex="index"></vide>
           <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
           <div class="file-name">{{ file.name }}</div>
           <!-- 多选框 -->
@@ -192,7 +193,7 @@ import other from '@/views/files/component/other.vue'
 import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
-import fileDialog from "@/views/files/component/filedialog2.vue"
+import fileDialog from "@/views/files/component/filedialog.vue"
 import gitApis from '@/apis/mock'
 import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
@@ -473,7 +474,20 @@ gitFileList.push(...[
     path: "",
     type: "video",
     size: "",
-    openLink: "https://c.goovvg.com:2002/remote_control.php?time=1687521098&cv=14e19545cdca4cce624429db1cb60db6&lr=0&cv2=bfba2c831ea2a5dbc0dc47e451bebdf5&file=%2Fvideos%2F105000%2F105749%2F105749.mp4",
+    openLink: "https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8",
+    downLink: 'https://element-plus.gitee.io/',
+    htmlLink: "",
+    creatTime: '2021-08-22',
+    selected: false,
+    showTips: false,
+    uploading: false,
+  },
+  {
+    name: "磁力链接",
+    path: "",
+    type: "video",
+    size: "",
+    openLink: "magnet:?xt=urn:btih:4B806BB5819591D31FD2EB1DDECC8D2D7CF6C6FE",
     downLink: 'https://element-plus.gitee.io/',
     htmlLink: "",
     creatTime: '2021-08-22',

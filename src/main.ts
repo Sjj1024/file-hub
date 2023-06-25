@@ -11,10 +11,6 @@ import 'element-plus/theme-chalk/dark/css-vars.css' //这句是暗黑模式切�
 import '@/style/theme.css'
 import '@/style/index.scss'
 import i18n from './lang/index'
-import 'vue-plyr/dist/vue-plyr.css'
-import "video.js/dist/video-js.css"
-import DPlayer from 'dplayer'
-import Hls from 'hls.js';
 
 
 

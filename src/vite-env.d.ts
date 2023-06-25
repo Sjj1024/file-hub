@@ -7,14 +7,15 @@ declare module "*.vue" {
 }
 
 
-declare module 'vue-plyr' {
-  import type { DefineComponent } from "vue";
-  const component: DefineComponent<{}, {}, any>;
-  export default component;
-}
-
 declare module 'dplayer' {
   import type { DefineComponent } from "vue";
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+
+// declare module 'webtorrent' {
+//   import type { DefineComponent } from "vue";
+//   const component: DefineComponent<{}, {}, any>;
+//   export default component;
+// }

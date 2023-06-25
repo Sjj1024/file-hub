@@ -21,11 +21,7 @@
       </el-carousel-item>
       <el-carousel-item v-show="file.type === 'video' || file.type === 'music'">
         <div class="content">
-          <VuePlyr ref="mediaPlayer" :options="options" @playing="onPlaying" @ended="onEnded" @pause="onPause"
-            @ready="onReady">
-            <video :src="file.openLink" ref="videoBox" id="videoBox">
-            </video>
-          </VuePlyr>
+          <div id="dplayer"></div>
         </div>
       </el-carousel-item>
       <el-carousel-item v-show="file.type === 'document'">
@@ -52,46 +48,22 @@
 import { ref } from 'vue'
 import loadingGif from "@/assets/image/loadColor.gif"
 import type { fileRes } from "@/utils/useTypes"
-import VuePlyr from 'vue-plyr'
+import Hls from 'hls.js';
+import Flv from "flv.js";
+import '@/utils/webtorrent.min.js';
+import DPlayer from 'dplayer';
+
 /**
  * 可以用于播放的视频
- * https://media.vued.vanthink.cn/sparkle_your_name_am720p.mp4
- * https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4
- * https://media.vued.vanthink.cn/sparkle_your_name_am360p.mp4
- * https://media.vued.vanthink.cn/y2mate.com%20-%20Weathering%20With%20You%20%5BOfficial%20Subtitled%20Trailer,%20GKIDS%5D_Q6iK6DjV_iE_1080p.mp4
- * https://media.vued.vanthink.cn/CJ7%20-%20Trailer.mp4
- * https://cdn.jsdelivr.net/gh/xdlumia/files/video-play/IronMan.mp4
- * https://vjs.zencdn.net/v/oceans.mp4
+ * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
+ * https://play.fenyucn.com/m/t/oaV-nEqiG9CAIuh84X5XRM8povMCJOSPeEa27kSydTegmk7g5GV6dc9HLcl9SPJca27YQf3-zp__DfOFU8YHMBjlzjCBj01uMBiHExNaNGk=.m3u8
+ * https://play.fenyucn.com/m/t/vmmTDC4FVjoUVAhd3djXwzIlh1D0bRrwxT40-ROidyTZ4RvCWsIKKIH6raNkLMlTCvPkqaXffF6tJHSI7T60EQQRgpRWkJUT6wlSLehuF-r0-tbUasC0b5_9y-BqDJxP.m3u8
+ * https://sjj1024.github.io/FileHub/root/IronMan.mp4
+ * https://static.smartisanos.cn/common/video/t1-ui.mp4
+ * 
  */
 
-//  视频播放器
-const mediaPlayer = ref()
-// 获取视频第一帧作为预览图
-const videoBox = ref()
-
-
-const options = {
-  autoplay: false,
-  muted: true,
-  controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay'],
-  fullscreen: { enabled: false, fallback: false, iosNative: false, container: null }
-}
-
-const onPlaying = () => {
-  console.log('Playing...')
-}
-const onEnded = () => {
-  console.log('Ended...')
-}
-const onPause = () => {
-  console.log('Paused...')
-}
-const onReady = () => {
-  console.log('Ready...')
-}
-
 const centerDialogVisible = ref(false)
-
 
 let file = ref({
   name: "",
@@ -107,17 +79,94 @@ let file = ref({
   uploading: false,
 })
 
-// 设施视频预览图，如果是音乐就不设置了
-const setVideoImg = () => {
-  if (videoBox.value) {
-    videoBox.value.currentTime = 1
-  } else {
-    console.log("video不存在");
-    setTimeout(() => {
-      videoBox.value.currentTime = 1
-    }, 0.1)
-  }
-
+// 设施视频配置：预览图自动播放等
+let dplayer: { seek: (t: number) => void, destroy: () => void } | null = null
+const setVideoInit = (file: fileRes) => {
+  console.log("setVideoInit-----", file);
+  setTimeout(() => {
+    if (file.openLink.includes('mp4')) {
+      dplayer = new DPlayer({
+        container: document.getElementById('dplayer'),
+        screenshot: false,
+        fullScreen: false,
+        lang: 'zh-cn', // zh-cn // en
+        video: {
+          url: file.openLink,
+          type: 'mp4'
+        }
+      });
+    } else if (file.openLink.includes('flv')) {
+      dplayer = new DPlayer({
+        container: document.getElementById('dplayer'),
+        screenshot: false,
+        video: {
+          url: file.openLink,
+          type: 'customFlv',
+          customType: {
+            customFlv: function (video: any, player: any) {
+              const flvPlayer = Flv.createPlayer({
+                type: 'flv',
+                url: file.openLink,
+              });
+              flvPlayer.attachMediaElement(video);
+              flvPlayer.load();
+            }
+          }
+        }
+      });
+    } else if (file.openLink.includes('m3u8')) {
+      dplayer = new DPlayer({
+        container: document.getElementById('dplayer'),
+        screenshot: false,
+        video: {
+          url: file.openLink,
+          type: 'customHls',
+          customType: {
+            customHls: function (video: any, player: any) {
+              const hls = new Hls(); //实例化Hls  用于解析m3u8
+              hls.loadSource(file.openLink);
+              hls.attachMedia(video);
+            }
+          }
+        }
+      });
+    }
+    // 支持磁力链接播放：TODO
+    // } else if (file.openLink.includes('magnet')) {
+    //   dplayer = new DPlayer({
+    //     container: document.getElementById('dplayer'),
+    //     screenshot: false,
+    //     video: {
+    //       url: 'magnet:?xt=urn:btih:4B806BB5819591D31FD2EB1DDECC8D2D7CF6C6FE',
+    //       type: 'customWebTorrent',
+    //       customType: {
+    //         customWebTorrent: function (video: any, player: any) {
+    //           player.container.classList.add('dplayer-loading');
+    //           const client = new WebTorrent();
+    //           const torrentId = video.src;
+    //           client.add(torrentId, (torrent: any) => {
+    //             const file = torrent.files.find((file: any) => file.name.endsWith('.mp4'));
+    //             file.renderTo(
+    //               video,
+    //               {
+    //                 autoplay: player.options.autoplay,
+    //               },
+    //               () => {
+    //                 player.container.classList.remove('dplayer-loading');
+    //               }
+    //             );
+    //           });
+    //         },
+    //       },
+    //     },
+    //   });
+    // }
+    // 设置预览图和隐藏全屏按钮
+    dplayer?.seek(1);
+    console.log("dplayer--------", dplayer);
+    (document.querySelector('div.dplayer-full') as HTMLDivElement).style.display = 'none';
+    (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
+  }, 1)
 }
 
 const randomBg = [
@@ -151,6 +200,32 @@ const randomBg = [
 
 ]
 
+const setMusicInit = (file: fileRes) => {
+  console.log("setMusicInit-----", file);
+  setTimeout(() => {
+    dplayer = new DPlayer({
+      container: document.getElementById('dplayer'),
+      screenshot: false,
+      fullScreen: false,
+      lang: 'zh-cn', // zh-cn // en
+      video: {
+        url: file.openLink,
+        type: 'mp3'
+      }
+    });
+    // 设置音乐背景随机
+    const bg = `url(${randomBg[Math.floor((Math.random() * randomBg.length))]})`;
+    (document.querySelector('div#dplayer > div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
+    // 隐藏全屏按钮
+    (document.querySelector('div.dplayer-full') as HTMLDivElement).style.display = 'none';
+    (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
+  }, 1)
+}
+
+// background-image: url(https://23img.com/i/2023/06/22/zh812z.jpg);
+// .dplayer-video-wrap
+
+
 const showFileDialog = (source: Boolean, f: fileRes) => {
   // 弹窗
   centerDialogVisible.value = true
@@ -160,41 +235,24 @@ const showFileDialog = (source: Boolean, f: fileRes) => {
       file.value[key] = f[key]
     }
   }
-  // 设置视频的预览图
-  const mp3BackGround = document.querySelector('.plyr__video-wrapper') as HTMLDivElement
+  // 如果播放器存在，先销毁，以解决播放控制实现隐藏bug
+  if (dplayer) {
+    dplayer.destroy()
+  }
   if (f.type === 'video') {
-    setVideoImg()
-    setTimeout(() => {
-      if (mp3BackGround) {
-        console.log("mp3BackGround-------", mp3BackGround);
-        mp3BackGround.style.backgroundImage = 'unset'
-      } else {
-        console.log("没有查找到背景元素-------");
-      }
-    }, 1)
+    setVideoInit(f)
   } else {
-    console.log("设置音乐播放器背景----");
-    const bg = randomBg[Math.floor((Math.random() * randomBg.length))]
-    setTimeout(() => {
-      if (mp3BackGround) {
-        console.log("mp3BackGround-------", mp3BackGround);
-        mp3BackGround.style.backgroundImage = `url(${bg})`
-        mp3BackGround.style.backgroundRepeat = "no-repeat"
-        mp3BackGround.style.backgroundPosition = 'center'
-      } else {
-        console.log("没有查找到背景元素-------");
-      }
-    }, 1)
+    setMusicInit(f)
   }
   console.log("videoBox-----", file);
 }
 
 // 关闭弹窗时候的回调函数
 const closeDialog = () => {
-  console.log("关闭弹窗-------", mediaPlayer.value.player);
+  // console.log("关闭弹窗-------", mediaPlayer.value.player);
   // 播放器暂停:如果是视频暂停，如果是音乐，就背景播放
-  if (file.value.type === 'video') {
-    mediaPlayer.value.player.pause()
+  if (file.value.type === 'video' && dplayer) {
+    dplayer.destroy()
   } else {
     console.log("音乐播放器后台播放");
   }
@@ -209,6 +267,18 @@ defineExpose({
 
 <style lang="scss">
 .file-dialog {
+
+  :deep(.dplayer-notice-list) {
+    display: none;
+  }
+
+  :deep(.dplayer-full) {
+    display: none;
+  }
+
+  :deep(#dplayer) {
+    height: 100%;
+  }
 
   &:hover {
     .el-dialog__header {
