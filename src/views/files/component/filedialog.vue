@@ -162,7 +162,7 @@ const setVideoInit = (file: fileRes) => {
     //   });
     // }
     // 设置预览图和隐藏全屏按钮
-    dplayer?.seek(1);
+    dplayer?.seek(0);
     console.log("dplayer--------", dplayer);
     (document.querySelector('div.dplayer-full') as HTMLDivElement).style.display = 'none';
     (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
@@ -267,6 +267,10 @@ defineExpose({
 
 <style lang="scss">
 .file-dialog {
+
+  .dplayer-notice-list{
+    display: none;
+  }
 
   :deep(.dplayer-notice-list) {
     display: none;

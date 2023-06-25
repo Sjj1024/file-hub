@@ -103,7 +103,7 @@ onMounted(() => {
     //   });
     // }
     // 设置预览图和隐藏全屏按钮
-    dplayer?.seek(1);
+    dplayer?.seek(0);
     console.log("video dplayer--------", dplayer);
   }, 1)
 })
