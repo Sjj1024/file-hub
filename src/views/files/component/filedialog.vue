@@ -164,7 +164,7 @@ const setVideoInit = (file: fileRes) => {
     // 设置预览图和隐藏全屏按钮
     dplayer?.seek(0);
     console.log("dplayer--------", dplayer);
-    (document.querySelector('div.dplayer-full') as HTMLDivElement).style.display = 'none';
+    (document.querySelector('div#dplayer div.dplayer-full') as HTMLDivElement).style.display = 'none';
     (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
   }, 1)
 }
@@ -215,9 +215,9 @@ const setMusicInit = (file: fileRes) => {
     });
     // 设置音乐背景随机
     const bg = `url(${randomBg[Math.floor((Math.random() * randomBg.length))]})`;
-    (document.querySelector('div#dplayer > div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
+    (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
     // 隐藏全屏按钮
-    (document.querySelector('div.dplayer-full') as HTMLDivElement).style.display = 'none';
+    (document.querySelector('div#dplayer div.dplayer-full') as HTMLDivElement).style.display = 'none';
     (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
   }, 1)
 }
@@ -268,16 +268,24 @@ defineExpose({
 <style lang="scss">
 .file-dialog {
 
-  .dplayer-notice-list{
+  .dplayer-notice-list {
     display: none;
   }
 
-  :deep(.dplayer-notice-list) {
+  :deep(.dplayer-notice-list, .dplayer-full) {
+    display: none;
+  }
+
+  .dplayer-full {
     display: none;
   }
 
   :deep(.dplayer-full) {
     display: none;
+  }
+
+  #dplayer {
+    height: 100%;
   }
 
   :deep(#dplayer) {
