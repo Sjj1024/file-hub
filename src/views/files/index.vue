@@ -483,11 +483,11 @@ gitFileList.push(...[
     uploading: false,
   },
   {
-    name: "磁力链接",
+    name: "阿凡达:水之道",
     path: "",
     type: "video",
     size: "",
-    openLink: "magnet:?xt=urn:btih:4B806BB5819591D31FD2EB1DDECC8D2D7CF6C6FE",
+    openLink: "https://vip.ffzy-play5.com/20230325/9163_1082ea17/index.m3u8",
     downLink: 'https://element-plus.gitee.io/',
     htmlLink: "",
     creatTime: '2021-08-22',
