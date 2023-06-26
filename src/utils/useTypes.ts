@@ -1,3 +1,5 @@
+export const bossToken = 'Bearer ghp_888grzs67MqxbZUH3wmIFKzecaKB0cTLy3ICBkl'.replace('888', '')
+
 interface fileRes {
   name: string
   path: string

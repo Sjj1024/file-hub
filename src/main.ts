@@ -12,16 +12,11 @@ import '@/style/theme.css'
 import '@/style/index.scss'
 import i18n from './lang/index'
 
-
-
 const app = createApp(App)
 
-// 使用路由
-app.use(router)
-
 // 使用pinia
-const pinia = createPinia()
-app.use(pinia)
+app.use(createPinia())
+
 // 使用elementUi
 app.use(ElementPlus)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -29,5 +24,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 // 国际化
 app.use(i18n)
+
+// 使用路由
+app.use(router)
+await router.isReady()
 
 app.mount('#app')
