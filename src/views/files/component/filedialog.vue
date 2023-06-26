@@ -197,7 +197,6 @@ const randomBg = [
   "https://23img.com/i/2023/06/22/zhfjg9.jpg",
   "https://23img.com/i/2023/06/22/zhofmr.jpg",
   "https://23img.com/i/2023/06/22/zhoptf.jpg",
-
 ]
 
 const setMusicInit = (file: fileRes) => {
@@ -214,7 +213,9 @@ const setMusicInit = (file: fileRes) => {
       }
     });
     // 设置音乐背景随机
-    const bg = `url(${randomBg[Math.floor((Math.random() * randomBg.length))]})`;
+    // const bg = `url(${randomBg[Math.floor((Math.random() * randomBg.length))]})`;
+    const bg = `url(https://23img.com/i/2023/06/26/gx45dx.gif)`;
+    (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
     (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
     // 隐藏全屏按钮
     (document.querySelector('div#dplayer div.dplayer-full') as HTMLDivElement).style.display = 'none';
@@ -270,6 +271,12 @@ defineExpose({
 
   .dplayer-notice-list {
     display: none;
+  }
+
+  div#dplayer div.dplayer-video-wrap{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   :deep(.dplayer-notice-list, .dplayer-full) {
