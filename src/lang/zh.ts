@@ -13,6 +13,7 @@ export default {
     welcomeLoginFileHub: "欢迎登陆FileHub",
     loginwithanaccount:"使用账号登陆",
     LoginusingToken: "使用Token登陆",
+    GetToken: "获取一个Token",
     Registeranewaccount:"注册新账户",
     captcha: '验证码',
     forgetPassword: '忘记密码了？',

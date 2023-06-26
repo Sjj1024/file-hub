@@ -13,6 +13,7 @@ export default {
     welcomeLoginFileHub: "Welcome to FileHub",
     loginwithanaccount:"Login with account",
     LoginusingToken: "Login use Token",
+    GetToken: "Obtain a Token",
     Registeranewaccount:"Register new account",
     captcha: 'Captcha',
     forgetPassword: 'Forget Password?',
