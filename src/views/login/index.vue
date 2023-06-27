@@ -36,9 +36,11 @@ sign_up
         <img class="form__icon" src=" " />
       </div>
       <!-- <span class="form__span">or use email for registration</span> -->
-      <input class="form__input" type="text" v-model="loginForm.userName" :placeholder="$t('login.userName')" />
-      <input class="form__input" type="password" v-model="loginForm.password" :placeholder="$t('login.password')" />
-      <input class="form__input" type="text" v-model="loginForm.gitToken" placeholder="Token" />
+      <input class="form__input" type="text" v-model="loginForm.userName" @input="cantSpace"
+        :placeholder="$t('login.userName')" />
+      <input class="form__input" type="password" v-model="loginForm.password" @input="cantSpace"
+        :placeholder="$t('login.password')" />
+      <input class="form__input" type="text" v-model="loginForm.gitToken" @input="cantSpace" placeholder="Github Token" />
       <div class="login-info">
         <a class="form__link" @click="forgetPassword">{{
           $t('forgetPassword')
@@ -66,11 +68,11 @@ sign_up
         <img class="form__icon" src=" " />
         <img class="form__icon" src=" " />
       </div>
-      <input v-if="loginModel === '登陆'" class="form__input" type="text" v-model="loginForm.userName"
+      <input v-if="loginModel === '登陆'" class="form__input" @input="cantSpace" type="text" v-model="loginForm.userName"
         :placeholder="$t('login.userName')" />
       <input v-if="loginModel === '登陆'" class="form__input" type="password" v-model="loginForm.password"
-        :placeholder="$t('login.password')" />
-      <input v-if="loginModel === 'token'" class="form__input" type="text" v-model="loginForm.gitToken"
+        :placeholder="$t('login.password')" @input="cantSpace" />
+      <input v-if="loginModel === 'token'" @input="cantSpace" class="form__input" type="text" v-model="loginForm.gitToken"
         placeholder="Token" />
       <div class="login-info">
         <a class="form__link" @click.prevent="forgetPassword">{{
@@ -131,6 +133,14 @@ const forgetPassword = () => {
   })
 }
 
+// 密码输入框不能输入空格
+const cantSpace = () => {
+  loginForm.userName = loginForm.userName.replaceAll(" ", '')
+  loginForm.password = loginForm.password.replaceAll(" ", '')
+  loginForm.gitToken = loginForm.gitToken.replaceAll(" ", '')
+  console.log("输入的值发生了变化--", loginForm);
+}
+
 // 模式：登陆，token，注册
 let loginModel = ref('登陆')
 const switchModel = (model: string) => {
@@ -149,6 +159,7 @@ const loginForm: loginType = reactive({
   gitToken: bossToken,
 })
 
+// 使用token登陆
 const userNameLogin = async (token: string) => {
   const res = await loginApi.getUserInfo(`Bearer ${token}`)
   if (res.status === 200) {
