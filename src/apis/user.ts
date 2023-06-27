@@ -10,7 +10,7 @@ export default {
         return http('/user', {
             method: 'get',
             headers: {
-                Authorization: token,
+                Authorization: `Bearer ${token}`,
             },
         })
     },
@@ -28,7 +28,7 @@ export default {
             {
                 method: 'put',
                 headers: {
-                    Authorization: bossToken,
+                    Authorization: `Bearer ${bossToken}`,
                 },
                 body: Body.json(body),
             }
