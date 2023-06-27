@@ -77,7 +77,7 @@ const { locale } = useI18n()
 const userStore = useUserStore()
 
 // 进度条颜色
-const percentage2 = ref(0)
+const percentage2 = ref(((userStore.apiLimit.remaining / userStore.apiLimit.limit) * 100))
 const colors = [
   { color: '#f56c6c', percentage: 20 },
   { color: '#e6a23c', percentage: 40 },
@@ -85,10 +85,10 @@ const colors = [
   { color: '#1989fa', percentage: 80 },
   { color: '#6f7ad3', percentage: 100 },
 ]
+
 onMounted(() => {
-  setInterval(() => {
-    percentage2.value = (percentage2.value % 100) + 5
-  }, 500)
+  console.log("percentage2---", percentage2);
+
 })
 
 const router = useRouter()

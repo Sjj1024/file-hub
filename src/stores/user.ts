@@ -5,7 +5,12 @@ export const useUserStore = defineStore('userInfo', {
     state: () => {
         return {
             name: '1024小神',
-            age: 18,
+            apiLimit: {
+                limit: 5000,
+                used: 34,
+                remaining: 4933,
+                reset: 1687853989,
+            },
             theme: localStorage.getItem('theme') || 'light',
             fileCdn: 'https://sjj1024.github.io/FileHub/',
             // fileCdn:"https://cdn.staticaly.com/gh/sjj1024/FileHub@main/",
@@ -21,15 +26,11 @@ export const useUserStore = defineStore('userInfo', {
     },
     // 定义getters
     getters: {
-        doubleAge: (state) => state.age * 2,
+        doubleAge: (state) => 2,
         threeAge: () => 6,
     },
     // 定义action
     actions: {
-        setAge() {
-            console.log('设置age----')
-            this.age = 99
-        },
         setTheme(the: string) {
             this.theme = the
             localStorage.setItem('theme', the)
@@ -37,6 +38,7 @@ export const useUserStore = defineStore('userInfo', {
         setGitInfo(gitToken: string, gitInfo: any) {
             this.gitToken = gitToken
             this.gitInfo = gitInfo
+            this.name = gitInfo.name
             localStorage.setItem('gitToken', gitToken)
             localStorage.setItem('gitInfo', JSON.stringify(gitInfo))
         },

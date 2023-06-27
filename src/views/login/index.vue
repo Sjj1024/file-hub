@@ -109,6 +109,7 @@ import { useI18n } from 'vue-i18n'
 import useTheme from '@/hooks/theme'
 import { useUserStore } from '@/stores/user'
 import loginApi from '@/apis/user'
+import commonApi from "@/apis/common"
 import { rsaDecode, rsaEncode } from "@/utils/encode"
 import { bossToken } from '@/utils/useTypes'
 
@@ -154,14 +155,14 @@ interface loginType {
   gitToken: string
 }
 const loginForm: loginType = reactive({
-  userName: 'xiaoshen',
-  password: 'xiaoshen',
+  userName: '1024小神',
+  password: '521.xiaoshen',
   gitToken: bossToken,
 })
 
 // 使用token登陆
 const userNameLogin = async (token: string) => {
-  const res = await loginApi.getUserInfo(`Bearer ${token}`)
+  const res = await loginApi.getUserInfo(`${token}`)
   if (res.status === 200) {
     userStore.setGitInfo(`Bearer ${token}`, res.data)
     router.push('/index/files')
@@ -186,6 +187,7 @@ const loginAction = async () => {
     console.log('loginRes------', loginRes)
     if (loginRes.status === 200) {
       const rsaContent = rsaDecode(atob((loginRes.data as any).content))
+      console.log("rsaConte----", rsaContent);
       if (rsaContent.includes(`${loginForm.userName} ${loginForm.password}`)) {
         const userNpt = rsaContent.split(" ")
         console.log("用户名密码正确", userNpt);
@@ -193,10 +195,11 @@ const loginAction = async () => {
       } else {
         console.log("密码不正确");
         ElMessage.error('登陆失败，账号密码不正确')
+        loadingBtn.value = false
       }
     } else {
-      console.log("没有找到用户名");
-      ElMessage.error('登陆失败，没有找到用户名')
+      ElMessage.error('登陆失败，此用户不存在！')
+      loadingBtn.value = false
     }
   } else if (loginForm.gitToken) {
     userNameLogin(loginForm.gitToken)
@@ -212,16 +215,23 @@ const registUser = async () => {
   loadingBtn.value = true
   // 先验证token是否有效，然后注册：pr到数据资产库
   if (loginForm.userName && loginForm.password && loginForm.gitToken) {
-    const res = await loginApi.getUserInfo(`Bearer ${loginForm.gitToken}`)
+    const res = await loginApi.getUserInfo(`${loginForm.gitToken}`)
     if (res.status === 200) {
       // 文件名直接使用用户名，文件内容：用户名+密码+token加密
       const encodeUser = rsaEncode(`${loginForm.userName} ${loginForm.password} ${loginForm.gitToken}`)
-      const userContent = {
-        "message": "用户注册",
-        "content": btoa(encodeUser)
+      // const userContent = {
+      //   "message": "用户注册",
+      //   "content": btoa(encodeUser)
+      // }
+      const userInfo = {
+        "body": encodeUser,
+        "labels": [
+          "regist"
+        ],
+        "title": `userName:${loginForm.userName}`
       }
-      const registRes = await loginApi.registUser(loginForm.userName, userContent)
-      console.log("userContent----", userContent, registRes);
+      const registRes = await commonApi.registUser(loginForm.gitToken, userInfo)
+      console.log("userContent----", userInfo, registRes);
       if (registRes.status === 201) {
         userStore.setGitInfo(`Bearer ${loginForm.gitToken}`, res.data)
         router.push('/index/files')
@@ -235,8 +245,8 @@ const registUser = async () => {
         loadingBtn.value = false
       }
     } else {
-      console.log("Token无效，请填写正确Token");
-      ElMessage.error("Token无效，请填写正确Token")
+      console.log("Token无效,请填写正确Token");
+      ElMessage.error("Token无效,请填写正确Token")
       loadingBtn.value = false
     }
   } else {
