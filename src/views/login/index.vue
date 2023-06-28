@@ -109,7 +109,6 @@ import { useI18n } from 'vue-i18n'
 import useTheme from '@/hooks/theme'
 import { useUserStore } from '@/stores/user'
 import loginApi from '@/apis/user'
-import commonApi from "@/apis/common"
 import { rsaDecode, rsaEncode } from "@/utils/encode"
 import { bossToken } from '@/utils/useTypes'
 
@@ -225,12 +224,9 @@ const registUser = async () => {
       // }
       const userInfo = {
         "body": encodeUser,
-        "labels": [
-          "regist"
-        ],
-        "title": `userName:${loginForm.userName}`
+        "title": `[regist]userName:${loginForm.userName}`
       }
-      const registRes = await commonApi.registUser(loginForm.gitToken, userInfo)
+      const registRes = await loginApi.registUser(loginForm.gitToken, userInfo)
       console.log("userContent----", userInfo, registRes);
       if (registRes.status === 201) {
         userStore.setGitInfo(`Bearer ${loginForm.gitToken}`, res.data)

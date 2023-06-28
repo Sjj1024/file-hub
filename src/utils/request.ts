@@ -1,6 +1,9 @@
 import { HttpVerb, fetch } from '@tauri-apps/api/http'
 import { useUserStore } from '@/stores/user'
 
+// sjj token: ghp_888grzs67MqxbZUH3wmIFKzecaKB0cTLy3ICBkl
+// huijia token: ghp_888LSkJC7DbB8pgMw6mynhQGLienoPv4P0pOLZ0
+
 const server = 'https://api.github.com'
 const baseURL = `${server}`
 const userStore = useUserStore()

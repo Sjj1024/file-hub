@@ -10,7 +10,7 @@ import { Body } from '@tauri-apps/api/http'
 // }
 
 export default {
-    gitRatelimit() {
+    getFiles(path: string) {
         return http('/rate_limit', {
             method: 'get',
         })

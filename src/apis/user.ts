@@ -22,16 +22,13 @@ export default {
             }
         )
     },
-    registUser(userName: string, body: any) {
-        return http(
-            `repos/Sjj1024/DataHub/contents/FileData/users/${userName}.txt`,
-            {
-                method: 'put',
-                headers: {
-                    Authorization: `Bearer ${bossToken}`,
-                },
-                body: Body.json(body),
-            }
-        )
+    registUser(token: string, body: any) {
+        return http(`/repos/Sjj1024/DataHub/issues`, {
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: Body.json(body),
+        })
     },
 }
