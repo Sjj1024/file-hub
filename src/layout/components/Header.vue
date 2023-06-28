@@ -5,8 +5,10 @@
       <img v-else :src="logoDark" alt="" class="logo-img" />
       <div class="api-pro">
         <el-progress :text-inside="true" :stroke-width="20" :percentage="percentage2" :color="colors" status="exception">
-          <el-tooltip class="box-item" :content="`每小时可发送5000个请求, 恢复时间:${timestampToTime(userStore.apiLimit.reset)}`" placement="right">
-            <span>API使用量:{{ percentage2.toFixed(2) }}%</span>
+          <el-tooltip class="box-item"
+            :content="`每小时可发送5000个请求, 已使用：${userStore.apiLimit.used}, 剩余：${userStore.apiLimit.remaining} 恢复时间：${timestampToTime(userStore.apiLimit.reset)}`"
+            placement="right">
+            <span>API用量:{{ percentage2.toFixed(2) }}%</span>
           </el-tooltip>
         </el-progress>
       </div>
@@ -72,6 +74,9 @@ import useTheme from '@/hooks/theme'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
 import { timestampToTime } from "@/utils/index"
+import { getApiLimit } from '@/utils/request';
+
+getApiLimit()
 
 const { locale } = useI18n()
 
@@ -80,16 +85,15 @@ const userStore = useUserStore()
 // 进度条颜色
 const percentage2 = ref(((userStore.apiLimit.remaining / userStore.apiLimit.limit) * 100))
 const colors = [
-  { color: '#f56c6c', percentage: 20 },
-  { color: '#e6a23c', percentage: 40 },
-  { color: '#5cb87a', percentage: 60 },
-  { color: '#1989fa', percentage: 80 },
-  { color: '#6f7ad3', percentage: 100 },
+  { color: '#f53434', percentage: 20 },
+  { color: '#f56c6c', percentage: 40 },
+  { color: '#6f7ad3', percentage: 60 },
+  { color: '#1fb929', percentage: 80 },
+  { color: '#1989fa', percentage: 100 },
 ]
 
 onMounted(() => {
   console.log("percentage2---", percentage2);
-
 })
 
 const router = useRouter()
@@ -107,6 +111,14 @@ const changeLang = (lang: string) => {
 </script>
 
 <style scoped lang="scss">
+.api-color {
+  color: #f53434;
+  color: #f56c6c;
+  color: #6f7ad3;
+  color: #1fb929;
+  color: #1989fa;
+}
+
 .user-item {
   text-align: center;
   height: 32px;

@@ -34,7 +34,7 @@ const buildFullPath = (baseURL: string, requestedURL: string) => {
 }
 
 // 重新获取API接口速率
-const getApiLimit = () => {
+export const getApiLimit = () => {
     let payload = {
         method: 'GET' as HttpVerb,
         headers: {
@@ -44,12 +44,12 @@ const getApiLimit = () => {
     fetch('https://api.github.com/rate_limit', payload)
         .then(({ status, data }) => {
             if (status >= 200 && status < 500) {
-                console.log('apilimit---', userStore)
+                console.log('apilimit---', data)
                 userStore.setApiRate((data as any).rate)
             }
         })
         .catch((err) => {
-            console.error('apilimiterr', err)
+            console.error('apilimiterr-------', err)
         })
 }
 

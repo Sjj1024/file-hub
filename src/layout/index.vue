@@ -17,13 +17,15 @@ import AppMain from './components/AppMain.vue';
 </script>
 
 <style scoped lang="scss">
-.common-layout{
+.common-layout {
   height: 100%;
-  .bar-main{
+
+  .bar-main {
     height: 100%;
     display: flex;
     flex-direction: row;
-    .bar{
+
+    .bar {
       flex: 4;
       height: 100%;
     }

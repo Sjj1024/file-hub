@@ -5,14 +5,17 @@ export const useUserStore = defineStore('userInfo', {
     state: () => {
         return {
             name: '1024小神',
-            apiLimit: JSON.parse(
-                localStorage.getItem('apiLimit')
-                    ? localStorage.getItem('apiLimit')!
-                    : '{}'
-            ),
+            apiLimit: localStorage.getItem('apiLimit')
+                ? JSON.parse(localStorage.getItem('apiLimit')!)
+                : {
+                      limit: 5000,
+                      used: 0,
+                      remaining: 5000,
+                      reset: 1687853989,
+                  },
             theme: localStorage.getItem('theme') || 'light',
             fileCdn: 'https://sjj1024.github.io/FileHub/',
-            // fileCdn:"https://cdn.staticaly.com/gh/sjj1024/FileHub@main/",
+            gitIoCdn:"https://cdn.staticaly.com/gh/sjj1024/FileHub@main/",
             gitToken: localStorage.getItem('gitToken')
                 ? localStorage.getItem('gitToken')
                 : '',
