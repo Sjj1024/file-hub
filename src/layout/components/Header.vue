@@ -5,8 +5,8 @@
       <img v-else :src="logoDark" alt="" class="logo-img" />
       <div class="api-pro">
         <el-progress :text-inside="true" :stroke-width="20" :percentage="percentage2" :color="colors" status="exception">
-          <el-tooltip class="box-item" content="每小时可发送5000个请求" placement="right">
-            <span>API使用量:{{ percentage2 }}%</span>
+          <el-tooltip class="box-item" :content="`每小时可发送5000个请求, 恢复时间:${timestampToTime(userStore.apiLimit.reset)}`" placement="right">
+            <span>API使用量:{{ percentage2.toFixed(2) }}%</span>
           </el-tooltip>
         </el-progress>
       </div>
@@ -71,6 +71,7 @@ import { useUserStore } from '@/stores/user'
 import useTheme from '@/hooks/theme'
 import { useI18n } from 'vue-i18n'
 import { onMounted, ref } from 'vue'
+import { timestampToTime } from "@/utils/index"
 
 const { locale } = useI18n()
 

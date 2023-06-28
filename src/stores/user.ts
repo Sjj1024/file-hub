@@ -5,12 +5,11 @@ export const useUserStore = defineStore('userInfo', {
     state: () => {
         return {
             name: '1024小神',
-            apiLimit: {
-                limit: 5000,
-                used: 34,
-                remaining: 4933,
-                reset: 1687853989,
-            },
+            apiLimit: JSON.parse(
+                localStorage.getItem('apiLimit')
+                    ? localStorage.getItem('apiLimit')!
+                    : '{}'
+            ),
             theme: localStorage.getItem('theme') || 'light',
             fileCdn: 'https://sjj1024.github.io/FileHub/',
             // fileCdn:"https://cdn.staticaly.com/gh/sjj1024/FileHub@main/",
@@ -41,6 +40,10 @@ export const useUserStore = defineStore('userInfo', {
             this.name = gitInfo.name
             localStorage.setItem('gitToken', gitToken)
             localStorage.setItem('gitInfo', JSON.stringify(gitInfo))
+        },
+        setApiRate(apiInfo: any) {
+            this.apiLimit = apiInfo
+            localStorage.setItem('apiLimit', JSON.stringify(apiInfo))
         },
     },
 })

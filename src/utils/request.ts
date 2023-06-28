@@ -1,9 +1,9 @@
-import { fetch } from '@tauri-apps/api/http'
+import { HttpVerb, fetch } from '@tauri-apps/api/http'
 import { useUserStore } from '@/stores/user'
 
 const server = 'https://api.github.com'
 const baseURL = `${server}`
-const userToken = useUserStore()
+const userStore = useUserStore()
 
 const BODY_TYPE = {
     Form: 'Form',
@@ -33,17 +33,36 @@ const buildFullPath = (baseURL: string, requestedURL: string) => {
     return requestedURL
 }
 
+// 重新获取API接口速率
+const getApiLimit = () => {
+    let payload = {
+        method: 'GET' as HttpVerb,
+        headers: {
+            Authorization: userStore.gitToken!,
+        },
+    }
+    fetch('https://api.github.com/rate_limit', payload)
+        .then(({ status, data }) => {
+            if (status >= 200 && status < 500) {
+                console.log('apilimit---', userStore)
+                userStore.setApiRate((data as any).rate)
+            }
+        })
+        .catch((err) => {
+            console.error('apilimiterr', err)
+        })
+}
+
 const http = async (url: string, options: any = {}) => {
     if (!options.headers)
         options.headers = {
-            Authorization: userToken.gitToken,
+            Authorization: userStore.gitToken,
         }
     if (options?.body) {
         if (options.body.type === BODY_TYPE.Form) {
             options.headers['Content-Type'] = 'multipart/form-data'
         }
     }
-
     options = { ...commonOptions, ...options }
     console.log('request-------', buildFullPath(baseURL, url), options)
     return fetch(buildFullPath(baseURL, url), options)
@@ -56,6 +75,10 @@ const http = async (url: string, options: any = {}) => {
         .catch((err) => {
             console.error(err)
             return Promise.reject(err)
+        })
+        .finally(() => {
+            // 发送接口速率
+            getApiLimit()
         })
 }
 
