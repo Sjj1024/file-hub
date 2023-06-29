@@ -194,12 +194,16 @@ import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
 import fileDialog from "@/views/files/component/filedialog.vue"
-import gitApis from '@/apis/mock'
+import { ElMessage } from 'element-plus'
 import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
+import fileApi from "@/apis/files"
 
 const userStore = useUserStore()
+
+// 拉取自己Filehub仓库中的文件内容
+
 
 // 文件弹窗
 const fileLog = ref()
@@ -448,9 +452,11 @@ const getType = (fileType: string, curFile: any) => {
 }
 
 // 发送请求获取根目录文件内容
-const gitRoots = gitApis.getFiles()
-const gitFileList: fileRes[] = reactive(
-  gitRoots.reduce((pre: fileRes[], cur) => {
+let gitFileList: fileRes[] = reactive([])
+const fileRes = await fileApi.getFiles("/root")
+console.log("fileRes------", fileRes);
+if (fileRes.status !== 200) {
+  gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
     pre.push({
       name: cur.name,
       path: cur.path,
@@ -465,40 +471,40 @@ const gitFileList: fileRes[] = reactive(
       uploading: false,
     })
     return pre
-  }, [])
-)
-// 添加别的类型的假数据
-gitFileList.push(...[
-  {
-    name: "m3u8视频测试",
-    path: "",
-    type: "video",
-    size: "",
-    openLink: "https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8",
-    downLink: 'https://element-plus.gitee.io/',
-    htmlLink: "",
-    creatTime: '2021-08-22',
-    selected: false,
-    showTips: false,
-    uploading: false,
-  },
-  {
-    name: "阿凡达:水之道",
-    path: "",
-    type: "video",
-    size: "",
-    openLink: "https://vip.ffzy-play5.com/20230325/9163_1082ea17/index.m3u8",
-    downLink: 'https://element-plus.gitee.io/',
-    htmlLink: "",
-    creatTime: '2021-08-22',
-    selected: false,
-    showTips: false,
-    uploading: false,
-  }
-])
-
+  }, []))
+} else {
+  // 添加别的类型的假数据
+  ElMessage.error("拉取数据失败，使用假数据")
+  gitFileList.push(...[
+    {
+      name: "m3u8视频测试",
+      path: "",
+      type: "video",
+      size: "",
+      openLink: "https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8",
+      downLink: 'https://element-plus.gitee.io/',
+      htmlLink: "",
+      creatTime: '2021-08-22',
+      selected: false,
+      showTips: false,
+      uploading: false,
+    },
+    {
+      name: "阿凡达:水之道",
+      path: "",
+      type: "video",
+      size: "",
+      openLink: "https://vip.ffzy-play5.com/20230325/9163_1082ea17/index.m3u8",
+      downLink: 'https://element-plus.gitee.io/',
+      htmlLink: "",
+      creatTime: '2021-08-22',
+      selected: false,
+      showTips: false,
+      uploading: false,
+    }
+  ])
+}
 console.log("gitFileList--------", gitFileList);
-
 
 </script>
 

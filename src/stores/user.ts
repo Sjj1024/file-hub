@@ -14,8 +14,18 @@ export const useUserStore = defineStore('userInfo', {
                       reset: 1687853989,
                   },
             theme: localStorage.getItem('theme') || 'light',
-            fileCdn: 'https://sjj1024.github.io/FileHub/',
-            gitIoCdn:"https://cdn.staticaly.com/gh/sjj1024/FileHub@main/",
+            gitName: localStorage.getItem('gitName') || 'sjj1024',
+            gitRepo: localStorage.getItem('gitRepo') || 'FileHub',
+            gitBranch: localStorage.getItem('gitBranch') || 'main',
+            gitPath:
+                localStorage.getItem('gitPath') ||
+                'https://api.github.com/repos/Sjj1024/HelloMyPic/contents',
+            fileCdn:
+                localStorage.getItem('fileCdn') ||
+                'https://sjj1024.github.io/FileHub',
+            gitIoCdn:
+                localStorage.getItem('gitIoCdn') ||
+                'https://cdn.staticaly.com/gh/sjj1024/FileHub@main',
             gitToken: localStorage.getItem('gitToken')
                 ? localStorage.getItem('gitToken')
                 : '',
@@ -37,12 +47,33 @@ export const useUserStore = defineStore('userInfo', {
             this.theme = the
             localStorage.setItem('theme', the)
         },
+        setFileHub(repo: string, branch: string) {
+            this.gitRepo = repo
+            this.gitBranch = branch
+            this.gitPath = `https://api.github.com/repos/${this.gitName}/${this.gitRepo}/contents`
+            this.fileCdn = `https://cdn.staticaly.com/gh/${this.gitName}/${this.gitRepo}@${this.gitBranch}/`
+            this.gitIoCdn = `https://${this.gitName}.github.io/${this.gitRepo}`
+            localStorage.setItem("gitRepo", this.gitRepo)
+            localStorage.setItem("gitBranch", this.gitBranch)
+            localStorage.setItem("gitPath", this.gitPath)
+            localStorage.setItem("fileCdn", this.fileCdn)
+            localStorage.setItem("gitIoCdn", this.gitIoCdn)
+        },
         setGitInfo(gitToken: string, gitInfo: any) {
             this.gitToken = gitToken
             this.gitInfo = gitInfo
             this.name = gitInfo.name
+            this.gitName = gitInfo.login
+            this.gitPath = `https://api.github.com/repos/${this.gitName}/${this.gitRepo}/contents`
+            this.fileCdn = `https://cdn.staticaly.com/gh/${this.gitName}/${this.gitRepo}@${this.gitBranch}/`
+            this.gitIoCdn = `https://${this.gitName}.github.io/${this.gitRepo}`
             localStorage.setItem('gitToken', gitToken)
             localStorage.setItem('gitInfo', JSON.stringify(gitInfo))
+            localStorage.setItem("name",  this.name)
+            localStorage.setItem("gitName",  this.gitName)
+            localStorage.setItem("gitPath", this.gitPath)
+            localStorage.setItem("fileCdn", this.fileCdn)
+            localStorage.setItem("gitIoCdn", this.gitIoCdn)
         },
         setApiRate(apiInfo: any) {
             this.apiLimit = apiInfo

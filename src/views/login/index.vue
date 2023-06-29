@@ -110,7 +110,7 @@ import useTheme from '@/hooks/theme'
 import { useUserStore } from '@/stores/user'
 import loginApi from '@/apis/user'
 import { rsaDecode, rsaEncode } from "@/utils/encode"
-import { bossToken } from '@/utils/useTypes'
+import { bossToken, guestToken } from '@/config'
 
 const userStore = useUserStore()
 
@@ -156,7 +156,7 @@ interface loginType {
 const loginForm: loginType = reactive({
   userName: '1024小神',
   password: '521.xiaoshen',
-  gitToken: bossToken,
+  gitToken: guestToken,
 })
 
 // 使用token登陆
@@ -175,6 +175,25 @@ const userNameLogin = async (token: string) => {
     console.log("登录错误");
     ElMessage.error('登陆失败：' + (res.data as any).message)
     loadingBtn.value = false
+  }
+}
+
+// 验证token或用户名后：先校验是否有FileHub仓库，有的话拉取内容，没有的话，frok仓库FileHub，然后拉取内容
+const firstRegistInit = async (token: string) => {
+  // frok仓库FileHub，然后登陆
+  const payload = {
+    "name": "FileHub",
+    "default_branch_only": true
+  }
+  const frokRes = await loginApi.frokFileHub(token, payload)
+  if (frokRes.status === 202) {
+    console.log("frok 成功");
+    ElMessage({
+      message: 'FileHub私有化初始化成功',
+      type: 'success',
+    })
+  } else {
+    console.log("frok filehub 出错");
   }
 }
 
@@ -212,16 +231,17 @@ const loginAction = async () => {
 // 注册行为
 const registUser = async () => {
   loadingBtn.value = true
+  ElMessage({
+    message: '第一次，可能需要耐心等一会...',
+    type: 'success',
+  })
   // 先验证token是否有效，然后注册：pr到数据资产库
   if (loginForm.userName && loginForm.password && loginForm.gitToken) {
     const res = await loginApi.getUserInfo(`${loginForm.gitToken}`)
     if (res.status === 200) {
+      firstRegistInit(loginForm.gitToken)
       // 文件名直接使用用户名，文件内容：用户名+密码+token加密
       const encodeUser = rsaEncode(`${loginForm.userName} ${loginForm.password} ${loginForm.gitToken}`)
-      // const userContent = {
-      //   "message": "用户注册",
-      //   "content": btoa(encodeUser)
-      // }
       const userInfo = {
         "body": encodeUser,
         "title": `[regist]userName:${loginForm.userName}`
@@ -232,7 +252,7 @@ const registUser = async () => {
         userStore.setGitInfo(`Bearer ${loginForm.gitToken}`, res.data)
         router.push('/index/files')
         ElMessage({
-          message: '欢迎注册FileHub',
+          message: '欢迎使用FileHub',
           type: 'success',
         })
         loadingBtn.value = false

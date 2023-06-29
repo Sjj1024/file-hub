@@ -1,17 +1,12 @@
 import http from '@/utils/request'
 import { Body } from '@tauri-apps/api/http'
-
-// {
-//   "body": "I'm having a problem with this.",
-//   "labels": [
-//       "bug"
-//   ],
-//   "title": "Found a bug"
-// }
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
+// 先判断仓库FileHub是否存在，存在就获取文件，不存在就frok然后再获取
 
 export default {
     getFiles(path: string) {
-        return http('/rate_limit', {
+        return http(userStore.gitPath + path, {
             method: 'get',
         })
     },
