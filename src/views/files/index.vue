@@ -453,9 +453,9 @@ const getType = (fileType: string, curFile: any) => {
 
 // 发送请求获取根目录文件内容
 let gitFileList: fileRes[] = reactive([])
-const fileRes = await fileApi.getFiles("/root")
-console.log("fileRes------", fileRes);
-if (fileRes.status !== 200) {
+
+fileApi.getFiles("/root").then((fileRes) => {
+  console.log("fileRes------", fileRes)
   gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
     pre.push({
       name: cur.name,
@@ -463,7 +463,7 @@ if (fileRes.status !== 200) {
       type: getType(cur.type, cur),
       size: (cur.size / 1024 / 1024).toFixed(2).toString(),
       openLink: `${userStore.fileCdn}${cur.path}`,
-      downLink: 'https://element-plus.gitee.io/',
+      downLink: `${userStore.fileCdn}${cur.path}`,
       htmlLink: cur.html_url,
       creatTime: '2021-08-22',
       selected: false,
@@ -472,38 +472,58 @@ if (fileRes.status !== 200) {
     })
     return pre
   }, []))
-} else {
-  // 添加别的类型的假数据
-  ElMessage.error("拉取数据失败，使用假数据")
-  gitFileList.push(...[
-    {
-      name: "m3u8视频测试",
-      path: "",
-      type: "video",
-      size: "",
-      openLink: "https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8",
-      downLink: 'https://element-plus.gitee.io/',
-      htmlLink: "",
-      creatTime: '2021-08-22',
-      selected: false,
-      showTips: false,
-      uploading: false,
-    },
-    {
-      name: "阿凡达:水之道",
-      path: "",
-      type: "video",
-      size: "",
-      openLink: "https://vip.ffzy-play5.com/20230325/9163_1082ea17/index.m3u8",
-      downLink: 'https://element-plus.gitee.io/',
-      htmlLink: "",
-      creatTime: '2021-08-22',
-      selected: false,
-      showTips: false,
-      uploading: false,
-    }
-  ])
-}
+}).catch((error) => {
+  console.log("获取root数据出错");
+})
+// if (fileRes.status !== 200) {
+//   gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
+//     pre.push({
+//       name: cur.name,
+//       path: cur.path,
+//       type: getType(cur.type, cur),
+//       size: (cur.size / 1024 / 1024).toFixed(2).toString(),
+//       openLink: `${userStore.fileCdn}${cur.path}`,
+//       downLink: 'https://element-plus.gitee.io/',
+//       htmlLink: cur.html_url,
+//       creatTime: '2021-08-22',
+//       selected: false,
+//       showTips: false,
+//       uploading: false,
+//     })
+//     return pre
+//   }, []))
+// } else {
+//   // 添加别的类型的假数据
+//   ElMessage.error("拉取数据失败，使用假数据")
+//   gitFileList.push(...[
+//     {
+//       name: "m3u8视频测试",
+//       path: "",
+//       type: "video",
+//       size: "",
+//       openLink: "https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8",
+//       downLink: 'https://element-plus.gitee.io/',
+//       htmlLink: "",
+//       creatTime: '2021-08-22',
+//       selected: false,
+//       showTips: false,
+//       uploading: false,
+//     },
+//     {
+//       name: "阿凡达:水之道",
+//       path: "",
+//       type: "video",
+//       size: "",
+//       openLink: "https://vip.ffzy-play5.com/20230325/9163_1082ea17/index.m3u8",
+//       downLink: 'https://element-plus.gitee.io/',
+//       htmlLink: "",
+//       creatTime: '2021-08-22',
+//       selected: false,
+//       showTips: false,
+//       uploading: false,
+//     }
+//   ])
+// }
 console.log("gitFileList--------", gitFileList);
 
 </script>
