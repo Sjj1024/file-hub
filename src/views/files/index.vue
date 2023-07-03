@@ -12,13 +12,13 @@
             <ArrowRight />
           </el-icon>
         </el-button>
+        <el-button text @click="getFileList('/root')" class="path-btn">
+          <el-icon class="path-icon"><HomeFilled /></el-icon>
+        </el-button>
         <el-button text @click="getFileList(null)" class="path-btn">
           <el-icon class="path-icon">
             <RefreshRight />
           </el-icon>
-        </el-button>
-        <el-button text @click="getFileList('/root')" class="path-btn">
-          <el-icon class="path-icon"><HomeFilled /></el-icon>
         </el-button>
         <el-tooltip class="box-item" effect="dark" :content="'当前路径：' + filePath" placement="right">
           <div class="path">:{{ filePath }}</div>
