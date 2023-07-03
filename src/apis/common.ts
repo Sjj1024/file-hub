@@ -30,4 +30,13 @@ export default {
             body: Body.json(body),
         })
     },
+    creatGitPage(user: string, repo:string, token: string, body: any) {
+        return http(`/repos/${user}/${repo}/pages`, {
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: Body.json(body),
+        })
+    },
 }

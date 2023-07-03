@@ -2,7 +2,7 @@
   <div class="pic">
     <keep-alive>
       <el-image :src="imgUrl" class="preview" fit="cover" loading="lazy" lazy hide-on-click-modal
-        :preview-src-list="srcList" :initial-index="preImgIndex" infinite>
+        :preview-src-list="srcList" :initial-index="preImgIndex" infinite @close="closePre">
         <template #placeholder>
           <img :src="loadingGif" alt="" class="preview">
         </template>
@@ -17,16 +17,23 @@
 <script setup lang="ts">
 import error from '@/assets/image/error.png'
 import loadingGif from "@/assets/image/loadColor.gif"
+import { fileRes } from '@/utils/useTypes';
 // import { nextTick } from 'vue';
 
 // 父子组件传值
 const props = defineProps<{
   imgUrl: string,
   srcList: string[]
+  fileImg: fileRes
 }>()
 
 // 查找图片的索引
 const preImgIndex = props.srcList.indexOf(props.imgUrl)
+
+const closePre = ()=>{
+  console.log("关闭弹窗预览");
+  props.fileImg.showTips = false
+}
 
 // 判断是否存在图片预览按钮，添加下载按钮
 const showImgPre = () => {

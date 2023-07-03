@@ -151,6 +151,10 @@ onMounted(() => {
     font-size: 22px;
   }
 
+  .dplayer{
+    height: 50px;
+  }
+
   .preview {
     width: $pre-width;
     height: $pre-height;

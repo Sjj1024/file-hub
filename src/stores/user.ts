@@ -22,10 +22,10 @@ export const useUserStore = defineStore('userInfo', {
                 'https://api.github.com/repos/Sjj1024/HelloMyPic/contents',
             fileCdn:
                 localStorage.getItem('fileCdn') ||
-                'https://sjj1024.github.io/FileHub',
+                'https://cdn.staticaly.com/gh/sjj1024/FileHub@main',
             gitIoCdn:
                 localStorage.getItem('gitIoCdn') ||
-                'https://cdn.staticaly.com/gh/sjj1024/FileHub@main',
+                'https://sjj1024.github.io/FileHub',
             gitToken: localStorage.getItem('gitToken')
                 ? localStorage.getItem('gitToken')
                 : '',

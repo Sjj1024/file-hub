@@ -1,17 +1,25 @@
 <template>
-  <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu">
+  <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading">
     <div class="tools-box">
       <div class="path-tool">
-        <el-icon class="path-icon">
-          <ArrowLeft />
-        </el-icon>
-        <el-icon class="path-icon">
-          <ArrowRight />
-        </el-icon>
-        <el-icon class="path-icon">
-          <RefreshRight />
-        </el-icon>
-        <span class="path">E:\2345Downloads</span>
+        <el-button text @click="backBtn" class="path-btn">
+          <el-icon class="path-icon">
+            <ArrowLeft />
+          </el-icon>
+        </el-button>
+        <el-button text @click="frontBtn" class="path-btn">
+          <el-icon class="path-icon">
+            <ArrowRight />
+          </el-icon>
+        </el-button>
+        <el-button text @click="getFileList" class="path-btn">
+          <el-icon class="path-icon">
+            <RefreshRight />
+          </el-icon>
+        </el-button>
+        <el-tooltip class="box-item" effect="dark" :content="'当前路径：' + filePath" placement="right">
+          <span class="path">:{{ filePath }}</span>
+        </el-tooltip>
       </div>
       <div class="action">
         <template v-if="!moreActionShow">
@@ -72,8 +80,7 @@
         <template #content>
           <div class="file-tips">
             名称: {{ file.name }}<br />
-            <span v-if="file.type !== 'foler'">大小: {{ file.size }}<br /></span>
-            时间: {{ file.creatTime }}
+            <span v-if="file.type !== 'foler'">大小: {{ file.size }}M</span>
           </div>
         </template>
         <div :class="{
@@ -81,12 +88,12 @@
           'item-seled': file.selected,
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave.self="fileCloseTips(file)" @dblclick="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
+          @mouseleave="fileCloseTips(file)" @dblclick="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
           <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
           <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
           <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
           <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.openLink" :srcList="imgPreList"
-            v-loading="file.uploading">
+            v-loading="file.uploading" :fileImg="file">
           </pic>
           <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
             v-loading="file.uploading"></fileLoading>
@@ -194,7 +201,6 @@ import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
 import fileDialog from "@/views/files/component/filedialog.vue"
-import { ElMessage } from 'element-plus'
 import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
@@ -203,7 +209,8 @@ import fileApi from "@/apis/files"
 const userStore = useUserStore()
 
 // 拉取自己Filehub仓库中的文件内容
-
+const filePath = ref('/root')
+const loading = ref(true)
 
 // 文件弹窗
 const fileLog = ref()
@@ -221,11 +228,14 @@ const position = ref({
   left: 0,
 })
 
+
+
 // 鼠标进去后显示这个文件的提示
 const fileShowTips = (e: any, file: fileRes) => {
   file.showTips = true
+  // console.log("fileShowTips--", file.showTips);
   // 鼠标不在文件上右键后，再到文件上右键的bug
-  e.target.click()
+  // e.target.click()
 }
 // 鼠标退出后关闭提示
 const fileCloseTips = (file: fileRes) => {
@@ -257,15 +267,50 @@ const openMenu = (e: MouseEvent, item: any) => {
   item.showTips = false
 }
 
+// 路径返回和前进：维护两个栈结构的数组Ab，a存储前进路径，b维护后退路径
+/**
+我们来分析一下浏览器的前进与后退功能：
+访问了一个网页a之后，将网址a入栈A。
+再访问网页b，将网址b入栈A。
+再访问网页c，将网址c入栈A。
+回退后，将栈顶c入栈B。
+再前进，从栈B中取出栈顶c进行访问。
+ */
+const backPath: any[] = ["/root"]
+const frontPath: any[] = []
+
+const backBtn = () => {
+  loading.value = true
+  backPath.length > 1 && frontPath.push(backPath.pop())
+  filePath.value = backPath.length > 0 ? backPath[backPath.length - 1] : "/root"
+  getFileList()
+  console.log("后退按钮", backPath, frontPath);
+}
+
+const frontBtn = () => {
+  loading.value = true
+  frontPath.length > 0 && backPath.push(frontPath.pop())
+  filePath.value = backPath[backPath.length - 1]
+  getFileList()
+  console.log("前进按钮", backPath, frontPath);
+}
+
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
   // 如果是上传中或者是图片，就不允许双击
-  if (file.uploading || file.type === 'picture') {
+  if (file.uploading || file.type === fileTypes.picture || file.type === fileTypes.document || file.type === fileTypes.other) {
     return
+  } else if (file.type === "foler") {
+    loading.value = true
+    filePath.value = "/" + file.path
+    backPath.push(filePath.value)
+    console.log("打开文件夹", backPath);
+    getFileList()
+  } else {
+    // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
+    fileLog.value.showFileDialog(true, file)
   }
-  // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
-  fileLog.value.showFileDialog(true, file)
 }
 
 const openDirMenu = (e: MouseEvent) => {
@@ -451,80 +496,38 @@ const getType = (fileType: string, curFile: any) => {
   }
 }
 
+
 // 发送请求获取根目录文件内容
 let gitFileList: fileRes[] = reactive([])
-
-fileApi.getFiles("/root").then((fileRes) => {
-  console.log("fileRes------", fileRes)
-  gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
-    pre.push({
-      name: cur.name,
-      path: cur.path,
-      type: getType(cur.type, cur),
-      size: (cur.size / 1024 / 1024).toFixed(2).toString(),
-      openLink: `${userStore.fileCdn}${cur.path}`,
-      downLink: `${userStore.fileCdn}${cur.path}`,
-      htmlLink: cur.html_url,
-      creatTime: '2021-08-22',
-      selected: false,
-      showTips: false,
-      uploading: false,
-    })
-    return pre
-  }, []))
-}).catch((error) => {
-  console.log("获取root数据出错");
-})
-// if (fileRes.status !== 200) {
-//   gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
-//     pre.push({
-//       name: cur.name,
-//       path: cur.path,
-//       type: getType(cur.type, cur),
-//       size: (cur.size / 1024 / 1024).toFixed(2).toString(),
-//       openLink: `${userStore.fileCdn}${cur.path}`,
-//       downLink: 'https://element-plus.gitee.io/',
-//       htmlLink: cur.html_url,
-//       creatTime: '2021-08-22',
-//       selected: false,
-//       showTips: false,
-//       uploading: false,
-//     })
-//     return pre
-//   }, []))
-// } else {
-//   // 添加别的类型的假数据
-//   ElMessage.error("拉取数据失败，使用假数据")
-//   gitFileList.push(...[
-//     {
-//       name: "m3u8视频测试",
-//       path: "",
-//       type: "video",
-//       size: "",
-//       openLink: "https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8",
-//       downLink: 'https://element-plus.gitee.io/',
-//       htmlLink: "",
-//       creatTime: '2021-08-22',
-//       selected: false,
-//       showTips: false,
-//       uploading: false,
-//     },
-//     {
-//       name: "阿凡达:水之道",
-//       path: "",
-//       type: "video",
-//       size: "",
-//       openLink: "https://vip.ffzy-play5.com/20230325/9163_1082ea17/index.m3u8",
-//       downLink: 'https://element-plus.gitee.io/',
-//       htmlLink: "",
-//       creatTime: '2021-08-22',
-//       selected: false,
-//       showTips: false,
-//       uploading: false,
-//     }
-//   ])
-// }
-console.log("gitFileList--------", gitFileList);
+const getFileList = () => {
+  loading.value = true
+  gitFileList.length = 0
+  fileApi.getFiles(filePath.value).then((fileRes) => {
+    console.log("fileRes------", fileRes)
+    gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
+      pre.push({
+        name: cur.name,
+        path: cur.path,
+        type: getType(cur.type, cur),
+        size: (cur.size / 1024 / 1024).toFixed(2).toString(),
+        openLink: getType(cur.type, cur) === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
+        downLink: getType(cur.type, cur) === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
+        htmlLink: cur.html_url,
+        creatTime: '2021-08-22',
+        selected: false,
+        showTips: false,
+        uploading: false,
+      })
+      return pre
+    }, []))
+  }).catch((error) => {
+    console.log("获取root数据出错", error);
+  })
+  loading.value = false
+  console.log("gitFileList--------", gitFileList);
+}
+// 初始化文件内容
+getFileList()
 
 </script>
 
@@ -578,8 +581,15 @@ $column-gap: 16px;
     justify-content: space-evenly;
     align-items: center;
 
+    .path-btn{
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      border-radius: 10px;
+    }
+
     .path-icon {
-      margin-right: 6px;
       font-size: 19px;
       cursor: pointer;
 
@@ -589,12 +599,16 @@ $column-gap: 16px;
     }
 
     .path {
-      // border: 1px solid gray;
+      width: 180px;
       border-radius: 16px;
       background-color: var(--bg-color);
       padding: 0 6px;
       font-size: 14px;
       margin-left: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
     }
   }
 

@@ -109,6 +109,7 @@ import { useI18n } from 'vue-i18n'
 import useTheme from '@/hooks/theme'
 import { useUserStore } from '@/stores/user'
 import loginApi from '@/apis/user'
+import commonApi from '@/apis/common'
 import { rsaDecode, rsaEncode } from "@/utils/encode"
 import { bossToken, guestToken } from '@/config'
 
@@ -179,7 +180,7 @@ const userNameLogin = async (token: string) => {
 }
 
 // 验证token或用户名后：先校验是否有FileHub仓库，有的话拉取内容，没有的话，frok仓库FileHub，然后拉取内容
-const firstRegistInit = async (token: string) => {
+const firstRegistInit = async (user: string, token: string) => {
   // frok仓库FileHub，然后登陆
   const payload = {
     "name": "FileHub",
@@ -188,12 +189,22 @@ const firstRegistInit = async (token: string) => {
   const frokRes = await loginApi.frokFileHub(token, payload)
   if (frokRes.status === 202) {
     console.log("frok 成功");
-    ElMessage({
-      message: 'FileHub私有化初始化成功',
-      type: 'success',
-    })
+    // frok成功后，创建gitpage
+    const gitPageBody = { "source": { "branch": "main", "path": "/" } }
+    setTimeout(() => {
+      commonApi.creatGitPage(user, 'FileHub', token, gitPageBody).then((gitPageRes) => {
+        if (gitPageRes.status === 201) {
+          ElMessage({
+            message: 'FileHub文件存储库初始化成功',
+            type: 'success',
+          })
+        } else {
+          console.log("gitPage 创建失败", gitPageRes);
+        }
+      })
+    }, 2000);
   } else {
-    console.log("frok filehub 出错");
+    console.log("frok Filehub 出错", frokRes);
   }
 }
 
@@ -235,11 +246,17 @@ const registUser = async () => {
     message: '第一次，可能需要耐心等一会...',
     type: 'success',
   })
+  // 先验证用户名是否重复
+  const loginRes = await loginApi.loginUserName(loginForm.userName)
+  console.log('UserNameExistRes------', loginRes)
+  if (loginRes.status === 200) {
+    ElMessage.error("用户名已存在，请更换用户名")
+  }
   // 先验证token是否有效，然后注册：pr到数据资产库
   if (loginForm.userName && loginForm.password && loginForm.gitToken) {
     const res = await loginApi.getUserInfo(`${loginForm.gitToken}`)
     if (res.status === 200) {
-      firstRegistInit(loginForm.gitToken)
+      firstRegistInit((res.data as any).login, loginForm.gitToken)
       // 文件名直接使用用户名，文件内容：用户名+密码+token加密
       const encodeUser = rsaEncode(`${loginForm.userName} ${loginForm.password} ${loginForm.gitToken}`)
       const userInfo = {
@@ -250,11 +267,13 @@ const registUser = async () => {
       console.log("userContent----", userInfo, registRes);
       if (registRes.status === 201) {
         userStore.setGitInfo(`Bearer ${loginForm.gitToken}`, res.data)
-        router.push('/index/files')
-        ElMessage({
-          message: '欢迎使用FileHub',
-          type: 'success',
-        })
+        setTimeout(() => {
+          router.push('/index/files')
+          ElMessage({
+            message: '欢迎使用FileHub',
+            type: 'success',
+          })
+        }, 2000)
         loadingBtn.value = false
       } else {
         ElMessage.error("用户名已存在，请更换用户名")

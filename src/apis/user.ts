@@ -43,5 +43,5 @@ export default {
             },
             body: Body.json(body),
         })
-    },
+    }
 }

@@ -6,6 +6,7 @@ const userStore = useUserStore()
 
 export default {
     getFiles(path: string) {
+        console.log("getFilespath---", path);
         return http(userStore.gitPath + path, {
             method: 'get',
         })

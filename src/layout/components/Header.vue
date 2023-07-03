@@ -42,7 +42,7 @@
         </el-dropdown>
       </div>
       <div class="user-info">
-        <el-dropdown>
+        <el-dropdown trigger="click">
           <img :src="userStore.gitInfo.avatar_url" alt="" class="user-img" />
           <template #dropdown>
             <el-dropdown-menu>
