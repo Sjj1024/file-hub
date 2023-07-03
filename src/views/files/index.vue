@@ -506,6 +506,7 @@ const getFileList = (path:string | null) => {
   loading.value = true
   gitFileList.length = 0
   path ? filePath.value = path : ""
+  path && backPath.push(path)
   fileApi.getFiles(filePath.value).then((fileRes) => {
     console.log("fileRes------", fileRes)
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
