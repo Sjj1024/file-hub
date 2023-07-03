@@ -80,7 +80,7 @@
         <template #content>
           <div class="file-tips">
             名称: {{ file.name }}<br />
-            <span v-if="file.type !== 'foler'">大小: {{ file.size }}M</span>
+            <span v-if="file.type !== 'foler'">大小: {{ file.size }}</span>
           </div>
         </template>
         <div :class="{
@@ -137,15 +137,15 @@
         <el-table-column label="文件名称">
           <template #default="scope">
             <el-tooltip :content="scope.row.name" placement="bottom">
-              <div class="list-name">{{ scope.row.name }}</div>
+              <div class="list-name" @dblclick="handleFileDblClick(scope.row)">{{ scope.row.name }}</div>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="日期" width="102">
+        <!-- <el-table-column label="日期" width="102">
           <template #default="scope">{{
             scope.row.creatTime
           }}</template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="类型" width="80">
           <template #default="scope">
             {{ fileTypes[scope.row.type] }}</template>
@@ -509,7 +509,7 @@ const getFileList = () => {
         name: cur.name,
         path: cur.path,
         type: getType(cur.type, cur),
-        size: (cur.size / 1024 / 1024).toFixed(2).toString(),
+        size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
         openLink: getType(cur.type, cur) === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
         downLink: getType(cur.type, cur) === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
         htmlLink: cur.html_url,
@@ -638,7 +638,7 @@ $column-gap: 16px;
   height: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: default;
+  cursor: pointer;
 }
 
 .table-action {

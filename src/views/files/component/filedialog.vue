@@ -4,20 +4,9 @@
     <el-carousel indicator-position="none" :autoplay="false">
       <!-- 根据文件类型展示不同的内容 -->
       <el-carousel-item v-if="file.type === 'picture'">
-        <el-image src="https://23img.com/i/2023/06/21/iesevm.jpg" fit="contain" loading="lazy">
-          <!-- 加载的占位符 -->
-          <template #placeholder>
-            <div class="image-slot">
-              <img :src="loadingGif" alt="">
-            </div>
-          </template>
-          <!-- 加载失败的内容 -->
-          <template #error>
-            <div class="image-slot">
-              <el-icon><icon-picture /></el-icon>
-            </div>
-          </template>
-        </el-image>
+        <div class="img-box">
+          <img :src="file.openLink" object-fit="contain" alt="" class="img-dialog">
+        </div>
       </el-carousel-item>
       <el-carousel-item v-show="file.type === 'video' || file.type === 'music'">
         <div class="content">
@@ -268,6 +257,16 @@ defineExpose({
 
 <style lang="scss">
 .file-dialog {
+
+  .img-box{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .img-dialog{
+    height: 100%;
+  }
 
   .dplayer-notice-list {
     display: none;
