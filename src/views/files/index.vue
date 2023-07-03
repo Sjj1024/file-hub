@@ -2,12 +2,12 @@
   <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading">
     <div class="tools-box">
       <div class="path-tool">
-        <el-button text @click="backBtn" class="path-btn">
+        <el-button text @click="backBtn" class="path-btn" :disabled="backPath.length === 1">
           <el-icon class="path-icon">
             <ArrowLeft />
           </el-icon>
         </el-button>
-        <el-button text @click="frontBtn" class="path-btn">
+        <el-button text @click="frontBtn" class="path-btn" :disabled="frontPath.length === 0">
           <el-icon class="path-icon">
             <ArrowRight />
           </el-icon>
@@ -18,7 +18,7 @@
           </el-icon>
         </el-button>
         <el-tooltip class="box-item" effect="dark" :content="'当前路径：' + filePath" placement="right">
-          <span class="path">:{{ filePath }}</span>
+          <div class="path">:{{ filePath }}</div>
         </el-tooltip>
       </div>
       <div class="action">
@@ -505,7 +505,7 @@ const getFileList = () => {
   fileApi.getFiles(filePath.value).then((fileRes) => {
     console.log("fileRes------", fileRes)
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
-      pre.push({
+      cur.name !== '.gitkeep' && pre.push({
         name: cur.name,
         path: cur.path,
         type: getType(cur.type, cur),
@@ -568,7 +568,7 @@ $column-gap: 16px;
 .tools-box {
   width: 82%;
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   position: fixed;
   z-index: 999;
   top: 40px;
@@ -577,11 +577,12 @@ $column-gap: 16px;
   .path-tool {
     height: 38px;
     line-height: 38px;
+    width: 30%;
+    flex: 1;
     display: flex;
-    justify-content: space-evenly;
     align-items: center;
 
-    .path-btn{
+    .path-btn {
       padding: 0;
       width: 20px;
       height: 20px;
@@ -591,15 +592,14 @@ $column-gap: 16px;
 
     .path-icon {
       font-size: 19px;
-      cursor: pointer;
-
       :hover {
         color: #337ecc;
       }
     }
 
     .path {
-      width: 180px;
+      max-width: 95%;
+      display: inline-block;
       border-radius: 16px;
       background-color: var(--bg-color);
       padding: 0 6px;
@@ -613,6 +613,7 @@ $column-gap: 16px;
   }
 
   .action {
+    width: 572.5px;
     display: flex;
     align-items: center;
 
