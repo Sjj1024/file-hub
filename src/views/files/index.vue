@@ -12,10 +12,13 @@
             <ArrowRight />
           </el-icon>
         </el-button>
-        <el-button text @click="getFileList" class="path-btn">
+        <el-button text @click="getFileList(null)" class="path-btn">
           <el-icon class="path-icon">
             <RefreshRight />
           </el-icon>
+        </el-button>
+        <el-button text @click="getFileList('/root')" class="path-btn">
+          <el-icon class="path-icon"><HomeFilled /></el-icon>
         </el-button>
         <el-tooltip class="box-item" effect="dark" :content="'当前路径：' + filePath" placement="right">
           <div class="path">:{{ filePath }}</div>
@@ -283,7 +286,7 @@ const backBtn = () => {
   loading.value = true
   backPath.length > 1 && frontPath.push(backPath.pop())
   filePath.value = backPath.length > 0 ? backPath[backPath.length - 1] : "/root"
-  getFileList()
+  getFileList(null)
   console.log("后退按钮", backPath, frontPath);
 }
 
@@ -291,7 +294,7 @@ const frontBtn = () => {
   loading.value = true
   frontPath.length > 0 && backPath.push(frontPath.pop())
   filePath.value = backPath[backPath.length - 1]
-  getFileList()
+  getFileList(null)
   console.log("前进按钮", backPath, frontPath);
 }
 
@@ -306,7 +309,7 @@ const handleFileDblClick = (file: fileRes) => {
     filePath.value = "/" + file.path
     backPath.push(filePath.value)
     console.log("打开文件夹", backPath);
-    getFileList()
+    getFileList(null)
   } else {
     // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
     fileLog.value.showFileDialog(true, file)
@@ -499,9 +502,10 @@ const getType = (fileType: string, curFile: any) => {
 
 // 发送请求获取根目录文件内容
 let gitFileList: fileRes[] = reactive([])
-const getFileList = () => {
+const getFileList = (path:string | null) => {
   loading.value = true
   gitFileList.length = 0
+  path ? filePath.value = path : ""
   fileApi.getFiles(filePath.value).then((fileRes) => {
     console.log("fileRes------", fileRes)
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
@@ -527,7 +531,7 @@ const getFileList = () => {
   console.log("gitFileList--------", gitFileList);
 }
 // 初始化文件内容
-getFileList()
+getFileList(null)
 
 </script>
 
