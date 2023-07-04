@@ -33,20 +33,20 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('@/views/files/index.vue'),
             },
             {
-                path: 'files',
-                name: 'files',
+                path: 'goods',
+                name: 'goods',
                 meta: {
                     requiresAuth: false,
                     show: true,
-                    title: '资源集市',
+                    title: '资源广场',
                     icon: 'Goods',
                 },
-                component: () => import('@/views/files/index.vue'),
+                component: () => import('@/views/share/index.vue'),
             },
             {
-                path: 'tools',
-                name: 'tools',
-                component: () => import('@/views/tools/index.vue'),
+                path: 'chatgpt',
+                name: 'chatgpt',
+                component: () => import('@/views/chatgpt/index.vue'),
                 meta: {
                     requiresAuth: false,
                     show: true,
