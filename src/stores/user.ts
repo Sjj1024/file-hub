@@ -38,7 +38,7 @@ export const useUserStore = defineStore('userInfo', {
     },
     // 定义getters
     getters: {
-        doubleAge: (state) => 2,
+        apiRate: (state) => (state.apiLimit.remaining / state.apiLimit.limit) * 100,
         threeAge: () => 6,
     },
     // 定义action

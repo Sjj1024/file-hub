@@ -27,10 +27,32 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     requiresAuth: false,
                     show: true,
-                    title: '我的文件',
+                    title: '我的资源',
                     icon: 'FolderOpened',
                 },
                 component: () => import('@/views/files/index.vue'),
+            },
+            {
+                path: 'files',
+                name: 'files',
+                meta: {
+                    requiresAuth: false,
+                    show: true,
+                    title: '资源集市',
+                    icon: 'Goods',
+                },
+                component: () => import('@/views/files/index.vue'),
+            },
+            {
+                path: 'tools',
+                name: 'tools',
+                component: () => import('@/views/tools/index.vue'),
+                meta: {
+                    requiresAuth: false,
+                    show: true,
+                    title: 'ChatGPT',
+                    icon: 'ChatLineRound',
+                },
             },
             {
                 path: 'article',
@@ -129,7 +151,7 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     requiresAuth: false,
                     show: true,
-                    title: 'ChatGPT',
+                    title: '插件工具',
                     icon: 'SetUp',
                 },
             },
@@ -182,12 +204,12 @@ router.beforeEach(async (to, from, next) => {
     } else {
         // 不存在token，就跳转到登陆页
         if (gitToken) {
-          // 存在token,就跳转到主页
-          next()
-      } else {
-          //否则就继续
-          next("/")
-      }
+            // 存在token,就跳转到主页
+            next()
+        } else {
+            //否则就继续
+            next('/')
+        }
     }
 })
 

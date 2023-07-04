@@ -4,11 +4,11 @@
       <img v-if="userStore.theme === 'light'" :src="logoLight" alt="" class="logo-img" />
       <img v-else :src="logoDark" alt="" class="logo-img" />
       <div class="api-pro">
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="percentage2" :color="colors" status="exception">
+        <el-progress :text-inside="true" :stroke-width="20" :percentage="userStore.apiRate" :color="colors" status="exception">
           <el-tooltip class="box-item"
             :content="`每小时可发送5000个请求, 已使用：${userStore.apiLimit.used}, 剩余：${userStore.apiLimit.remaining} 恢复时间：${timestampToTime(userStore.apiLimit.reset)}`"
             placement="right">
-            <span>API用量:{{ percentage2.toFixed(2) }}%</span>
+            <span>API剩余:{{ userStore.apiRate.toFixed(2) }}%</span>
           </el-tooltip>
         </el-progress>
       </div>
@@ -72,18 +72,13 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import useTheme from '@/hooks/theme'
 import { useI18n } from 'vue-i18n'
-import { onMounted, ref } from 'vue'
 import { timestampToTime } from "@/utils/index"
 import { getApiLimit } from '@/utils/request';
 
 getApiLimit()
-
 const { locale } = useI18n()
-
 const userStore = useUserStore()
-
 // 进度条颜色
-const percentage2 = ref(((userStore.apiLimit.remaining / userStore.apiLimit.limit) * 100))
 const colors = [
   { color: '#f53434', percentage: 20 },
   { color: '#f56c6c', percentage: 40 },
@@ -92,17 +87,12 @@ const colors = [
   { color: '#1989fa', percentage: 100 },
 ]
 
-onMounted(() => {
-  console.log("percentage2---", percentage2);
-})
-
 const router = useRouter()
 // 退出登录
 const loginOut = () => {
   localStorage.removeItem("gitToken")
   router.push('/')
 }
-
 // 语言切换
 const changeLang = (lang: string) => {
   locale.value = lang
