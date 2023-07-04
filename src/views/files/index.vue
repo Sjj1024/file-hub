@@ -13,7 +13,9 @@
           </el-icon>
         </el-button>
         <el-button text @click="getFileList('/root')" class="path-btn">
-          <el-icon class="path-icon"><HomeFilled /></el-icon>
+          <el-icon class="path-icon">
+            <HomeFilled />
+          </el-icon>
         </el-button>
         <el-button text @click="getFileList(null)" class="path-btn">
           <el-icon class="path-icon">
@@ -26,7 +28,7 @@
       </div>
       <div class="action">
         <template v-if="!moreActionShow">
-          <el-button type="primary" round plain>
+          <el-button type="primary" round plain @click="startUpload">
             上传文件
             <el-icon class="el-icon--right">
               <Upload />
@@ -91,7 +93,7 @@
           'item-seled': file.selected,
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave="fileCloseTips(file)" @dblclick="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
+          @mouseleave="fileCloseTips(file)" @dblclick.self="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
           <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
           <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
           <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
@@ -116,8 +118,8 @@
         </div>
       </el-tooltip>
       <!-- 网格布局的上传文件按钮 -->
-      <div v-if="showStyle === 'grid'" class="upload-file">
-        <el-upload class="upload-inner" :auto-upload="false" drag multiple :on-change="handleUploadChange"
+      <div v-show="showStyle === 'grid'" class="upload-file">
+        <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
           :show-file-list="false">
           <el-icon>
             <Plus />
@@ -126,7 +128,7 @@
         <div class="upload-name">上传文件</div>
       </div>
       <!-- 列表布局 -->
-      <el-table v-else :data="gitFileList" style="width: 100%">
+      <el-table v-if="showStyle !== 'grid'" :data="gitFileList" style="width: 100%">
         <el-table-column width="26">
           <template #header>
             <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="checkAllChange"></el-checkbox>
@@ -356,7 +358,7 @@ const fileSelChange = (e: any, item: any) => {
   console.log('fileSelChange---', e, item)
 }
 
-// 上传文件按钮事件
+// 上传文件回调事件
 const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   console.log('handleUploadChange----', uploadFile, uploadFiles)
   // 当前日期
@@ -365,11 +367,12 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
     var reader = new FileReader()
     reader.readAsDataURL(uploadFile.raw)
     reader.onload = function (event: any) {
+      // 用于预览图片
       gitFileList.push({
         name: uploadFile.name,
         path: event!.target.result,
-        type: getType(uploadFile.raw.type, uploadFile.name),
-        size: (uploadFile.size / 1024 / 1024).toFixed(2).toString(),
+        type: getType(uploadFile.raw.type, uploadFile),
+        size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
         openLink: 'https://element-plus.gitee.io/',
         downLink: 'https://element-plus.gitee.io/',
         htmlLink: '',
@@ -378,6 +381,15 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
         selected: false,
         showTips: false,
         uploading: true,
+      })
+      // 用于上传图片
+      fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
+        "message": "Upload From FileHub",
+        "content": event!.target.result.split("base64,")[1]
+      }).then(res => {
+        console.log("上传文件结果:", res);
+      }).catch(error => {
+        console.log("上传文件错误:", error);
       })
     }
   } else {
@@ -399,9 +411,11 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   console.log('gitFileList-----', gitFileList)
 }
 
-// 手动上传文件
+// 上传文件
 const startUpload = () => {
-  console.log('开始上传文件')
+  const uploadBox = document.querySelector('div.el-upload-dragger') as HTMLDivElement
+  console.log('开始上传文件', uploadBox)
+  uploadBox.click()
 }
 
 // 搜索
@@ -502,7 +516,7 @@ const getType = (fileType: string, curFile: any) => {
 
 // 发送请求获取根目录文件内容
 let gitFileList: fileRes[] = reactive([])
-const getFileList = (path:string | null) => {
+const getFileList = (path: string | null) => {
   loading.value = true
   gitFileList.length = 0
   path ? filePath.value = path : ""
@@ -510,13 +524,14 @@ const getFileList = (path:string | null) => {
   fileApi.getFiles(filePath.value).then((fileRes) => {
     console.log("fileRes------", fileRes)
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
+      var fileType = getType(cur.type, cur)
       cur.name !== '.gitkeep' && pre.push({
         name: cur.name,
         path: cur.path,
-        type: getType(cur.type, cur),
+        type: fileType,
         size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
-        openLink: getType(cur.type, cur) === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
-        downLink: getType(cur.type, cur) === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
+        openLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
+        downLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
         htmlLink: cur.html_url,
         creatTime: '2021-08-22',
         selected: false,
@@ -597,6 +612,7 @@ $column-gap: 16px;
 
     .path-icon {
       font-size: 19px;
+
       :hover {
         color: #337ecc;
       }

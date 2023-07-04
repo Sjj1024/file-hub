@@ -6,7 +6,7 @@ const userStore = useUserStore()
 
 export default {
     getFiles(path: string) {
-        console.log("getFilespath---", path);
+        console.log('getFilespath---', path)
         return http(userStore.gitPath + path, {
             method: 'get',
         })
@@ -14,6 +14,12 @@ export default {
     creatIssue(body: any) {
         return http('/repos/Sjj1024/DataHub/issues', {
             method: 'post',
+            body: Body.json(body),
+        })
+    },
+    uploadFile(filePath:string, body: any) {
+        return http(`/repos/${userStore.gitName}/${userStore.gitRepo}/contents${filePath}`, {
+            method: 'put',
             body: Body.json(body),
         })
     },

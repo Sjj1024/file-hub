@@ -1,7 +1,7 @@
 <template>
   <div class="pic">
     <keep-alive>
-      <el-image :src="imgUrl" class="preview" fit="cover" loading="lazy" lazy hide-on-click-modal
+      <el-image :src="imgUrl" class="preview" fit="cover"
         :preview-src-list="srcList" :initial-index="preImgIndex" infinite @close="closePre">
         <template #placeholder>
           <img :src="loadingGif" alt="" class="preview">
@@ -18,7 +18,6 @@
 import error from '@/assets/image/error.png'
 import loadingGif from "@/assets/image/loadColor.gif"
 import { fileRes } from '@/utils/useTypes';
-// import { nextTick } from 'vue';
 
 // 父子组件传值
 const props = defineProps<{
@@ -30,8 +29,8 @@ const props = defineProps<{
 // 查找图片的索引
 const preImgIndex = props.srcList.indexOf(props.imgUrl)
 
-const closePre = ()=>{
-  console.log("关闭弹窗预览");
+const closePre = () => {
+  console.log("关闭弹窗预览", props.srcList);
   props.fileImg.showTips = false
 }
 
