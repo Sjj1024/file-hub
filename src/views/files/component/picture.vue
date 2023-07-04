@@ -30,7 +30,6 @@ const props = defineProps<{
 const preImgIndex = props.srcList.indexOf(props.imgUrl)
 
 const closePre = () => {
-  console.log("关闭弹窗预览", props.srcList);
   props.fileImg.showTips = false
 }
 

@@ -93,7 +93,7 @@
           'item-seled': file.selected,
           'file-loading': file.uploading,
         }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave="fileCloseTips(file)" @dblclick.self="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
+          @mouseleave="fileCloseTips(file)" @dblclick.stop="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
           <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
           <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
           <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
@@ -186,7 +186,7 @@
       top: position.top + 'px',
       display: dirShowMenu ? 'block' : 'none',
     }" class="filemenu">
-      <li class="item">上传文件</li>
+      <li class="item" @click="startUpload">上传文件</li>
       <li class="item">新建文件夹</li>
       <li class="item">刷新目录</li>
     </ul>
@@ -210,6 +210,7 @@ import { ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
+import { fa } from 'element-plus/es/locale'
 
 const userStore = useUserStore()
 
@@ -251,7 +252,6 @@ const fileCloseTips = (file: fileRes) => {
 // 选中的某一个文件项
 const rightClickItem = ref('')
 const openMenu = (e: MouseEvent, item: any) => {
-  console.log('打开菜单', e)
   dirShowMenu.value = false
   // 如果文件是上传状态，则直接返回
   if (item.uploading) {
@@ -264,6 +264,7 @@ const openMenu = (e: MouseEvent, item: any) => {
   const headerHeight = (
     document.querySelector('.tools-box') as HTMLDivElement
   ).offsetTop
+  console.log('打开菜单', e, headerHeight)
   showMenu.value = true
   position.value.top = e.clientY - headerHeight - 36
   position.value.left = e.clientX - sideBarWidth + 2
@@ -304,7 +305,7 @@ const frontBtn = () => {
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
   // 如果是上传中或者是图片，就不允许双击
-  if (file.uploading || file.type === fileTypes.picture || file.type === fileTypes.document || file.type === fileTypes.other) {
+  if (file.uploading || file.type === "picture" || file.type === "document" || file.type === "other") {
     return
   } else if (file.type === "foler") {
     loading.value = true
@@ -363,41 +364,17 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   console.log('handleUploadChange----', uploadFile, uploadFiles)
   // 当前日期
   var date = new Date()
-  if (uploadFile.raw.type.includes('image') !== -1) {
-    var reader = new FileReader()
-    reader.readAsDataURL(uploadFile.raw)
-    reader.onload = function (event: any) {
-      // 用于预览图片
-      gitFileList.push({
-        name: uploadFile.name,
-        path: event!.target.result,
-        type: getType(uploadFile.raw.type, uploadFile),
-        size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
-        openLink: 'https://element-plus.gitee.io/',
-        downLink: 'https://element-plus.gitee.io/',
-        htmlLink: '',
-        creatTime: `${date.getFullYear()}-${date.getMonth() + 1
-          }-${date.getDate()}`,
-        selected: false,
-        showTips: false,
-        uploading: true,
-      })
-      // 用于上传图片
-      fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
-        "message": "Upload From FileHub",
-        "content": event!.target.result.split("base64,")[1]
-      }).then(res => {
-        console.log("上传文件结果:", res);
-      }).catch(error => {
-        console.log("上传文件错误:", error);
-      })
-    }
-  } else {
-    gitFileList.push({
+  var reader = new FileReader()
+  var uploadType = getType(uploadFile.raw.type, uploadFile)
+  reader.readAsDataURL(uploadFile.raw)
+  reader.onload = function (event: any) {
+    // 用于预览图片
+    var uploadFileRaw = reactive({
       name: uploadFile.name,
-      path: '',
-      type: getType(uploadFile.raw.type, uploadFile.name),
-      size: (uploadFile.size / 1024 / 1024).toFixed(2).toString(),
+      path: uploadType === 'picture' ? event!.target.result : "",
+      type: uploadType,
+      size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
+      sha: "",
       openLink: 'https://element-plus.gitee.io/',
       downLink: 'https://element-plus.gitee.io/',
       htmlLink: '',
@@ -406,6 +383,20 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
       selected: false,
       showTips: false,
       uploading: true,
+    })
+    gitFileList.push(uploadFileRaw)
+    // 用于上传图片
+    fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
+      "message": "Upload From FileHub",
+      "content": event!.target.result.split("base64,")[1]
+    }).then((res: any) => {
+      console.log("上传文件结果:", res);
+      uploadFileRaw.uploading = false
+      uploadFileRaw.sha = res.data.content.sha
+      uploadFileRaw.openLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
+      uploadFileRaw.downLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
+    }).catch(error => {
+      console.log("上传文件错误:", error);
     })
   }
   console.log('gitFileList-----', gitFileList)
@@ -530,6 +521,7 @@ const getFileList = (path: string | null) => {
         path: cur.path,
         type: fileType,
         size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
+        sha: cur.sha,
         openLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
         downLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
         htmlLink: cur.html_url,
@@ -649,7 +641,7 @@ $column-gap: 16px;
 .file-name {
   text-align: center;
   width: 90px;
-  height: 20px;
+  // height: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

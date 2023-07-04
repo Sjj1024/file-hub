@@ -27,6 +27,6 @@ app.use(i18n)
 
 // 使用路由
 app.use(router)
-await router.isReady()
+// await router.isReady()
 
 app.mount('#app')

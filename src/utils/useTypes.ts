@@ -3,6 +3,7 @@ interface fileRes {
   path: string
   type: string
   size: string
+  sha: string
   openLink: string
   downLink: string
   htmlLink: string
