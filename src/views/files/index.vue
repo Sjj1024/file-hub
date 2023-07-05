@@ -264,9 +264,9 @@ const openMenu = (e: MouseEvent, item: any) => {
   const headerHeight = (
     document.querySelector('.tools-box') as HTMLDivElement
   ).offsetTop
-  console.log('打开菜单', e, headerHeight)
+  const scroTop = (document.querySelector('div.main-box') as HTMLDivElement).scrollTop
   showMenu.value = true
-  position.value.top = e.clientY - headerHeight - 36
+  position.value.top = e.pageY - headerHeight - 36 + scroTop
   position.value.left = e.clientX - sideBarWidth + 2
   rightClickItem.value = item
   // 显示文件提示内容
@@ -331,7 +331,8 @@ const openDirMenu = (e: MouseEvent) => {
     document.querySelector('.tools-box') as HTMLDivElement
   ).offsetTop
   dirShowMenu.value = true
-  position.value.top = e.clientY - headerHeight - 36
+  const scroTop = (document.querySelector('div.main-box') as HTMLDivElement).scrollTop
+  position.value.top = e.clientY - headerHeight - 36 + scroTop
   position.value.left = e.clientX - sideBarWidth + 2
 }
 // 点击项目后关闭右键
