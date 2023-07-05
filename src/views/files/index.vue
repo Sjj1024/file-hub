@@ -174,11 +174,12 @@
       top: position.top + 'px',
       display: showMenu ? 'block' : 'none',
     }" class="filemenu">
-      <li class="item">分享链接</li>
-      <li class="item">重新命名</li>
-      <li class="item">下载文件</li>
-      <li class="item">详细信息</li>
-      <li class="item">删除文件</li>
+      <li class="item" @click="copyLink">复制链接</li>
+      <li class="item" @click="shareFile">分享资源</li>
+      <li class="item" @click="renameFile">重新命名</li>
+      <li class="item" @click="downFile">下载文件</li>
+      <li class="item" @click="infoFile">详细信息</li>
+      <li class="item" @click="deleteFile">删除文件</li>
     </ul>
     <!-- 目录右键菜单 -->
     <ul v-show="dirShowMenu" :style="{
@@ -187,8 +188,8 @@
       display: dirShowMenu ? 'block' : 'none',
     }" class="filemenu">
       <li class="item" @click="startUpload">上传文件</li>
-      <li class="item">新建文件夹</li>
-      <li class="item">刷新目录</li>
+      <li class="item" @click="newDir">新建文件夹</li>
+      <li class="item" @click="getFileList(null)">刷新目录</li>
     </ul>
   </div>
   <!-- 文件打开弹窗 -->
@@ -206,7 +207,7 @@ import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
 import fileDialog from "@/views/files/component/filedialog.vue"
-import { ElTable } from 'element-plus'
+import { ElMessage, ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
@@ -250,8 +251,8 @@ const fileCloseTips = (file: fileRes) => {
   // console.log("点击文件后---", file);
 }
 // 选中的某一个文件项
-const rightClickItem = ref('')
-const openMenu = (e: MouseEvent, item: any) => {
+let rightClickItem: fileRes
+const openMenu = (e: MouseEvent, item: fileRes) => {
   dirShowMenu.value = false
   // 如果文件是上传状态，则直接返回
   if (item.uploading) {
@@ -268,7 +269,7 @@ const openMenu = (e: MouseEvent, item: any) => {
   showMenu.value = true
   position.value.top = e.pageY - headerHeight - 36 + scroTop
   position.value.left = e.clientX - sideBarWidth + 2
-  rightClickItem.value = item
+  rightClickItem = item
   // 显示文件提示内容
   item.showTips = false
 }
@@ -401,6 +402,61 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
     })
   }
   console.log('gitFileList-----', gitFileList)
+}
+
+// 复制链接
+const copyLink = () => {
+  console.log("rightClickItem----", rightClickItem)
+  navigator.clipboard.writeText(rightClickItem.openLink).then(() => {
+    ElMessage({
+      message: '复制成功，快去分享吧',
+      type: 'success',
+    })
+  })
+}
+
+// 分享资源
+const shareFile = () => {
+  console.log("分享资源");
+}
+
+// 重命名
+const renameFile = () => {
+  console.log("重命名资源");
+}
+
+// 下载
+const downFile = () => {
+  console.log("下载资源");
+}
+
+// 详情
+const infoFile = () => {
+  console.log("详情资源");
+}
+
+// 删除资源
+const deleteFile = () => {
+  console.log("删除资源");
+  fileApi.delFile(rightClickItem.path, {
+    "message": "delete from FileHub",
+    "sha": rightClickItem.sha
+  }).then((res) => {
+    console.log("删除成功", res);
+    ElMessage({
+      message: '删除成功',
+      type: 'success',
+    })
+    getFileList(null)
+  }).catch((e) => {
+    console.log("删除错误：", e);
+    ElMessage.error('删除失败:' + e)
+  })
+}
+
+// 新建文件夹
+const newDir = () => {
+  console.log("新建文件夹");
 }
 
 // 上传文件

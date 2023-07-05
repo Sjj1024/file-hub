@@ -32,7 +32,7 @@ export default {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            body: Body.json(body),
+            body,
         })
     },
     frokFileHub(token: string, body: any) {
@@ -41,7 +41,7 @@ export default {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            body: Body.json(body),
+            body,
         })
     }
 }

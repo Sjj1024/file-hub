@@ -1,5 +1,4 @@
 import http from '@/utils/request'
-import { Body } from '@tauri-apps/api/http'
 
 // {
 //   "body": "I'm having a problem with this.",
@@ -18,7 +17,7 @@ export default {
     creatIssue(body: any) {
         return http('/repos/Sjj1024/DataHub/issues', {
             method: 'post',
-            body: Body.json(body),
+            body,
         })
     },
     registUser(token: string, body: any) {
@@ -27,7 +26,7 @@ export default {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            body: Body.json(body),
+            body,
         })
     },
     creatGitPage(user: string, repo:string, token: string, body: any) {
@@ -36,7 +35,7 @@ export default {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            body: Body.json(body),
+            body,
         })
     },
 }

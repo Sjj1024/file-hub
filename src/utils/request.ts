@@ -1,5 +1,6 @@
 import { HttpVerb, fetch } from '@tauri-apps/api/http'
 import { useUserStore } from '@/stores/user'
+import { Body } from '@tauri-apps/api/http'
 
 const server = 'https://api.github.com'
 const baseURL = `${server}`
@@ -59,6 +60,7 @@ const http = async (url: string, options: any = {}) => {
             Authorization: userStore.gitToken,
         }
     if (options?.body) {
+        options.body = Body.json(options.body)
         if (options.body.type === BODY_TYPE.Form) {
             options.headers['Content-Type'] = 'multipart/form-data'
         }
