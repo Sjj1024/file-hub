@@ -104,7 +104,7 @@ onMounted(() => {
     // }
     // 设置预览图和隐藏全屏按钮
     dplayer?.seek(0.1);
-    console.log("video dplayer--------", dplayer);
+    // console.log("video dplayer--------", dplayer);
   }, 1)
 })
 

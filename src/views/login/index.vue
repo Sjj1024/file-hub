@@ -38,8 +38,8 @@ sign_up
       <!-- <span class="form__span">or use email for registration</span> -->
       <input class="form__input" type="text" v-model="loginForm.userName" @input="cantSpace"
         :placeholder="$t('login.userName')" />
-      <input class="form__input" type="password" v-model="loginForm.password" @input="cantSpace"
-        :placeholder="$t('login.password')" />
+      <input class="form__input" type="password" @keydown.enter="loginAction" v-model="loginForm.password"
+        @input="cantSpace" :placeholder="$t('login.password')" />
       <input class="form__input" type="text" v-model="loginForm.gitToken" @input="cantSpace" placeholder="Github Token" />
       <div class="login-info">
         <a class="form__link" @click="forgetPassword">{{
@@ -71,7 +71,7 @@ sign_up
       <input v-if="loginModel === '登陆'" class="form__input" @input="cantSpace" type="text" v-model="loginForm.userName"
         :placeholder="$t('login.userName')" />
       <input v-if="loginModel === '登陆'" class="form__input" type="password" v-model="loginForm.password"
-        :placeholder="$t('login.password')" @input="cantSpace" />
+        :placeholder="$t('login.password')" @keydown.enter="loginAction" @input="cantSpace" />
       <input v-if="loginModel === 'token'" @input="cantSpace" class="form__input" type="text" v-model="loginForm.gitToken"
         placeholder="Token" />
       <div class="login-info">

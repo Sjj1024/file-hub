@@ -19,6 +19,23 @@ a:hover {
     color: #409eff;
 }
 
+.confirm-btn {
+    background-color: #409eff !important;
+    border-color: unset;
+}
+
+.confirm-btn:focus-visible {
+    outline: unset;
+}
+
+.confirm-btn:active {
+    background-color: #337ecc !important;
+}
+
+.confirm-btn:hover {
+    background-color: #79bbff !important;
+}
+
 // 文件列表中的文件高度
 $file-height: 80px;
 // 文件图标宽高

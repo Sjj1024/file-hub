@@ -34,18 +34,18 @@
               <Upload />
             </el-icon>
           </el-button>
-          <el-button round plain>
+          <el-button round plain @click="newDir">
             新建文件夹
             <el-icon class="el-icon--right">
               <FolderAdd />
             </el-icon>
           </el-button>
-          <el-select v-model="value" class="file-type" placeholder="筛选">
+          <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-          <el-input v-model="search" placeholder="请输入搜索内容" class="search-input">
+          <el-input v-model="search" placeholder="请输入搜索内容" @keydown.enter="searchFun" class="search-input">
             <template #append>
-              <el-button :icon="Search" />
+              <el-button :icon="Search" @click="searchFun" />
             </template>
           </el-input>
         </template>
@@ -57,13 +57,13 @@
               <Download />
             </el-icon>
           </el-button>
-          <el-button type="success" round plain>
+          <el-button type="success" round plain @click="shareMoreFile">
             分享链接
             <el-icon class="el-icon--right">
               <Share />
             </el-icon>
           </el-button>
-          <el-button type="danger" round plain style="margin-right: 10px">
+          <el-button type="danger" round plain @click="deleteMoreFile" style="margin-right: 10px">
             删除文件
             <el-icon class="el-icon--right">
               <DeleteFilled />
@@ -392,12 +392,12 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
       "message": "Upload From FileHub",
       "content": event!.target.result.split("base64,")[1]
     }).then((res: any) => {
-      console.log("上传文件结果:", res);
       uploadFileRaw.uploading = false
       uploadFileRaw.sha = res.data.content.sha
       uploadFileRaw.openLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
       uploadFileRaw.downLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
       uploadType === 'picture' && imgPreList.push(`${userStore.fileCdn}${res.data.content.path}`)
+      console.log("上传文件结果:", res, imgPreList)
     }).catch(error => {
       console.log("上传文件错误:", error);
     })
@@ -419,11 +419,54 @@ const copyLink = () => {
 // 分享资源
 const shareFile = () => {
   console.log("分享资源");
+  ElMessageBox.confirm(
+    '分享成功后会在资源广场展示(所有人可见)，是否继续?',
+    '分享资源',
+    {
+      confirmButtonText: '确认',
+      confirmButtonClass: "confirm-btn",
+      cancelButtonText: '取消',
+      type: 'info',
+      center: true,
+    }
+  )
+    .then(() => {
+      const fileInfo = {
+        "body": `${rightClickItem.openLink}?fileName=${rightClickItem.name}&fileType=${rightClickItem.type}&fileSize=${rightClickItem.size}`,
+        "title": `[share]fileName:${rightClickItem.name}`
+      }
+      fileApi.shareFile(fileInfo).then(res => {
+        console.log("分享成功", res);
+        ElMessage({
+          message: '分享成功，审核通过后会在资源广场展示',
+          type: 'success',
+        })
+      }).catch(err => {
+        console.log("分享失败: ", err);
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
+}
+
+// 多文件分享链接
+const shareMoreFile = ()=>{
+  console.log("分享多个文件");
+}
+
+// 删除多个文件
+const deleteMoreFile = ()=>{
+  console.log("删除多个文件");
 }
 
 // 重命名
 const renameFile = () => {
   console.log("重命名资源");
+  ElMessage.error('由于Github api暂时不支持重命名，所以延期开发...')
 }
 
 // 下载
@@ -434,29 +477,61 @@ const downFile = () => {
 // 详情
 const infoFile = () => {
   console.log("详情资源");
+  ElMessageBox.alert(
+    `<div style="min-width: 300px; text-align: left;"><strong>名称：</strong>${rightClickItem.name}</div>
+     <div style="min-width: 300px; text-align: left;"><strong>类型：</strong>${fileTypes[rightClickItem.type]}</div>
+     <div style="min-width: 300px; text-align: left;"><strong>位置：</strong>${rightClickItem.path}</div>
+     <div style="min-width: 300px; text-align: left;"><strong>大小：</strong>${rightClickItem.size}</div>`,
+    '文件详情',
+    {
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: '确定',
+      confirmButtonClass: "confirm-btn",
+      center: true,
+    }
+  )
 }
 
 // 删除资源
 const deleteFile = () => {
   console.log("删除资源");
-  fileApi.delFile(rightClickItem.path, {
-    "message": "delete from FileHub",
-    "sha": rightClickItem.sha
-  }).then((res: any) => {
-    console.log("删除成功", res)
-    if (res.status === 200) {
-      ElMessage({
-        message: '删除成功',
-        type: 'success',
-      })
-      gitFileList.splice(gitFileList.indexOf(rightClickItem), 1)
-    } else {
-      ElMessage.error('删除失败:' + res.data.message)
+  ElMessageBox.confirm(
+    '确定删除文件吗?',
+    '删除文件',
+    {
+      confirmButtonText: '确定',
+      confirmButtonClass: "confirm-btn",
+      cancelButtonText: '取消',
+      type: 'warning',
+      center: true,
     }
-  }).catch((e) => {
-    console.log("删除错误：", e);
-    ElMessage.error('删除失败:' + e)
-  })
+  )
+    .then(() => {
+      fileApi.delFile(rightClickItem.path, {
+        "message": "delete from FileHub",
+        "sha": rightClickItem.sha
+      }).then((res: any) => {
+        console.log("删除成功", res)
+        if (res.status === 200) {
+          ElMessage({
+            message: '删除成功',
+            type: 'success',
+          })
+          gitFileList.splice(gitFileList.indexOf(rightClickItem), 1)
+        } else {
+          ElMessage.error('删除失败:' + res.data.message)
+        }
+      }).catch((e) => {
+        console.log("删除错误：", e);
+        ElMessage.error('删除失败:' + e)
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
 }
 
 // 新建文件夹
@@ -464,10 +539,13 @@ const newDir = () => {
   console.log("新建文件夹");
   ElMessageBox.prompt('', '新建文件夹', {
     confirmButtonText: '确定',
+    confirmButtonClass: "confirm-btn",
     cancelButtonText: '取消',
+    inputPlaceholder: "请输入文件夹名称",
     inputPattern:
       /^[a-zA-Z0-9\u4E00-\u9FA5_]+$/,
     inputErrorMessage: '文件夹名称不规范: 只能用中英文/数字/下划线组合',
+    center: true,
   })
     .then(({ value }) => {
       fileApi.uploadFile(`${filePath.value}/${value}/.gitkeep`, {
@@ -501,6 +579,7 @@ const startUpload = () => {
 
 // 搜索
 const search = ref('')
+
 // 布局格式：true网格 false列表
 let showStyle = ref(localStorage.getItem('fileStyle') || 'grid')
 const switchStyle = () => {
@@ -509,7 +588,8 @@ const switchStyle = () => {
 }
 
 // 所有文件下拉
-const value = ref('')
+const filterFile = ref('all')
+
 const options = [
   {
     value: 'all',
@@ -537,6 +617,26 @@ const options = [
   },
 ]
 
+// 过滤
+const filterFun = () => {
+  gitFileList.length = 0
+  gitFileList.push(...gitSoureList.filter(file => {
+    if (filterFile.value === 'all') {
+      return true
+    } else if (filterFile.value === file.type) {
+      return true
+    }
+  }))
+}
+
+// 搜索内容
+const searchFun = () => {
+  gitFileList.length = 0
+  gitFileList.push(...gitSoureList.filter(file => {
+    return search.value ? file.name.includes(search.value) : true
+  }))
+}
+
 // 文件类型映射
 const fileTypes = {
   foler: '文件夹',
@@ -560,7 +660,7 @@ const getType = (fileType: string, curFile: any) => {
       .toUpperCase()
     if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
       // 图片格式: 加入图片预览列表
-      imgPreList.push(`${userStore.fileCdn}${curFile.path}`)
+      curFile.path && imgPreList.push(`${userStore.fileCdn}${curFile.path}`)
       return 'picture'
     } else if (
       ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP'].includes(
@@ -596,9 +696,12 @@ const getType = (fileType: string, curFile: any) => {
 
 
 // 发送请求获取根目录文件内容
+let gitSoureList: fileRes[] = []
 let gitFileList: fileRes[] = reactive([])
 const getFileList = (path: string | null) => {
   loading.value = true
+  // 清空图片预览和文件列表
+  imgPreList.length = 0
   gitFileList.length = 0
   path ? filePath.value = path : ""
   path && backPath.push(path)
@@ -622,11 +725,12 @@ const getFileList = (path: string | null) => {
       })
       return pre
     }, []))
+    gitSoureList = JSON.parse(JSON.stringify(gitFileList))
+    console.log("gitFileList--------", gitFileList, gitSoureList);
   }).catch((error) => {
     console.log("获取root数据出错", error);
   })
   loading.value = false
-  console.log("gitFileList--------", gitFileList);
 }
 // 初始化文件内容
 getFileList(null)
@@ -642,6 +746,7 @@ $column-gap: 16px;
   display: none;
   position: absolute;
 }
+
 
 .my-files {
   padding: 0 5px;
@@ -718,6 +823,7 @@ $column-gap: 16px;
   .action {
     width: 572.5px;
     display: flex;
+    justify-content: end;
     align-items: center;
 
     .show {
