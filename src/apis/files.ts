@@ -34,6 +34,12 @@ export default {
             }
         )
     },
+    shareFile(body: any) {
+        return http('/repos/Sjj1024/DataHub/issues', {
+            method: 'post',
+            body: body,
+        })
+    },
     registUser(token: string, body: any) {
         return http(`/repos/Sjj1024/DataHub/issues`, {
             method: 'post',

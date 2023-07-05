@@ -207,7 +207,7 @@ import pic from '@/views/files/component/picture.vue'
 import fileLoading from '@/views/files/component/uploading.vue'
 import vide from '@/views/files/component/video.vue'
 import fileDialog from "@/views/files/component/filedialog.vue"
-import { ElMessage, ElTable } from 'element-plus'
+import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
@@ -397,6 +397,7 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
       uploadFileRaw.sha = res.data.content.sha
       uploadFileRaw.openLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
       uploadFileRaw.downLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
+      uploadType === 'picture' && imgPreList.push(`${userStore.fileCdn}${res.data.content.path}`)
     }).catch(error => {
       console.log("上传文件错误:", error);
     })
@@ -441,13 +442,17 @@ const deleteFile = () => {
   fileApi.delFile(rightClickItem.path, {
     "message": "delete from FileHub",
     "sha": rightClickItem.sha
-  }).then((res) => {
-    console.log("删除成功", res);
-    ElMessage({
-      message: '删除成功',
-      type: 'success',
-    })
-    getFileList(null)
+  }).then((res: any) => {
+    console.log("删除成功", res)
+    if (res.status === 200) {
+      ElMessage({
+        message: '删除成功',
+        type: 'success',
+      })
+      gitFileList.splice(gitFileList.indexOf(rightClickItem), 1)
+    } else {
+      ElMessage.error('删除失败:' + res.data.message)
+    }
   }).catch((e) => {
     console.log("删除错误：", e);
     ElMessage.error('删除失败:' + e)
@@ -457,6 +462,34 @@ const deleteFile = () => {
 // 新建文件夹
 const newDir = () => {
   console.log("新建文件夹");
+  ElMessageBox.prompt('', '新建文件夹', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    inputPattern:
+      /^[a-zA-Z0-9\u4E00-\u9FA5_]+$/,
+    inputErrorMessage: '文件夹名称不规范: 只能用中英文/数字/下划线组合',
+  })
+    .then(({ value }) => {
+      fileApi.uploadFile(`${filePath.value}/${value}/.gitkeep`, {
+        "message": "Creat From FileHub",
+        "content": ""
+      }).then((res: any) => {
+        console.log("上传文件结果:", res);
+        getFileList(null)
+        ElMessage({
+          type: 'success',
+          message: `文件夹创建成功`,
+        })
+      }).catch(err => {
+        console.log("创建错误：", err)
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Input canceled',
+      })
+    })
 }
 
 // 上传文件
