@@ -27,7 +27,29 @@
         </el-tooltip>
       </div>
       <div class="action">
-        <template v-if="!moreActionShow">
+        <!-- 多选文件时候的下载，分享，删除按钮  -->
+        <template v-if="selectedNum">
+          <el-button type="primary" round plain>
+            下载文件
+            <el-icon class="el-icon--right">
+              <Download />
+            </el-icon>
+          </el-button>
+          <el-button type="success" round plain @click="shareMoreFile">
+            分享链接
+            <el-icon class="el-icon--right">
+              <Share />
+            </el-icon>
+          </el-button>
+          <el-button type="danger" round plain @click="deleteMoreFile" style="margin-right: 10px">
+            删除文件
+            <el-icon class="el-icon--right">
+              <DeleteFilled />
+            </el-icon>
+          </el-button>
+        </template>
+
+        <template v-else>
           <el-button type="primary" round plain @click="startUpload">
             上传文件
             <el-icon class="el-icon--right">
@@ -48,27 +70,6 @@
               <el-button :icon="Search" @click="searchFun" />
             </template>
           </el-input>
-        </template>
-        <!-- 多选文件时候的下载，分享，删除按钮  -->
-        <template v-else>
-          <el-button type="primary" round plain>
-            下载文件
-            <el-icon class="el-icon--right">
-              <Download />
-            </el-icon>
-          </el-button>
-          <el-button type="success" round plain @click="shareMoreFile">
-            分享链接
-            <el-icon class="el-icon--right">
-              <Share />
-            </el-icon>
-          </el-button>
-          <el-button type="danger" round plain @click="deleteMoreFile" style="margin-right: 10px">
-            删除文件
-            <el-icon class="el-icon--right">
-              <DeleteFilled />
-            </el-icon>
-          </el-button>
         </template>
 
         <span @click="switchStyle">
@@ -109,6 +110,7 @@
           <!-- 多选框 -->
           <el-checkbox v-if="!file.uploading" :class="{
             'file-select': true,
+            'hiden-check': file.type === 'foler',
             'check-show': file.selected,
           }" v-model="file.selected" @change="(e) => fileSelChange(e, file)"></el-checkbox>
           <!-- 文件属性提示符 -->
@@ -218,6 +220,12 @@ const userStore = useUserStore()
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
 const loading = ref(true)
+
+// 计算属性：计算选中了几个文件
+const selectedNum = computed(() => gitFileList.reduce((pre: any, cur: any) => {
+  cur.selected && pre.push(cur)
+  return pre
+}, []).length)
 
 // 文件弹窗
 const fileLog = ref()
@@ -454,13 +462,41 @@ const shareFile = () => {
 }
 
 // 多文件分享链接
-const shareMoreFile = ()=>{
+const shareMoreFile = () => {
   console.log("分享多个文件");
 }
 
 // 删除多个文件
-const deleteMoreFile = ()=>{
+const deleteMoreFile = () => {
   console.log("删除多个文件");
+  ElMessageBox.confirm(
+    '确定删除多个文件吗?',
+    '删除多个文件',
+    {
+      confirmButtonText: '确定',
+      confirmButtonClass: "confirm-btn",
+      cancelButtonText: '取消',
+      type: 'warning',
+      center: true,
+    }
+  )
+    .then(() => {
+      gitFileList.forEach(file => {
+        if (file.selected) {
+          fileApi.delFile(rightClickItem.path, {
+            "message": "delete from FileHub",
+            "sha": rightClickItem.sha
+          })
+        }
+      }
+      )
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
 }
 
 // 重命名
@@ -908,6 +944,10 @@ $column-gap: 16px;
       top: 3px;
       left: 5px;
       display: none;
+    }
+
+    .hiden-check {
+      display: none !important;
     }
 
     .more-action {
