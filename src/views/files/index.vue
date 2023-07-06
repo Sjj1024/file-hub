@@ -69,13 +69,12 @@
           <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-          <el-input v-model="search" placeholder="请输入搜索内容" @keydown.enter="searchFun" class="search-input">
+          <el-input v-model="search" placeholder="请输入搜索内容" clearable @input="searchFun" class="search-input">
             <template #append>
               <el-button :icon="Search" @click="searchFun" />
             </template>
           </el-input>
         </template>
-
         <span @click="switchStyle">
           <span v-if="showStyle === 'grid'" class="iconfont show">&#xe7f6;</span>
           <span v-else class="iconfont show">&#xe7f7;</span>
@@ -162,13 +161,25 @@
             {{ fileTypes[scope.row.type] }}</template>
         </el-table-column>
         <el-table-column property="size" width="80" label="大小" />
-        <el-table-column label="操作" width="196" class-name="table-action">
+        <el-table-column label="操作" width="100" align='center' class-name="table-action">
           <template #default="scope">
             <div v-if="scope.row.uploading">上传中......</div>
             <div v-else>
-              <el-button type="success" plain size="small">分享</el-button>
-              <el-button type="primary" plain size="small">下载</el-button>
-              <el-button size="small" type="danger" plain>删除</el-button>
+              <el-dropdown>
+                <span class="dropdown-icon">
+                  <el-icon>
+                    <MoreFilled />
+                  </el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="copyLink(scope.row)">复制链接</el-dropdown-item>
+                    <el-dropdown-item @click="shareFile(scope.row)">分享资源</el-dropdown-item>
+                    <el-dropdown-item @click="downFile(scope.row)">下载文件</el-dropdown-item>
+                    <el-dropdown-item @click="deleteFile(scope.row)">删除文件</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </el-table-column>
@@ -260,7 +271,6 @@ const selectedLink = computed(() => gitFileList.reduce((pre: any, cur) => {
   cur.selected && pre.push(cur.openLink)
   return pre
 }, []))
-
 
 // 多文件分享链接
 const fileLinkContent = ref()
@@ -386,7 +396,7 @@ const frontBtn = () => {
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
   // 如果是上传中或者是图片，就不允许双击
-  if (file.uploading || file.type === "picture" || file.type === "document" || file.type === "other") {
+  if (file.uploading || file.type === "document" || file.type === "other") {
     return
   } else if (file.type === "foler") {
     loading.value = true
@@ -396,7 +406,7 @@ const handleFileDblClick = (file: fileRes) => {
     getFileList(null)
   } else {
     // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
-    fileLog.value.showFileDialog(true, file)
+    fileLog.value.showFileDialog(imgPreList, file)
   }
 }
 
@@ -486,9 +496,9 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
 }
 
 // 复制链接
-const copyLink = () => {
-  console.log("rightClickItem----", rightClickItem)
-  navigator.clipboard.writeText(rightClickItem.openLink).then(() => {
+const copyLink = (file?: any) => {
+  console.log("rightClickItem----", file)
+  navigator.clipboard.writeText(file ? file.openLink : rightClickItem.openLink).then(() => {
     ElMessage({
       message: '复制成功，快去分享吧',
       type: 'success',
@@ -497,11 +507,11 @@ const copyLink = () => {
 }
 
 // 分享资源
-const shareFile = () => {
+const shareFile = (file?: any) => {
   console.log("分享资源");
   ElMessageBox.confirm(
     '分享成功后会在资源广场展示(所有人可见)，是否继续?',
-    '分享资源',
+    '分享到资源广场',
     {
       confirmButtonText: '确认',
       confirmButtonClass: "confirm-btn",
@@ -511,9 +521,10 @@ const shareFile = () => {
     }
   )
     .then(() => {
+      const curFile = file ? file : rightClickItem
       const fileInfo = {
-        "body": `${rightClickItem.openLink}?fileName=${rightClickItem.name}&fileType=${rightClickItem.type}&fileSize=${rightClickItem.size}`,
-        "title": `[share]fileName:${rightClickItem.name}`
+        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${rightClickItem.size}`,
+        "title": `[share]fileName:${curFile.name}`
       }
       fileApi.shareFile(fileInfo).then(res => {
         console.log("分享成功", res);
@@ -576,7 +587,7 @@ const renameFile = () => {
 }
 
 // 下载
-const downFile = () => {
+const downFile = (file?: any) => {
   console.log("下载资源");
 }
 
@@ -599,7 +610,7 @@ const infoFile = () => {
 }
 
 // 删除资源
-const deleteFile = () => {
+const deleteFile = (file?: any) => {
   console.log("删除资源");
   ElMessageBox.confirm(
     '确定删除文件吗?',
@@ -613,9 +624,10 @@ const deleteFile = () => {
     }
   )
     .then(() => {
-      fileApi.delFile(rightClickItem.path, {
+      const curFile = file ? file : rightClickItem
+      fileApi.delFile(curFile.path, {
         "message": "delete from FileHub",
-        "sha": rightClickItem.sha
+        "sha": curFile.sha
       }).then((res: any) => {
         console.log("删除成功", res)
         if (res.status === 200) {
@@ -623,7 +635,7 @@ const deleteFile = () => {
             message: '删除成功',
             type: 'success',
           })
-          gitFileList.splice(gitFileList.indexOf(rightClickItem), 1)
+          gitFileList.splice(gitFileList.indexOf(curFile), 1)
         } else {
           ElMessage.error('删除失败:' + res.data.message)
         }
@@ -860,6 +872,15 @@ $column-gap: 16px;
   position: absolute;
 }
 
+.dropdown-icon {
+  padding: 4px 10px;
+  text-align: center;
+  color: #337ecc;
+
+  &:focus-visible {
+    outline: unset;
+  }
+}
 
 .my-files {
   padding: 0 5px;

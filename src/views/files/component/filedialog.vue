@@ -1,7 +1,16 @@
 <template>
   <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen class="file-dialog"
     @close="closeDialog">
-    <el-carousel indicator-position="none" :autoplay="false">
+    <!-- <el-image v-if="file.type === 'picture'" :src="file.openLink" class="preview" fit="cover"
+      :preview-src-list="imgPreList" :initial-index="preImgIndex" infinite @close="closePre">
+      <template #placeholder>
+        <img :src="loadingGif" alt="" class="preview">
+      </template>
+      <template #error>
+        <img :src="error" alt="加载失败" style="object-fit: fill; width: 100%; height: 100%" />
+      </template>
+    </el-image> -->
+    <el-carousel indicator-position="none" :autoplay="false" arrow="never">
       <!-- 根据文件类型展示不同的内容 -->
       <el-carousel-item v-if="file.type === 'picture'">
         <div class="img-box">
@@ -41,7 +50,7 @@ import Hls from 'hls.js';
 import Flv from "flv.js";
 import '@/utils/webtorrent.min.js';
 import DPlayer from 'dplayer';
-
+import error from '@/assets/image/error.png'
 /**
  * 可以用于播放的视频
  * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
@@ -53,6 +62,10 @@ import DPlayer from 'dplayer';
  */
 
 const centerDialogVisible = ref(false)
+
+const closePre = () => {
+  file.value.showTips = false
+}
 
 let file = ref({
   name: "",
@@ -67,6 +80,12 @@ let file = ref({
   showTips: false,
   uploading: false,
 })
+
+let imgPreList: string[] = []
+
+// 查找图片的索引
+let preImgIndex = ref(0)
+
 
 // 设施视频配置：预览图自动播放等
 let dplayer: { seek: (t: number) => void, destroy: () => void } | null = null
@@ -216,7 +235,7 @@ const setMusicInit = (file: fileRes) => {
 // .dplayer-video-wrap
 
 
-const showFileDialog = (source: Boolean, f: fileRes) => {
+const showFileDialog = (imgList: [], f: fileRes) => {
   // 弹窗
   centerDialogVisible.value = true
   // 赋值
@@ -225,14 +244,19 @@ const showFileDialog = (source: Boolean, f: fileRes) => {
       file.value[key] = f[key]
     }
   }
-  // 如果播放器存在，先销毁，以解决播放控制实现隐藏bug
-  if (dplayer) {
-    dplayer.destroy()
-  }
-  if (f.type === 'video') {
-    setVideoInit(f)
+  if (f.type === 'picture') {
+    imgPreList = imgList
+    preImgIndex.value = imgPreList.indexOf(f.openLink)
   } else {
-    setMusicInit(f)
+    // 如果播放器存在，先销毁，以解决播放控制实现隐藏bug
+    if (dplayer) {
+      dplayer.destroy()
+    }
+    if (f.type === 'video') {
+      setVideoInit(f)
+    } else {
+      setMusicInit(f)
+    }
   }
   console.log("videoBox-----", file);
 }
@@ -258,13 +282,13 @@ defineExpose({
 <style lang="scss">
 .file-dialog {
 
-  .img-box{
+  .img-box {
     width: 100%;
     height: 100%;
     text-align: center;
   }
 
-  .img-dialog{
+  .img-dialog {
     height: 100%;
   }
 
@@ -272,7 +296,7 @@ defineExpose({
     display: none;
   }
 
-  div#dplayer div.dplayer-video-wrap{
+  div#dplayer div.dplayer-video-wrap {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
