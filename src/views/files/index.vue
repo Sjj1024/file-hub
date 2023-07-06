@@ -509,6 +509,7 @@ const copyLink = (file?: any) => {
 // 分享资源
 const shareFile = (file?: any) => {
   console.log("分享资源");
+  const curFile = file ? file : rightClickItem
   ElMessageBox.confirm(
     '分享成功后会在资源广场展示(所有人可见)，是否继续?',
     '分享到资源广场',
@@ -521,9 +522,8 @@ const shareFile = (file?: any) => {
     }
   )
     .then(() => {
-      const curFile = file ? file : rightClickItem
       const fileInfo = {
-        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${rightClickItem.size}`,
+        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${curFile.size}`,
         "title": `[share]fileName:${curFile.name}`
       }
       fileApi.shareFile(fileInfo).then(res => {
@@ -536,10 +536,10 @@ const shareFile = (file?: any) => {
         console.log("分享失败: ", err);
       })
     })
-    .catch(() => {
+    .catch((e) => {
       ElMessage({
         type: 'info',
-        message: 'Delete canceled',
+        message: '分享失败' + e,
       })
     })
 }
@@ -612,6 +612,7 @@ const infoFile = () => {
 // 删除资源
 const deleteFile = (file?: any) => {
   console.log("删除资源");
+  const curFile = file ? file : rightClickItem
   ElMessageBox.confirm(
     '确定删除文件吗?',
     '删除文件',
@@ -624,7 +625,6 @@ const deleteFile = (file?: any) => {
     }
   )
     .then(() => {
-      const curFile = file ? file : rightClickItem
       fileApi.delFile(curFile.path, {
         "message": "delete from FileHub",
         "sha": curFile.sha
@@ -647,7 +647,7 @@ const deleteFile = (file?: any) => {
     .catch(() => {
       ElMessage({
         type: 'info',
-        message: 'Delete canceled',
+        message: 'Delete 失败',
       })
     })
 }
