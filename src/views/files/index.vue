@@ -140,7 +140,7 @@
           </template>
           <template #default="scope">
             <el-checkbox v-model="scope.row.selected" @change="(e) => fileSelChange(e, scope.row)"
-              :disabled="scope.row.uploading">
+              :disabled="scope.row.uploading || scope.row.type === 'foler'">
             </el-checkbox>
           </template>
         </el-table-column>
@@ -164,6 +164,7 @@
         <el-table-column label="操作" width="100" align='center' class-name="table-action">
           <template #default="scope">
             <div v-if="scope.row.uploading">上传中......</div>
+            <div v-if="scope.row.type === 'foler'">不可操作</div>
             <div v-else>
               <el-dropdown>
                 <span class="dropdown-icon">
@@ -345,7 +346,7 @@ let rightClickItem: fileRes
 const openMenu = (e: MouseEvent, item: fileRes) => {
   dirShowMenu.value = false
   // 如果文件是上传状态，则直接返回
-  if (item.uploading) {
+  if (item.uploading || item.type === 'foler') {
     return
   }
   // 获取侧边菜单栏宽度和顶部栏高度
