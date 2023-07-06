@@ -29,7 +29,10 @@
       <div class="action">
         <!-- 多选文件时候的下载，分享，删除按钮  -->
         <template v-if="selectedNum">
-          <el-tag class="ml-2" type="success" size="large" style="margin-right: 10px;">已选择{{ selectedNum }}个文件</el-tag>
+          <!-- <el-tag class="ml-2" type="success" size="large" style="margin-right: 10px;">已选择{{ selectedNum }}个文件</el-tag> -->
+          <el-button round plain @click="gitFileList.forEach(file => file.selected = false)">
+            取消选择({{ selectedNum }})
+          </el-button>
           <el-button type="primary" round plain>
             下载文件
             <el-icon class="el-icon--right">
@@ -195,25 +198,25 @@
       <li class="item" @click="getFileList(null)">刷新目录</li>
     </ul>
     <!-- 打开多文件分享链接弹窗 -->
-    <el-dialog v-model="shareMoreDialog" title="分享链接" width="60%" center>
+    <el-dialog v-model="shareMoreDialog" title="分享链接" width="80%" center>
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="原始链接" name="first">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="论坛代码" name="second">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="MarkDown" name="third">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="HTML标签" name="fourth">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
       </el-tabs>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="shareMoreDialog = false">取消</el-button>
-          <el-button type="primary" @click="shareMoreDialog = false">
+          <el-button type="primary" @click="copyMoreFileLink">
             复制
           </el-button>
         </span>
@@ -262,10 +265,16 @@ const selectedLink = computed(() => gitFileList.reduce((pre: any, cur) => {
 // 多文件分享链接
 const fileLinkContent = ref()
 
+// 取消选择的文件
+const cancleSelectedFile = () => {
+  gitFileList.forEach(file => file.selected = false)
+}
+
 const shareMoreFile = () => {
   console.log("分享多个文件");
   fileLinkContent.value = selectedLink.value.join("\r")
   shareMoreDialog.value = true
+  activeName.value = "first"
 }
 
 const shareMoreDialog = ref(false)
@@ -281,6 +290,17 @@ const handleClick = (tab: any, event: Event) => {
   } else {
     fileLinkContent.value = '<img src="' + selectedLink.value.join('" alt="1" />\r<img src="') + '" alt="1" />'
   }
+}
+
+// 复制多文件分享链接内容
+const copyMoreFileLink = () => {
+  navigator.clipboard.writeText(fileLinkContent.value).then(res => {
+    ElMessage({
+      message: '内容已复制到剪切板',
+      type: 'success',
+    })
+    shareMoreDialog.value = false
+  })
 }
 
 // 文件弹窗
@@ -530,13 +550,16 @@ const deleteMoreFile = () => {
     .then(() => {
       gitFileList.forEach(file => {
         if (file.selected) {
-          fileApi.delFile(rightClickItem.path, {
+          fileApi.delFile(file.path, {
             "message": "delete from FileHub",
-            "sha": rightClickItem.sha
+            "sha": file.sha
           })
         }
-      }
-      )
+      })
+      ElMessage({
+        message: '删除成功',
+        type: 'success',
+      })
     })
     .catch(() => {
       ElMessage({
@@ -823,7 +846,7 @@ getFileList(null)
 <style scoped>
 :deep(.el-dialog__body) {
   padding-top: 0;
-  padding-bottom: 0;
+  padding-bottom: 10px;
 }
 </style>
 
