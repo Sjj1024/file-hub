@@ -29,6 +29,7 @@
       <div class="action">
         <!-- 多选文件时候的下载，分享，删除按钮  -->
         <template v-if="selectedNum">
+          <el-tag class="ml-2" type="success" size="large" style="margin-right: 10px;">已选择{{ selectedNum }}个文件</el-tag>
           <el-button type="primary" round plain>
             下载文件
             <el-icon class="el-icon--right">
@@ -193,6 +194,31 @@
       <li class="item" @click="newDir">新建文件夹</li>
       <li class="item" @click="getFileList(null)">刷新目录</li>
     </ul>
+    <!-- 打开多文件分享链接弹窗 -->
+    <el-dialog v-model="shareMoreDialog" title="分享链接" width="60%" center>
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <el-tab-pane label="原始链接" name="first">
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+        </el-tab-pane>
+        <el-tab-pane label="论坛代码" name="second">
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+        </el-tab-pane>
+        <el-tab-pane label="MarkDown" name="third">
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+        </el-tab-pane>
+        <el-tab-pane label="HTML标签" name="fourth">
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+        </el-tab-pane>
+      </el-tabs>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="shareMoreDialog = false">取消</el-button>
+          <el-button type="primary" @click="shareMoreDialog = false">
+            复制
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
   <!-- 文件打开弹窗 -->
   <fileDialog ref="fileLog"></fileDialog>
@@ -213,7 +239,6 @@ import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
-import { fa } from 'element-plus/es/locale'
 
 const userStore = useUserStore()
 
@@ -227,13 +252,40 @@ const selectedNum = computed(() => gitFileList.reduce((pre: any, cur: any) => {
   return pre
 }, []).length)
 
+// 选中文件的链接
+const selectedLink = computed(() => gitFileList.reduce((pre: any, cur) => {
+  cur.selected && pre.push(cur.openLink)
+  return pre
+}, []))
+
+
+// 多文件分享链接
+const fileLinkContent = ref()
+
+const shareMoreFile = () => {
+  console.log("分享多个文件");
+  fileLinkContent.value = selectedLink.value.join("\r")
+  shareMoreDialog.value = true
+}
+
+const shareMoreDialog = ref(false)
+const activeName = ref('first')
+const handleClick = (tab: any, event: Event) => {
+  console.log("selectedLink------", tab.props.label, event, selectedLink)
+  if (tab.props.label === '原始链接') {
+    fileLinkContent.value = selectedLink.value.join("\r")
+  } else if (tab.props.label === "论坛代码") {
+    fileLinkContent.value = "[img]" + selectedLink.value.join("[/img]\r[img]") + "[/img]"
+  } else if (tab.props.label === "MarkDown") {
+    fileLinkContent.value = "![](" + selectedLink.value.join(")\r![](") + ")"
+  } else {
+    fileLinkContent.value = '<img src="' + selectedLink.value.join('" alt="1" />\r<img src="') + '" alt="1" />'
+  }
+}
+
 // 文件弹窗
 const fileLog = ref()
 
-// 计算属性：多选下载/分享/删除按钮
-const moreActionShow = computed(() =>
-  gitFileList.find((item) => item.selected === true)
-)
 // 文件右键菜单
 const showMenu = ref(false)
 // 文件夹右键菜单
@@ -366,7 +418,7 @@ const checkAllChange = (val: any) => {
 // 多选框选项
 const fileSelChange = (e: any, item: any) => {
   item.selected = e
-  console.log('fileSelChange---', e, item)
+  console.log('fileSelChange---', e, item, selectedNum)
 }
 
 // 上传文件回调事件
@@ -459,11 +511,6 @@ const shareFile = () => {
         message: 'Delete canceled',
       })
     })
-}
-
-// 多文件分享链接
-const shareMoreFile = () => {
-  console.log("分享多个文件");
 }
 
 // 删除多个文件
@@ -773,6 +820,13 @@ getFileList(null)
 
 </script>
 
+<style scoped>
+:deep(.el-dialog__body) {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+</style>
+
 <style scoped lang="scss">
 $file-height: 100px;
 $row-gap: 30px;
@@ -807,6 +861,7 @@ $column-gap: 16px;
     }
   }
 }
+
 
 .tools-box {
   width: 82%;
