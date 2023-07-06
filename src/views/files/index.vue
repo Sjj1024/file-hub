@@ -224,13 +224,16 @@
         <el-tab-pane label="HTML标签" name="fourth">
           <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
+        <el-tab-pane label="资源广场" name="five">
+          <el-input readonly value="分享到资源广场，审核通过后，会在资源广场展示(所有人可见)，是否继续?" :autosize="{ minRows: 4, maxRows: 8 }"
+            type="textarea" />
+        </el-tab-pane>
       </el-tabs>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="shareMoreDialog = false">取消</el-button>
-          <el-button type="primary" @click="copyMoreFileLink">
-            复制
-          </el-button>
+          <el-button type="primary" v-if="activeName !== 'five'" @click="copyMoreFileLink">复制</el-button>
+          <el-button type="primary" v-else @click="copyMoreFileLink">分享到资源广场</el-button>
         </span>
       </template>
     </el-dialog>
@@ -524,7 +527,7 @@ const shareFile = (file?: any) => {
   )
     .then(() => {
       const fileInfo = {
-        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${curFile.size}`,
+        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${curFile.size}&gitUser=${userStore.gitName}`,
         "title": `[share]fileName:${curFile.name}`
       }
       fileApi.shareFile(fileInfo).then(res => {
@@ -860,6 +863,22 @@ getFileList(null)
 :deep(.el-dialog__body) {
   padding-top: 0;
   padding-bottom: 10px;
+}
+
+:deep(.el-textarea__inner)::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+:deep(.el-textarea__inner)::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #c3c3c3;
+}
+
+:deep(.el-textarea__inner)::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 </style>
 
