@@ -5,7 +5,6 @@ const userStore = useUserStore()
 
 export default {
     getFiles(path: string) {
-        console.log('getFilespath---', path)
         return http(userStore.gitPath + path, {
             method: 'get',
         })
@@ -48,5 +47,21 @@ export default {
             },
             body: body,
         })
+    },
+    getShareFiles(label: string) {
+        return http(
+            `https://api.github.com/repos/Sjj1024/DataHub/issues?labels=share,${label}`,
+            {
+                method: 'get',
+            }
+        )
+    },
+    getMyShare() {
+        return http(
+            `https://api.github.com/repos/Sjj1024/DataHub/issues?filter=created`,
+            {
+                method: 'get',
+            }
+        )
     },
 }

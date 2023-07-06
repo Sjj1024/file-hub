@@ -2,28 +2,8 @@
   <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading">
     <div class="tools-box">
       <div class="path-tool">
-        <el-button text @click="backBtn" class="path-btn" :disabled="backPath.length === 1">
-          <el-icon class="path-icon">
-            <ArrowLeft />
-          </el-icon>
-        </el-button>
-        <el-button text @click="frontBtn" class="path-btn" :disabled="frontPath.length === 0">
-          <el-icon class="path-icon">
-            <ArrowRight />
-          </el-icon>
-        </el-button>
-        <el-button text @click="getFileList('/root')" class="path-btn">
-          <el-icon class="path-icon">
-            <HomeFilled />
-          </el-icon>
-        </el-button>
-        <el-button text @click="getFileList(null)" class="path-btn">
-          <el-icon class="path-icon">
-            <RefreshRight />
-          </el-icon>
-        </el-button>
-        <el-tooltip class="box-item" effect="dark" :content="'当前路径：' + filePath" placement="right">
-          <div class="path">:{{ filePath }}</div>
+        <el-tooltip class="box-item" effect="dark" :content="'图片：6，视频：10，音乐：100'" placement="right">
+          <div class="path">资源总计：1000</div>
         </el-tooltip>
       </div>
       <div class="action">
@@ -40,31 +20,19 @@
             </el-icon>
           </el-button>
           <el-button type="success" round plain @click="shareMoreFile">
-            分享链接
+            存入我的
             <el-icon class="el-icon--right">
               <Share />
-            </el-icon>
-          </el-button>
-          <el-button type="danger" round plain @click="deleteMoreFile" style="margin-right: 10px">
-            删除文件
-            <el-icon class="el-icon--right">
-              <DeleteFilled />
             </el-icon>
           </el-button>
         </template>
 
         <template v-else>
           <el-button type="primary" round plain @click="startUpload">
-            上传文件
-            <el-icon class="el-icon--right">
-              <Upload />
-            </el-icon>
+            我要分享
           </el-button>
-          <el-button round plain @click="newDir">
-            新建文件夹
-            <el-icon class="el-icon--right">
-              <FolderAdd />
-            </el-icon>
+          <el-button round plain @click="startUpload">
+            我的分享
           </el-button>
           <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />

@@ -512,8 +512,8 @@ const copyLink = (file?: any) => {
 
 // 分享资源
 const shareFile = (file?: any) => {
-  console.log("分享资源");
-  const curFile = file ? file : rightClickItem
+  const curFile = file.openLink ? file : rightClickItem
+  console.log("分享资源----", file, rightClickItem, curFile);
   ElMessageBox.confirm(
     '分享成功后会在资源广场展示(所有人可见)，是否继续?',
     '分享到资源广场',
@@ -616,7 +616,7 @@ const infoFile = () => {
 // 删除资源
 const deleteFile = (file?: any) => {
   console.log("删除资源");
-  const curFile = file ? file : rightClickItem
+  const curFile = file.openLink ? file : rightClickItem
   ElMessageBox.confirm(
     '确定删除文件吗?',
     '删除文件',
