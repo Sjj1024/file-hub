@@ -5,6 +5,11 @@
         <el-tooltip class="box-item" effect="dark" :content="'图片：6，视频：10，音乐：100'" placement="right">
           <div class="path">资源总计：1000</div>
         </el-tooltip>
+        <el-button text @click="getFileList(null)" class="path-btn">
+          <el-icon class="path-icon">
+            <RefreshRight />
+          </el-icon>
+        </el-button>
       </div>
       <div class="action">
         <!-- 多选文件时候的下载，分享，删除按钮  -->
@@ -795,20 +800,21 @@ const getFileList = (path: string | null) => {
   gitFileList.length = 0
   path ? filePath.value = path : ""
   path && backPath.push(path)
-  fileApi.getFiles(filePath.value).then((fileRes) => {
-    console.log("fileRes------", fileRes)
-    gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
-      var fileType = getType(cur.type, cur)
+  fileApi.getShareFiles('').then((shares) => {
+    console.log("shares------", shares)
+    gitFileList.push(...(shares.data as any).reduce((pre: fileRes[], cur: any) => {
+      var fileInfo = cur.title.split("FileHub:")
+      fileInfo[2] === "picture" && imgPreList.push(cur.body)
       cur.name !== '.gitkeep' && pre.push({
-        name: cur.name,
-        path: cur.path,
-        type: fileType,
-        size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
+        name: fileInfo[1],
+        path: "",
+        type: fileInfo[2],
+        size: fileInfo[3],
         sha: cur.sha,
-        openLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
-        downLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
+        openLink: cur.body,
+        downLink: cur.body,
         htmlLink: cur.html_url,
-        creatTime: '2021-08-22',
+        creatTime: cur.created_at,
         selected: false,
         showTips: false,
         uploading: false,
@@ -818,7 +824,7 @@ const getFileList = (path: string | null) => {
     gitSoureList = JSON.parse(JSON.stringify(gitFileList))
     console.log("gitFileList--------", gitFileList, gitSoureList);
   }).catch((error) => {
-    console.log("获取root数据出错", error);
+    console.log("获取share数据出错", error);
   })
   loading.value = false
 }

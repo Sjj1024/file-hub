@@ -57,7 +57,7 @@ export default {
             body: body,
         })
     },
-    getShareFiles(label: string) {
+    getShareFiles(label?: string) {
         return http(
             `/repos/Sjj1024/DataHub/issues?labels=share,${label}`,
             {
@@ -66,11 +66,8 @@ export default {
         )
     },
     getMyShare() {
-        return http(
-            `/repos/Sjj1024/DataHub/issues?filter=created`,
-            {
-                method: 'get',
-            }
-        )
+        return http(`/repos/Sjj1024/DataHub/issues?filter=created`, {
+            method: 'get',
+        })
     },
 }

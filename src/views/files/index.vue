@@ -588,8 +588,8 @@ const shareFile = (file?: any) => {
   )
     .then(() => {
       const fileInfo = {
-        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${curFile.size}&gitUser=${uStore.gitName}`,
-        "title": `[share]fileName:${curFile.name}`
+        "body": `${curFile.openLink}`,
+        "title": `[share]FileHub:${curFile.name}FileHub:${curFile.type}FileHub:${curFile.size}`
       }
       fileApi.shareFile(fileInfo).then(res => {
         console.log("分享成功", res);
