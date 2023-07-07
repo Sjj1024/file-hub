@@ -242,22 +242,28 @@
   <!-- 文件打开弹窗 -->
   <fileDialog ref="fileLog"></fileDialog>
   <!-- 打开导入资源弹窗 -->
-  <el-dialog v-model="importLink" title="导入外部资源" width="50%" center>
-    <el-form label-position="right" label-width="100px" :model="formLabelAlign" style="max-width: 460px">
+  <el-dialog v-model="importLink" title="导入外部资源" width="50%" center class="import-box">
+    <el-form label-position="right" label-width="70px" :model="linkForm">
       <el-form-item label="资源链接">
-        <el-input v-model="formLabelAlign.link" />
+        <el-input v-model="linkForm.link" />
       </el-form-item>
       <el-form-item label="资源名称">
-        <el-input v-model="formLabelAlign.name" />
+        <el-input v-model="linkForm.name" />
       </el-form-item>
       <el-form-item label="资源类型">
-        <el-input v-model="formLabelAlign.type" />
+        <el-radio-group v-model="linkForm.type">
+          <el-radio-button label="图片"></el-radio-button>
+          <el-radio-button label="视频"></el-radio-button>
+          <el-radio-button label="音频"></el-radio-button>
+          <el-radio-button label="文档"></el-radio-button>
+          <el-radio-button label="其他"></el-radio-button>
+        </el-radio-group>
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="importLink = false">取消</el-button>
-        <el-button type="primary" @click="importLink = false">导入</el-button>
+        <el-button type="primary" @click="importLinkAction">导入</el-button>
       </span>
     </template>
   </el-dialog>
@@ -279,19 +285,41 @@ import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
 
-const userStore = useUserStore()
+
+const uStore = useUserStore()
 
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
 const loading = ref(true)
 
-const formLabelAlign = reactive({
-  link: '',
-  name: '',
-  type: '',
+const linkForm = reactive({
+  link: 'https://h0.rzisytn.cn//20230513/yYmXp1xC/index.m3u8',
+  name: '银河护卫队3',
+  type: '视频',
 })
 
 const importLink = ref(false)
+
+const importLinkAction = () => {
+  const importLinkName = btoa(encodeURIComponent(`${linkForm.link}  ${linkForm.name}  ${linkForm.type}`))
+  fileApi.uploadFile(`${filePath.value}/FileHub:${importLinkName}`, {
+    "message": "Upload From FileHub",
+    "content": ""
+  }).then((res) => {
+    console.log("导入文件成功-----", res);
+    if (res.status === 201) {
+      ElMessage({
+        message: '导入文件成功',
+        type: 'success',
+      })
+      importLink.value = false
+    } else {
+      ElMessage.error("导入失败：可能文件已存在")
+    }
+  }).catch(err => {
+    console.log("导入文件失败:", err);
+  })
+}
 
 // 计算属性：计算选中了几个文件
 const selectedNum = computed(() => gitFileList.reduce((pre: any, cur: any) => {
@@ -517,9 +545,9 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
     }).then((res: any) => {
       uploadFileRaw.uploading = false
       uploadFileRaw.sha = res.data.content.sha
-      uploadFileRaw.openLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
-      uploadFileRaw.downLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
-      uploadType === 'picture' && imgPreList.push(`${userStore.fileCdn}${res.data.content.path}`)
+      uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+      uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+      uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
       console.log("上传文件结果:", res, imgPreList)
     }).catch(error => {
       console.log("上传文件错误:", error);
@@ -556,7 +584,7 @@ const shareFile = (file?: any) => {
   )
     .then(() => {
       const fileInfo = {
-        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${curFile.size}&gitUser=${userStore.gitName}`,
+        "body": `${curFile.openLink}?fileName=${curFile.name}&fileType=${curFile.type}&fileSize=${curFile.size}&gitUser=${uStore.gitName}`,
         "title": `[share]fileName:${curFile.name}`
       }
       fileApi.shareFile(fileInfo).then(res => {
@@ -799,7 +827,7 @@ const fileTypes = {
   foler: '文件夹',
   video: '视频',
   picture: '图片',
-  music: '音乐',
+  music: '音频',
   document: '文档',
   other: '其他',
 }
@@ -817,7 +845,7 @@ const getType = (fileType: string, curFile: any) => {
       .toUpperCase()
     if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
       // 图片格式: 加入图片预览列表
-      curFile.path && imgPreList.push(`${userStore.fileCdn}${curFile.path}`)
+      curFile.path && imgPreList.push(`${uStore.fileCdn}${curFile.path}`)
       return 'picture'
     } else if (
       ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP'].includes(
@@ -865,21 +893,41 @@ const getFileList = (path: string | null) => {
   fileApi.getFiles(filePath.value).then((fileRes) => {
     console.log("fileRes------", fileRes)
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
-      var fileType = getType(cur.type, cur)
-      cur.name !== '.gitkeep' && pre.push({
-        name: cur.name,
-        path: cur.path,
-        type: fileType,
-        size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
-        sha: cur.sha,
-        openLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
-        downLink: fileType === 'picture' ? `${userStore.fileCdn}${cur.path}` : `${userStore.gitIoCdn}/${cur.path}`,
-        htmlLink: cur.html_url,
-        creatTime: '2021-08-22',
-        selected: false,
-        showTips: false,
-        uploading: false,
-      })
+      // 是不是链接资源
+      if (cur.name.indexOf("FileHub:") === 0) {
+        const linkInfo = decodeURIComponent(atob(cur.name.replace('FileHub:', ''))).split("  ")
+        console.log("是链接资源-------", cur, linkInfo);
+        pre.push({
+          name: linkInfo[1],
+          path: cur.path,
+          type: options.find(f => f.label === linkInfo[2])?.value as string,
+          size: "未知",
+          sha: cur.sha,
+          openLink: linkInfo[0],
+          downLink: linkInfo[0],
+          htmlLink: cur.html_url,
+          creatTime: '2021-08-22',
+          selected: false,
+          showTips: false,
+          uploading: false,
+        })
+      } else {
+        var fileType = getType(cur.type, cur)
+        cur.name !== '.gitkeep' && pre.push({
+          name: cur.name,
+          path: cur.path,
+          type: fileType,
+          size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
+          sha: cur.sha,
+          openLink: fileType === 'picture' ? `${uStore.fileCdn}${cur.path}` : `${uStore.gitIoCdn}/${cur.path}`,
+          downLink: fileType === 'picture' ? `${uStore.fileCdn}${cur.path}` : `${uStore.gitIoCdn}/${cur.path}`,
+          htmlLink: cur.html_url,
+          creatTime: '2021-08-22',
+          selected: false,
+          showTips: false,
+          uploading: false,
+        })
+      }
       return pre
     }, []))
     gitSoureList = JSON.parse(JSON.stringify(gitFileList))
@@ -897,7 +945,7 @@ getFileList(null)
 <style scoped>
 :deep(.el-dialog__body) {
   padding-top: 0;
-  padding-bottom: 10px;
+  padding-bottom: 10px !important;
 }
 
 :deep(.el-textarea__inner)::-webkit-scrollbar {
@@ -926,6 +974,7 @@ $column-gap: 16px;
   display: none;
   position: absolute;
 }
+
 
 .dropdown-icon {
   padding: 4px 10px;

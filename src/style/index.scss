@@ -36,20 +36,11 @@ a:hover {
     background-color: #79bbff !important;
 }
 
-// .el-textarea__inner {
-//   overflow-y: scroll !important;
-// }
-// .el-textarea__inner::-webkit-scrollbar {
-//   width: 8px;
-// }
-// .el-textarea__inner::-webkit-scrollbar-thumb {
-//   border-radius: 10px;
-//   background: var(--scroll-thumb);
-// }
-// .el-textarea__inner::-webkit-scrollbar-track {
-//   border-radius: 0;
-//   background: var(--scroll-track);
-// }
+
+.el-dialog__body {
+  padding-top: 0;
+  padding-bottom: 10px !important;
+}
 
 // 文件列表中的文件高度
 $file-height: 80px;

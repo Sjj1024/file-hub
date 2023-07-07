@@ -111,7 +111,7 @@ import { useUserStore } from '@/stores/user'
 import loginApi from '@/apis/user'
 import commonApi from '@/apis/common'
 import { rsaDecode, rsaEncode } from "@/utils/encode"
-import { bossToken, guestToken } from '@/config'
+import { guestToken } from '@/config'
 
 const userStore = useUserStore()
 
