@@ -316,6 +316,7 @@ const importLinkAction = () => {
       linkForm.name = ""
       linkForm.type = "图片"
       importLink.value = false
+      getFileList()
     } else {
       ElMessage.error("导入失败：可能文件已存在")
     }
@@ -886,7 +887,7 @@ const getType = (fileType: string, curFile: any) => {
 // 发送请求获取根目录文件内容
 let gitSoureList: fileRes[] = []
 let gitFileList: fileRes[] = reactive([])
-const getFileList = (path: string | null) => {
+const getFileList = (path?: string | null) => {
   loading.value = true
   // 清空图片预览和文件列表
   imgPreList.length = 0
