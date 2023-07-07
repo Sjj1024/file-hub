@@ -1,5 +1,6 @@
 import http from '@/utils/request'
-import { Body } from '@tauri-apps/api/http'
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
 
 export default {
     getFiles() {
@@ -43,5 +44,19 @@ export default {
             },
             body,
         })
-    }
+    },
+    creatFileHub(token: string, body: any) {
+        return http(`/repos/Sjj1024/FileHub/generate`, {
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body,
+        })
+    },
+    checkReady(path: string) {
+        return http(path, {
+            method: 'get',
+        })
+    },
 }

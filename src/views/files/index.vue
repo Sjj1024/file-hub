@@ -206,6 +206,7 @@
       display: dirShowMenu ? 'block' : 'none',
     }" class="filemenu">
       <li class="item" @click="startUpload">上传文件</li>
+      <li class="item" @click="importSource">导入资源</li>
       <li class="item" @click="newDir">新建文件夹</li>
       <li class="item" @click="getFileList(null)">刷新目录</li>
     </ul>
@@ -240,6 +241,26 @@
   </div>
   <!-- 文件打开弹窗 -->
   <fileDialog ref="fileLog"></fileDialog>
+  <!-- 打开导入资源弹窗 -->
+  <el-dialog v-model="importLink" title="导入外部资源" width="50%" center>
+    <el-form label-position="right" label-width="100px" :model="formLabelAlign" style="max-width: 460px">
+      <el-form-item label="资源链接">
+        <el-input v-model="formLabelAlign.link" />
+      </el-form-item>
+      <el-form-item label="资源名称">
+        <el-input v-model="formLabelAlign.name" />
+      </el-form-item>
+      <el-form-item label="资源类型">
+        <el-input v-model="formLabelAlign.type" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="importLink = false">取消</el-button>
+        <el-button type="primary" @click="importLink = false">导入</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -263,6 +284,14 @@ const userStore = useUserStore()
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
 const loading = ref(true)
+
+const formLabelAlign = reactive({
+  link: '',
+  name: '',
+  type: '',
+})
+
+const importLink = ref(false)
 
 // 计算属性：计算选中了几个文件
 const selectedNum = computed(() => gitFileList.reduce((pre: any, cur: any) => {
@@ -698,6 +727,12 @@ const startUpload = () => {
   console.log('开始上传文件', uploadBox)
   uploadBox.click()
 }
+
+// 导入资源：导入m3u8等链接
+const importSource = () => {
+  importLink.value = true
+}
+
 
 // 搜索
 const search = ref('')

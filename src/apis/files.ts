@@ -24,6 +24,15 @@ export default {
             }
         )
     },
+    importSource(filePath: string, body: any) {
+        return http(
+            `/repos/${userStore.gitName}/${userStore.gitRepo}/contents${filePath}`,
+            {
+                method: 'put',
+                body: body,
+            }
+        )
+    },
     delFile(filePath: string, body: any) {
         return http(
             `/repos/${userStore.gitName}/${userStore.gitRepo}/contents/${filePath}`,
@@ -50,7 +59,7 @@ export default {
     },
     getShareFiles(label: string) {
         return http(
-            `https://api.github.com/repos/Sjj1024/DataHub/issues?labels=share,${label}`,
+            `/repos/Sjj1024/DataHub/issues?labels=share,${label}`,
             {
                 method: 'get',
             }
@@ -58,7 +67,7 @@ export default {
     },
     getMyShare() {
         return http(
-            `https://api.github.com/repos/Sjj1024/DataHub/issues?filter=created`,
+            `/repos/Sjj1024/DataHub/issues?filter=created`,
             {
                 method: 'get',
             }
