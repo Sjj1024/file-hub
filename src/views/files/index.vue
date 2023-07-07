@@ -245,10 +245,10 @@
   <el-dialog v-model="importLink" title="导入外部资源" width="50%" center class="import-box">
     <el-form label-position="right" label-width="70px" :model="linkForm">
       <el-form-item label="资源链接">
-        <el-input v-model="linkForm.link" />
+        <el-input v-model.trim="linkForm.link" />
       </el-form-item>
       <el-form-item label="资源名称">
-        <el-input v-model="linkForm.name" />
+        <el-input v-model.trim="linkForm.name" />
       </el-form-item>
       <el-form-item label="资源类型">
         <el-radio-group v-model="linkForm.type">
@@ -293,9 +293,9 @@ const filePath = ref('/root')
 const loading = ref(true)
 
 const linkForm = reactive({
-  link: 'https://h0.rzisytn.cn//20230513/yYmXp1xC/index.m3u8',
-  name: '银河护卫队3',
-  type: '视频',
+  link: '',
+  name: '',
+  type: '图片',
 })
 
 const importLink = ref(false)
@@ -312,6 +312,9 @@ const importLinkAction = () => {
         message: '导入文件成功',
         type: 'success',
       })
+      linkForm.link = ""
+      linkForm.name = ""
+      linkForm.type = "图片"
       importLink.value = false
     } else {
       ElMessage.error("导入失败：可能文件已存在")
@@ -897,6 +900,7 @@ const getFileList = (path: string | null) => {
       if (cur.name.indexOf("FileHub:") === 0) {
         const linkInfo = decodeURIComponent(atob(cur.name.replace('FileHub:', ''))).split("  ")
         console.log("是链接资源-------", cur, linkInfo);
+        options.find(f => f.label === linkInfo[2])?.value as string === 'picture' && imgPreList.push(linkInfo[0])
         pre.push({
           name: linkInfo[1],
           path: cur.path,
