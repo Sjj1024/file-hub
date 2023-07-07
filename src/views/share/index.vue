@@ -274,7 +274,7 @@ const shareLink = ref(false)
 const shareLinkAction = () => {
   const fileInfo = {
     "body": `${linkForm.link}`,
-    "title": `[share]FileHub:${linkForm.name}FileHub:${linkForm.type}FileHub:未知`
+    "title": `[share]FileHub:${linkForm.name}FileHub:${options.find(op => op.label === linkForm.type)?.value}FileHub:未知`
   }
   fileApi.shareFile(fileInfo).then(res => {
     console.log("分享资源成功-----", res);
@@ -852,7 +852,7 @@ const getType = (fileType: string, curFile: any) => {
 // 发送请求获取根目录文件内容
 let gitSoureList: fileRes[] = []
 let gitFileList: fileRes[] = reactive([])
-const getFileList = (path: string | null) => {
+const getFileList = (path?: string | null) => {
   loading.value = true
   // 清空图片预览和文件列表
   imgPreList.length = 0
@@ -986,14 +986,6 @@ $column-gap: 16px;
       border-radius: 10px;
     }
 
-    .path-icon {
-      font-size: 19px;
-
-      :hover {
-        color: #337ecc;
-      }
-    }
-
     .path {
       max-width: 95%;
       display: inline-block;
@@ -1014,6 +1006,14 @@ $column-gap: 16px;
     display: flex;
     justify-content: end;
     align-items: center;
+
+    .path-icon {
+      font-size: 20px !important;
+
+      :hover {
+        color: #337ecc;
+      }
+    }
 
     .show {
       margin-right: 6px;
