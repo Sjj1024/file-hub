@@ -206,7 +206,7 @@
       display: dirShowMenu ? 'block' : 'none',
     }" class="filemenu">
       <li class="item" @click="startUpload">上传文件</li>
-      <li class="item" @click="importSource">导入资源</li>
+      <li class="item" @click="importLink = true">导入资源</li>
       <li class="item" @click="newDir">新建文件夹</li>
       <li class="item" @click="getFileList(null)">刷新目录</li>
     </ul>
@@ -759,12 +759,6 @@ const startUpload = () => {
   console.log('开始上传文件', uploadBox)
   uploadBox.click()
 }
-
-// 导入资源：导入m3u8等链接
-const importSource = () => {
-  importLink.value = true
-}
-
 
 // 搜索
 const search = ref('')

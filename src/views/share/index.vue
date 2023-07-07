@@ -5,11 +5,6 @@
         <el-tooltip class="box-item" effect="dark" :content="'图片：6，视频：10，音乐：100'" placement="right">
           <div class="path">资源总计：1000</div>
         </el-tooltip>
-        <el-button text @click="getFileList(null)" class="path-btn">
-          <el-icon class="path-icon">
-            <RefreshRight />
-          </el-icon>
-        </el-button>
       </div>
       <div class="action">
         <!-- 多选文件时候的下载，分享，删除按钮  -->
@@ -33,8 +28,13 @@
         </template>
 
         <template v-else>
-          <el-button type="primary" round plain @click="startUpload">
-            我要分享
+          <el-button text @click="getFileList(null)" class="path-btn">
+            <el-icon class="path-icon">
+              <RefreshRight />
+            </el-icon>
+          </el-button>
+          <el-button type="primary" round plain @click="shareLink = true">
+            分享资源
           </el-button>
           <el-button round plain @click="startUpload">
             我的分享
@@ -213,6 +213,32 @@
   </div>
   <!-- 文件打开弹窗 -->
   <fileDialog ref="fileLog"></fileDialog>
+  <!-- 打开导入资源弹窗 -->
+  <el-dialog v-model="shareLink" title="分享资源" width="50%" center class="import-box">
+    <el-form label-position="right" label-width="70px" :model="linkForm">
+      <el-form-item label="资源链接">
+        <el-input v-model.trim="linkForm.link" />
+      </el-form-item>
+      <el-form-item label="资源名称">
+        <el-input v-model.trim="linkForm.name" />
+      </el-form-item>
+      <el-form-item label="资源类型">
+        <el-radio-group v-model="linkForm.type">
+          <el-radio-button label="图片"></el-radio-button>
+          <el-radio-button label="视频"></el-radio-button>
+          <el-radio-button label="音频"></el-radio-button>
+          <el-radio-button label="文档"></el-radio-button>
+          <el-radio-button label="其他"></el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="shareLink = false">取消</el-button>
+        <el-button type="primary" @click="shareLinkAction">分享</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -236,6 +262,39 @@ const userStore = useUserStore()
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
 const loading = ref(true)
+
+const linkForm = reactive({
+  link: '',
+  name: '',
+  type: '图片',
+})
+
+const shareLink = ref(false)
+
+const shareLinkAction = () => {
+  const fileInfo = {
+    "body": `${linkForm.link}`,
+    "title": `[share]FileHub:${linkForm.name}FileHub:${linkForm.type}FileHub:未知`
+  }
+  fileApi.shareFile(fileInfo).then(res => {
+    console.log("分享资源成功-----", res);
+    if (res.status === 201) {
+      ElMessage({
+        message: '资源分享成功',
+        type: 'success',
+      })
+      linkForm.link = ""
+      linkForm.name = ""
+      linkForm.type = "图片"
+      shareLink.value = false
+      getFileList()
+    } else {
+      ElMessage.error("资源分享失败：可能文件已存在")
+    }
+  }).catch(err => {
+    console.log("资源分享失败:", err);
+  })
+}
 
 // 计算属性：计算选中了几个文件
 const selectedNum = computed(() => gitFileList.reduce((pre: any, cur: any) => {
@@ -922,6 +981,7 @@ $column-gap: 16px;
       padding: 0;
       width: 20px;
       height: 20px;
+      font-size: 20px;
       text-align: center;
       border-radius: 10px;
     }
