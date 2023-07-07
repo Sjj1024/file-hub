@@ -36,7 +36,7 @@
           <el-button type="primary" round plain @click="shareLink = true">
             分享资源
           </el-button>
-          <el-button round plain @click="startUpload">
+          <el-button round plain @click="getFileList('filter=created')">
             我的分享
           </el-button>
           <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
@@ -430,9 +430,9 @@ const frontBtn = () => {
 
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
-  console.log("双击元素---", file, fileLog);
+  console.log("双击元素---", file, fileLog, showStyle.value);
   // 如果是上传中或者是图片，就不允许双击
-  if (file.uploading || file.type === "document" || file.type === "other") {
+  if (file.uploading || file.type === "document" || file.type === "other" || (file.type === "picture" && showStyle.value === "grid")) {
     return
   } else if (file.type === "foler") {
     loading.value = true
@@ -852,14 +852,12 @@ const getType = (fileType: string, curFile: any) => {
 // 发送请求获取根目录文件内容
 let gitSoureList: fileRes[] = []
 let gitFileList: fileRes[] = reactive([])
-const getFileList = (path?: string | null) => {
+const getFileList = (filter?: string | null) => {
   loading.value = true
   // 清空图片预览和文件列表
   imgPreList.length = 0
   gitFileList.length = 0
-  path ? filePath.value = path : ""
-  path && backPath.push(path)
-  fileApi.getShareFiles('').then((shares) => {
+  fileApi.getShareFiles(filter ? filter : 'labels=share').then((shares) => {
     console.log("shares------", shares)
     gitFileList.push(...(shares.data as any).reduce((pre: fileRes[], cur: any) => {
       var fileInfo = cur.title.split("FileHub:")

@@ -461,7 +461,7 @@ const frontBtn = () => {
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
   // 如果是上传中或者是图片，就不允许双击
-  if (file.uploading || file.type === "document" || file.type === "other") {
+  if (file.uploading || file.type === "document" || file.type === "other" || (file.type === "picture" && showStyle.value === "grid")) {
     return
   } else if (file.type === "foler") {
     loading.value = true

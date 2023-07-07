@@ -59,7 +59,7 @@ export default {
     },
     getShareFiles(label?: string) {
         return http(
-            `/repos/Sjj1024/DataHub/issues?labels=share,${label}`,
+            `/repos/Sjj1024/DataHub/issues?${label}`,
             {
                 method: 'get',
             }
