@@ -931,10 +931,11 @@ const getFileList = (path?: string | null) => {
     }, []))
     gitSoureList = JSON.parse(JSON.stringify(gitFileList))
     console.log("gitFileList--------", gitFileList, gitSoureList);
+    loading.value = false
   }).catch((error) => {
     console.log("获取root数据出错", error);
+    loading.value = false
   })
-  loading.value = false
 }
 // 初始化文件内容
 getFileList(null)

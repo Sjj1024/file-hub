@@ -36,9 +36,14 @@
           <el-button type="primary" round plain @click="shareLink = true">
             分享资源
           </el-button>
-          <el-button round plain @click="getFileList('filter=created')">
+          <el-radio-group v-model="shareStatus" style="width: 132px; margin-left: 10px;"
+            @change="l => l === '全部' ? getFileList() : getFileList(`creator=${userStore.gitName}&state=all`)">
+            <el-radio-button label="全部" />
+            <el-radio-button label="我的" />
+          </el-radio-group>
+          <!-- <el-button round plain @click="getFileList(`creator=${userStore.gitName}&state=all`)">
             我的分享
-          </el-button>
+          </el-button> -->
           <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
@@ -62,7 +67,8 @@
         <template #content>
           <div class="file-tips">
             名称: {{ file.name }}<br />
-            <span v-if="file.type !== 'foler'">大小: {{ file.size }}</span>
+            <span v-if="file.type !== 'foler'">大小: {{ file.size }}</span><br />
+            状态：{{ file.sha }}
           </div>
         </template>
         <div :class="{
@@ -268,6 +274,8 @@ const linkForm = reactive({
   name: '',
   type: '图片',
 })
+
+const shareStatus = ref('全部')
 
 const shareLink = ref(false)
 
@@ -857,17 +865,17 @@ const getFileList = (filter?: string | null) => {
   // 清空图片预览和文件列表
   imgPreList.length = 0
   gitFileList.length = 0
-  fileApi.getShareFiles(filter ? filter : 'labels=share').then((shares) => {
+  fileApi.getShareFiles(filter ? filter : 'labels=share&state=closed').then((shares) => {
     console.log("shares------", shares)
     gitFileList.push(...(shares.data as any).reduce((pre: fileRes[], cur: any) => {
       var fileInfo = cur.title.split("FileHub:")
       fileInfo[2] === "picture" && imgPreList.push(cur.body)
-      cur.name !== '.gitkeep' && pre.push({
+      cur.title.includes('FileHub:') && pre.push({
         name: fileInfo[1],
         path: "",
         type: fileInfo[2],
         size: fileInfo[3],
-        sha: cur.sha,
+        sha: cur.labels.length === 1 ? "审核不通过" : cur.labels.length === 2 ? "审核通过" : "待审核",
         openLink: cur.body,
         downLink: cur.body,
         htmlLink: cur.html_url,
@@ -880,10 +888,11 @@ const getFileList = (filter?: string | null) => {
     }, []))
     gitSoureList = JSON.parse(JSON.stringify(gitFileList))
     console.log("gitFileList--------", gitFileList, gitSoureList);
+    loading.value = false
   }).catch((error) => {
     console.log("获取share数据出错", error);
+    loading.value = false
   })
-  loading.value = false
 }
 // 初始化文件内容
 getFileList(null)
@@ -1000,7 +1009,7 @@ $column-gap: 16px;
   }
 
   .action {
-    width: 572.5px;
+    width: 582.5px;
     display: flex;
     justify-content: end;
     align-items: center;
