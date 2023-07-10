@@ -47,7 +47,7 @@
           <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-          <el-input v-model="search" placeholder="请输入搜索内容" clearable @input="searchFun" class="search-input">
+          <el-input v-model="search" placeholder="请输入搜索内容" clearable @keyup.enter="searchFun" class="search-input">
             <template #append>
               <el-button :icon="Search" @click="searchFun" />
             </template>
@@ -165,6 +165,8 @@
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
+    <el-pagination background layout="prev, pager, next" :total="1000" />
     <!-- 文件右键菜单部分 -->
     <ul v-show="showMenu" :style="{
       left: position.left + 'px',
@@ -791,12 +793,18 @@ const filterFun = () => {
   }))
 }
 
-// 搜索内容
+// 搜索内容:在仓库的issue里面搜索，最多返回100条
 const searchFun = () => {
   gitFileList.length = 0
-  gitFileList.push(...gitSoureList.filter(file => {
-    return search.value ? file.name.includes(search.value) : true
-  }))
+  console.log("keyWord---", search.value);
+  fileApi.searchShare(search.value).then(res => {
+    console.log("searchFun res--", res);
+    gitFileList.push(...gitSoureList.filter(file => {
+      return search.value ? file.name.includes(search.value) : true
+    }))
+  }).catch(err => {
+    console.log("searchFun err-", err);
+  })
 }
 
 // 文件类型映射
@@ -1053,7 +1061,7 @@ $column-gap: 16px;
 }
 
 .file-box {
-  height: auto;
+  height: 90%;
   margin-top: 36px;
   padding-bottom: 41px;
 }
@@ -1065,6 +1073,7 @@ $column-gap: 16px;
 .grid-style {
   display: flex;
   flex-wrap: wrap;
+  align-content: start;
 
   .upload-file {
     width: 120px;
@@ -1094,6 +1103,7 @@ $column-gap: 16px;
 
   .file-item {
     width: 110px;
+    height: 120px;
     padding: 10px 15px;
     margin: 5px;
     border-radius: 5px;

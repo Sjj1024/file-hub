@@ -196,6 +196,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/') {
         if (gitToken) {
             // 存在token,就跳转到主页
+            localStorage.removeItem("menuIndex")
             next('/index/files')
         } else {
             //否则就继续

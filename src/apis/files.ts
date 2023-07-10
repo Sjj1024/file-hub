@@ -58,16 +58,17 @@ export default {
         })
     },
     getShareFiles(label?: string) {
+        return http(`/repos/Sjj1024/DataHub/issues?${label}`, {
+            method: 'get',
+        })
+    },
+    searchShare(keyWord: string) {
+        // 在Sjj1024/DataHub中搜索关闭的和分享的内容，并且是标题里面包含关键字的
         return http(
-            `/repos/Sjj1024/DataHub/issues?${label}`,
+            `/search/issues?q=${keyWord}+label:share+state:closed+in:title+repo:Sjj1024/DataHub`,
             {
                 method: 'get',
             }
         )
-    },
-    getMyShare() {
-        return http(`/repos/Sjj1024/DataHub/issues?filter=created`, {
-            method: 'get',
-        })
     },
 }

@@ -92,7 +92,7 @@
             <span v-if="file.type !== 'foler'">大小: {{ file.size }}</span>
           </div>
         </template>
-        <div :class="{
+        <div v-if="file.name !== ''" :class="{
           'file-item': true,
           'item-seled': file.selected,
           'file-loading': file.uploading,
@@ -125,7 +125,7 @@
       <!-- 网格布局的上传文件按钮 -->
       <div v-show="showStyle === 'grid'" class="upload-file">
         <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
-          :show-file-list="false">
+          :on-progress="handlePropress" :before-upload="handleBeforeUpload" :show-file-list="false">
           <el-icon>
             <Plus />
           </el-icon>
@@ -516,6 +516,20 @@ const fileSelChange = (e: any, item: any) => {
   console.log('fileSelChange---', e, item, selectedNum)
 }
 
+function handleBeforeUpload(file: any) {
+  //获取上传文件大小
+  let fileSize = Number(file.size / 1024 / 1024);
+  if (fileSize > 25) {
+    ElMessage({ message: '文件大小不能超过25MB，请重新上传。', type: 'warning' })
+    return false
+  }
+}
+
+// 文件上传的on-progress
+const handlePropress = (evt: any, uploadFile: any, uploadFiles: any) => {
+  console.log("handlePropress---", evt, uploadFile, uploadFiles);
+}
+
 // 上传文件回调事件
 const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   console.log('handleUploadChange----', uploadFile, uploadFiles)
@@ -547,13 +561,22 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
       "message": "Upload From FileHub",
       "content": event!.target.result.split("base64,")[1]
     }).then((res: any) => {
-      uploadFileRaw.uploading = false
-      uploadFileRaw.sha = res.data.content.sha
-      uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-      uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-      uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
-      console.log("上传文件结果:", res, imgPreList)
+      console.log("上传文件返回:", res);
+      if (res.status === 201) {
+        uploadFileRaw.uploading = false
+        uploadFileRaw.path = res.data.content.path
+        uploadFileRaw.sha = res.data.content.sha
+        uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+        uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+        uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
+        console.log("上传文件结果:", res, imgPreList)
+      } else {
+        ElMessage.error("上传失败:" + res.data.message)
+        gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+      }
     }).catch(error => {
+      uploadFileRaw.sha = 'error'
+      gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
       console.log("上传文件错误:", error);
     })
   }
@@ -623,15 +646,22 @@ const deleteMoreFile = () => {
       center: true,
     }
   )
-    .then(() => {
-      gitFileList.forEach(file => {
+    .then(async () => {
+      for (let index = 0; index < gitFileList.length; index++) {
+        const file = gitFileList[index];
         if (file.selected) {
-          fileApi.delFile(file.path, {
+          await fileApi.delFile(file.path, {
             "message": "delete from FileHub",
             "sha": file.sha
+          }).then(res => {
+            console.log("删除返回:", res);
+            file.name = ""
+          }).catch(err => {
+            console.log("删除错误:", err);
           })
         }
-      })
+      }
+      getFileList()
       ElMessage({
         message: '删除成功',
         type: 'success',
