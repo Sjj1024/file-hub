@@ -54,12 +54,16 @@
         </template>
 
         <template v-else>
-          <el-button type="primary" round plain @click="startUpload">
+          <el-progress :text-inside="true" :stroke-width="32" :percentage="50" :indeterminate="true" :duration="6"
+            style="width: 120px; margin-right: 10px;">
+            <span>上传进度:{{ upPropress }}/{{ fileList.length ? fileList.length : "1" }}</span>
+          </el-progress>
+          <!-- <el-button type="primary" round plain @click="startUpload">
             上传文件
             <el-icon class="el-icon--right">
               <Upload />
             </el-icon>
-          </el-button>
+          </el-button> -->
           <el-button round plain @click="newDir">
             新建文件夹
             <el-icon class="el-icon--right">
@@ -125,7 +129,7 @@
       <!-- 网格布局的上传文件按钮 -->
       <div v-show="showStyle === 'grid'" class="upload-file">
         <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
-          :on-progress="handlePropress" :before-upload="handleBeforeUpload" :show-file-list="false">
+          :before-upload="handleBeforeUpload" :show-file-list="false">
           <el-icon>
             <Plus />
           </el-icon>
@@ -526,60 +530,132 @@ function handleBeforeUpload(file: any) {
 }
 
 // 文件上传的on-progress
-const handlePropress = (evt: any, uploadFile: any, uploadFiles: any) => {
-  console.log("handlePropress---", evt, uploadFile, uploadFiles);
+const upPropress = ref(0)
+
+let fileList: any[]
+
+const startUpFiles = async () => {
+  console.log("开始多文件上传", fileList);
+  for (let index = 0; index < fileList.length; index++) {
+    const uploadFile = fileList[index];
+    // console.log("file---", element.name);
+    await new Promise((resolve, reject) => {
+      // 当前日期
+      var date = new Date()
+      var reader = new FileReader()
+      var uploadType = getType(uploadFile.raw.type, uploadFile)
+      reader.readAsDataURL(uploadFile.raw)
+      reader.onload = function (event: any) {
+        // 用于预览图片
+        var uploadFileRaw = reactive({
+          name: uploadFile.name,
+          path: uploadType === 'picture' ? event!.target.result : "",
+          type: uploadType,
+          size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
+          sha: "",
+          openLink: 'https://element-plus.gitee.io/',
+          downLink: 'https://element-plus.gitee.io/',
+          htmlLink: '',
+          creatTime: `${date.getFullYear()}-${date.getMonth() + 1
+            }-${date.getDate()}`,
+          selected: false,
+          showTips: false,
+          uploading: true,
+        })
+        gitFileList.push(uploadFileRaw)
+        // 用于上传图片
+        fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
+          "message": "Upload From FileHub",
+          "content": event!.target.result.split("base64,")[1]
+        }).then((res: any) => {
+          console.log("上传文件返回:", res);
+          if (res.status === 201) {
+            uploadFileRaw.uploading = false
+            uploadFileRaw.path = res.data.content.path
+            uploadFileRaw.sha = res.data.content.sha
+            uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+            uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+            uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
+            console.log("上传文件结果:", res, imgPreList)
+            resolve("200")
+            upPropress.value = index + 1
+          } else {
+            ElMessage.error("上传失败:" + res.data.message)
+            gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+            reject("409")
+            upPropress.value = index + 1
+          }
+        }).catch(error => {
+          uploadFileRaw.sha = 'error'
+          gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+          console.log("上传文件错误:", error);
+          reject("409")
+          upPropress.value = index + 1
+        })
+      }
+    })
+  }
 }
+
+let upTimer: number | null
 
 // 上传文件回调事件
 const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
-  console.log('handleUploadChange----', uploadFile, uploadFiles)
+  console.log('handleUploadChange----', uploadFiles, fileList)
+  fileList = uploadFiles
+  upTimer && clearTimeout(upTimer)
+  upTimer = setTimeout(() => {
+    upTimer = null
+    console.log('防抖 高频触发后n秒内只会执行一次  再次触发重新计时')
+    startUpFiles() //说明此时change了所有文件了 可以上传了
+  }, 1000)
   // 当前日期
-  var date = new Date()
-  var reader = new FileReader()
-  var uploadType = getType(uploadFile.raw.type, uploadFile)
-  reader.readAsDataURL(uploadFile.raw)
-  reader.onload = function (event: any) {
-    // 用于预览图片
-    var uploadFileRaw = reactive({
-      name: uploadFile.name,
-      path: uploadType === 'picture' ? event!.target.result : "",
-      type: uploadType,
-      size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
-      sha: "",
-      openLink: 'https://element-plus.gitee.io/',
-      downLink: 'https://element-plus.gitee.io/',
-      htmlLink: '',
-      creatTime: `${date.getFullYear()}-${date.getMonth() + 1
-        }-${date.getDate()}`,
-      selected: false,
-      showTips: false,
-      uploading: true,
-    })
-    gitFileList.push(uploadFileRaw)
-    // 用于上传图片
-    fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
-      "message": "Upload From FileHub",
-      "content": event!.target.result.split("base64,")[1]
-    }).then((res: any) => {
-      console.log("上传文件返回:", res);
-      if (res.status === 201) {
-        uploadFileRaw.uploading = false
-        uploadFileRaw.path = res.data.content.path
-        uploadFileRaw.sha = res.data.content.sha
-        uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-        uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-        uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
-        console.log("上传文件结果:", res, imgPreList)
-      } else {
-        ElMessage.error("上传失败:" + res.data.message)
-        gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-      }
-    }).catch(error => {
-      uploadFileRaw.sha = 'error'
-      gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-      console.log("上传文件错误:", error);
-    })
-  }
+  // var date = new Date()
+  // var reader = new FileReader()
+  // var uploadType = getType(uploadFile.raw.type, uploadFile)
+  // reader.readAsDataURL(uploadFile.raw)
+  // reader.onload = function (event: any) {
+  //   // 用于预览图片
+  //   var uploadFileRaw = reactive({
+  //     name: uploadFile.name,
+  //     path: uploadType === 'picture' ? event!.target.result : "",
+  //     type: uploadType,
+  //     size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
+  //     sha: "",
+  //     openLink: 'https://element-plus.gitee.io/',
+  //     downLink: 'https://element-plus.gitee.io/',
+  //     htmlLink: '',
+  //     creatTime: `${date.getFullYear()}-${date.getMonth() + 1
+  //       }-${date.getDate()}`,
+  //     selected: false,
+  //     showTips: false,
+  //     uploading: true,
+  //   })
+  //   gitFileList.push(uploadFileRaw)
+  //   // 用于上传图片
+  //   fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
+  //     "message": "Upload From FileHub",
+  //     "content": event!.target.result.split("base64,")[1]
+  //   }).then((res: any) => {
+  //     console.log("上传文件返回:", res);
+  //     if (res.status === 201) {
+  //       uploadFileRaw.uploading = false
+  //       uploadFileRaw.path = res.data.content.path
+  //       uploadFileRaw.sha = res.data.content.sha
+  //       uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+  //       uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+  //       uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
+  //       console.log("上传文件结果:", res, imgPreList)
+  //     } else {
+  //       ElMessage.error("上传失败:" + res.data.message)
+  //       gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+  //     }
+  //   }).catch(error => {
+  //     uploadFileRaw.sha = 'error'
+  //     gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+  //     console.log("上传文件错误:", error);
+  //   })
+  // }
   console.log('gitFileList-----', gitFileList)
 }
 
@@ -665,7 +741,7 @@ const deleteMoreFile = () => {
           })
         }
       }
-      getFileList()
+      gitFileList.length = 0
     })
     .catch(() => {
       ElMessage({
