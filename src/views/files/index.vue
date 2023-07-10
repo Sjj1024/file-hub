@@ -214,16 +214,16 @@
     <el-dialog v-model="shareMoreDialog" title="分享链接" width="80%" center>
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="原始链接" name="first">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="论坛代码" name="second">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="MarkDown" name="third">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="HTML标签" name="fourth">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 4, maxRows: 8 }" type="textarea" />
+          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
         </el-tab-pane>
         <el-tab-pane label="资源广场" name="five">
           <el-input readonly value="分享到资源广场，审核通过后，会在资源广场展示(所有人可见)，是否继续?" :autosize="{ minRows: 4, maxRows: 8 }"
