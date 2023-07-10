@@ -655,6 +655,10 @@ const deleteMoreFile = () => {
             "sha": file.sha
           }).then(res => {
             console.log("删除返回:", res);
+            ElMessage({
+              message: `${file.name}删除成功`,
+              type: 'success',
+            })
             file.name = ""
           }).catch(err => {
             console.log("删除错误:", err);
@@ -662,10 +666,6 @@ const deleteMoreFile = () => {
         }
       }
       getFileList()
-      ElMessage({
-        message: '删除成功',
-        type: 'success',
-      })
     })
     .catch(() => {
       ElMessage({
