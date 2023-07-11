@@ -2,22 +2,22 @@
   <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading">
     <div class="tools-box">
       <div class="path-tool">
-        <el-button text @click="backBtn" class="path-btn" :disabled="backPath.length === 1">
+        <el-button text @click="backBtn" class="path-btn" :disabled="backPath.length === 1 || fileList.length !== 0">
           <el-icon class="path-icon">
             <ArrowLeft />
           </el-icon>
         </el-button>
-        <el-button text @click="frontBtn" class="path-btn" :disabled="frontPath.length === 0">
+        <el-button text @click="frontBtn" class="path-btn" :disabled="frontPath.length === 0 || fileList.length !== 0">
           <el-icon class="path-icon">
             <ArrowRight />
           </el-icon>
         </el-button>
-        <el-button text @click="getFileList('/root')" class="path-btn">
+        <el-button text @click="getFileList('/root')" class="path-btn" :disabled="fileList.length !== 0">
           <el-icon class="path-icon">
             <HomeFilled />
           </el-icon>
         </el-button>
-        <el-button text @click="getFileList(null)" class="path-btn">
+        <el-button text @click="getFileList(null)" class="path-btn" :disabled="fileList.length !== 0">
           <el-icon class="path-icon">
             <RefreshRight />
           </el-icon>
@@ -54,16 +54,18 @@
         </template>
 
         <template v-else>
-          <el-progress :text-inside="true" :stroke-width="32" :percentage="50" :indeterminate="true" :duration="6"
-            style="width: 120px; margin-right: 10px;">
-            <span>上传进度:{{ upPropress }}/{{ fileList.length ? fileList.length : "1" }}</span>
+          <el-progress v-if="fileList.length" :text-inside="true" :stroke-width="32"
+            :percentage="upPropress / fileList.length * 100" style="width: 120px; margin-right: 10px;">
+            <span style="font-size: 13.5px;">
+              上传进度:{{ upPropress }}/{{ fileList.length ? fileList.length : "0" }}
+            </span>
           </el-progress>
-          <!-- <el-button type="primary" round plain @click="startUpload">
+          <el-button v-else type="primary" round plain @click="startUpload">
             上传文件
             <el-icon class="el-icon--right">
               <Upload />
             </el-icon>
-          </el-button> -->
+          </el-button>
           <el-button round plain @click="newDir">
             新建文件夹
             <el-icon class="el-icon--right">
@@ -127,7 +129,7 @@
         </div>
       </el-tooltip>
       <!-- 网格布局的上传文件按钮 -->
-      <div v-show="showStyle === 'grid'" class="upload-file">
+      <div v-show="showStyle === 'grid' && fileList.length === 0" class="upload-file">
         <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
           :before-upload="handleBeforeUpload" :show-file-list="false">
           <el-icon>
@@ -209,7 +211,7 @@
       top: position.top + 'px',
       display: dirShowMenu ? 'block' : 'none',
     }" class="filemenu">
-      <li class="item" @click="startUpload">上传文件</li>
+      <li class="item" @click="startUpload" v-if="fileList.length === 0">上传文件</li>
       <li class="item" @click="importLink = true">导入资源</li>
       <li class="item" @click="newDir">新建文件夹</li>
       <li class="item" @click="getFileList(null)">刷新目录</li>
@@ -532,7 +534,7 @@ function handleBeforeUpload(file: any) {
 // 文件上传的on-progress
 const upPropress = ref(0)
 
-let fileList: any[]
+let fileList: any[] = []
 
 const startUpFiles = async () => {
   console.log("开始多文件上传", fileList);
@@ -595,6 +597,10 @@ const startUpFiles = async () => {
       }
     })
   }
+  // for上传完所有文件之后
+  console.log("for上传完所有文件之后", fileList);
+  upPropress.value = 0
+  fileList.length = 0
 }
 
 let upTimer: number | null
@@ -608,54 +614,7 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
     upTimer = null
     console.log('防抖 高频触发后n秒内只会执行一次  再次触发重新计时')
     startUpFiles() //说明此时change了所有文件了 可以上传了
-  }, 1000)
-  // 当前日期
-  // var date = new Date()
-  // var reader = new FileReader()
-  // var uploadType = getType(uploadFile.raw.type, uploadFile)
-  // reader.readAsDataURL(uploadFile.raw)
-  // reader.onload = function (event: any) {
-  //   // 用于预览图片
-  //   var uploadFileRaw = reactive({
-  //     name: uploadFile.name,
-  //     path: uploadType === 'picture' ? event!.target.result : "",
-  //     type: uploadType,
-  //     size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
-  //     sha: "",
-  //     openLink: 'https://element-plus.gitee.io/',
-  //     downLink: 'https://element-plus.gitee.io/',
-  //     htmlLink: '',
-  //     creatTime: `${date.getFullYear()}-${date.getMonth() + 1
-  //       }-${date.getDate()}`,
-  //     selected: false,
-  //     showTips: false,
-  //     uploading: true,
-  //   })
-  //   gitFileList.push(uploadFileRaw)
-  //   // 用于上传图片
-  //   fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
-  //     "message": "Upload From FileHub",
-  //     "content": event!.target.result.split("base64,")[1]
-  //   }).then((res: any) => {
-  //     console.log("上传文件返回:", res);
-  //     if (res.status === 201) {
-  //       uploadFileRaw.uploading = false
-  //       uploadFileRaw.path = res.data.content.path
-  //       uploadFileRaw.sha = res.data.content.sha
-  //       uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-  //       uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-  //       uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
-  //       console.log("上传文件结果:", res, imgPreList)
-  //     } else {
-  //       ElMessage.error("上传失败:" + res.data.message)
-  //       gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-  //     }
-  //   }).catch(error => {
-  //     uploadFileRaw.sha = 'error'
-  //     gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-  //     console.log("上传文件错误:", error);
-  //   })
-  // }
+  }, 500)
   console.log('gitFileList-----', gitFileList)
 }
 
@@ -741,7 +700,7 @@ const deleteMoreFile = () => {
           })
         }
       }
-      gitFileList.length = 0
+      getFileList()
     })
     .catch(() => {
       ElMessage({
