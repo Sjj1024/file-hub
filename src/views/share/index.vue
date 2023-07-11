@@ -2,7 +2,7 @@
   <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading">
     <div class="tools-box">
       <div class="path-tool">
-        <el-tooltip class="box-item" effect="dark" :content="'图片：6，视频：10，音乐：100'" placement="right">
+        <el-tooltip class="box-item" effect="dark" :content="'图片：6，视频：10，音乐：100，待审核：5'" placement="right">
           <div class="path">资源总计：1000</div>
         </el-tooltip>
       </div>
@@ -37,7 +37,7 @@
             分享资源
           </el-button>
           <el-radio-group v-model="shareStatus" style="width: 132px; margin-left: 10px;"
-            @change="l => l === '全部' ? getFileList() : getFileList(`creator=${userStore.gitName}&state=all`)">
+            @change="l => l === '全部' ? getFileList() : getFileList(`FileHub`, '', `+author:${userStore.gitName}`)">
             <el-radio-button label="全部" />
             <el-radio-button label="我的" />
           </el-radio-group>
@@ -144,9 +144,8 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="copyLink(scope.row)">复制链接</el-dropdown-item>
-                    <el-dropdown-item @click="shareFile(scope.row)">分享资源</el-dropdown-item>
+                    <el-dropdown-item @click="shareFile(scope.row)">存入我的</el-dropdown-item>
                     <el-dropdown-item @click="downFile(scope.row)">下载文件</el-dropdown-item>
-                    <el-dropdown-item @click="deleteFile(scope.row)">删除文件</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -155,11 +154,9 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination class="page-box"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-       background layout="total, sizes, prev, pager, next, jumper" :total="pageTotal"
-        :page-sizes="[25, 200, 300, 100]" />
+      <el-pagination class="page-box" v-model:current-page="currentPage" v-model:page-size="pageSize"
+        @current-change="pageChange" @size-change="sizeChange" background layout="total, sizes, prev, pager, next, jumper"
+        :total="pageTotal" :page-sizes="[35, 70, 100]" />
     </div>
     <!-- 文件右键菜单部分 -->
     <ul v-show="showMenu" :style="{
@@ -258,9 +255,20 @@ import fileApi from "@/apis/files"
 const userStore = useUserStore()
 
 // 分页大小
-const currentPage = ref(4)
-const pageSize = ref(100)
+const currentPage = ref(1)
+const pageSize = ref(35)
 const pageTotal = ref(100)
+
+// 页码变化
+const pageChange = (page: number) => {
+  currentPage.value = page
+  getFileList()
+}
+
+const sizeChange = (size: number) => {
+  pageSize.value = size
+  getFileList()
+}
 
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
@@ -405,34 +413,6 @@ const openMenu = (e: MouseEvent, item: fileRes) => {
   item.showTips = false
 }
 
-// 路径返回和前进：维护两个栈结构的数组Ab，a存储前进路径，b维护后退路径
-/**
-我们来分析一下浏览器的前进与后退功能：
-访问了一个网页a之后，将网址a入栈A。
-再访问网页b，将网址b入栈A。
-再访问网页c，将网址c入栈A。
-回退后，将栈顶c入栈B。
-再前进，从栈B中取出栈顶c进行访问。
- */
-const backPath: any[] = ["/root"]
-const frontPath: any[] = []
-
-const backBtn = () => {
-  loading.value = true
-  backPath.length > 1 && frontPath.push(backPath.pop())
-  filePath.value = backPath.length > 0 ? backPath[backPath.length - 1] : "/root"
-  getFileList(null)
-  console.log("后退按钮", backPath, frontPath);
-}
-
-const frontBtn = () => {
-  loading.value = true
-  frontPath.length > 0 && backPath.push(frontPath.pop())
-  filePath.value = backPath[backPath.length - 1]
-  getFileList(null)
-  console.log("前进按钮", backPath, frontPath);
-}
-
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog, showStyle.value);
@@ -442,8 +422,6 @@ const handleFileDblClick = (file: fileRes) => {
   } else if (file.type === "foler") {
     loading.value = true
     filePath.value = "/" + file.path
-    backPath.push(filePath.value)
-    console.log("打开文件夹", backPath);
     getFileList(null)
   } else {
     // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
@@ -490,50 +468,6 @@ const checkAllChange = (val: any) => {
 const fileSelChange = (e: any, item: any) => {
   item.selected = e
   console.log('fileSelChange---', e, item, selectedNum)
-}
-
-// 上传文件回调事件
-const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
-  console.log('handleUploadChange----', uploadFile, uploadFiles)
-  // 当前日期
-  var date = new Date()
-  var reader = new FileReader()
-  var uploadType = getType(uploadFile.raw.type, uploadFile)
-  reader.readAsDataURL(uploadFile.raw)
-  reader.onload = function (event: any) {
-    // 用于预览图片
-    var uploadFileRaw = reactive({
-      name: uploadFile.name,
-      path: uploadType === 'picture' ? event!.target.result : "",
-      type: uploadType,
-      size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
-      sha: "",
-      openLink: 'https://element-plus.gitee.io/',
-      downLink: 'https://element-plus.gitee.io/',
-      htmlLink: '',
-      creatTime: `${date.getFullYear()}-${date.getMonth() + 1
-        }-${date.getDate()}`,
-      selected: false,
-      showTips: false,
-      uploading: true,
-    })
-    gitFileList.push(uploadFileRaw)
-    // 用于上传图片
-    fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
-      "message": "Upload From FileHub",
-      "content": event!.target.result.split("base64,")[1]
-    }).then((res: any) => {
-      uploadFileRaw.uploading = false
-      uploadFileRaw.sha = res.data.content.sha
-      uploadFileRaw.openLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
-      uploadFileRaw.downLink = uploadType === 'picture' ? `${userStore.fileCdn}${res.data.content.path}` : `${userStore.gitIoCdn}/${res.data.content.path}`
-      uploadType === 'picture' && imgPreList.push(`${userStore.fileCdn}${res.data.content.path}`)
-      console.log("上传文件结果:", res, imgPreList)
-    }).catch(error => {
-      console.log("上传文件错误:", error);
-    })
-  }
-  console.log('gitFileList-----', gitFileList)
 }
 
 // 复制链接
@@ -585,41 +519,6 @@ const shareFile = (file?: any) => {
     })
 }
 
-// 删除多个文件
-const deleteMoreFile = () => {
-  console.log("删除多个文件");
-  ElMessageBox.confirm(
-    '确定删除多个文件吗?',
-    '删除多个文件',
-    {
-      confirmButtonText: '确定',
-      confirmButtonClass: "confirm-btn",
-      cancelButtonText: '取消',
-      type: 'warning',
-      center: true,
-    }
-  )
-    .then(() => {
-      gitFileList.forEach(file => {
-        if (file.selected) {
-          fileApi.delFile(file.path, {
-            "message": "delete from FileHub",
-            "sha": file.sha
-          })
-        }
-      })
-      ElMessage({
-        message: '删除成功',
-        type: 'success',
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Delete canceled',
-      })
-    })
-}
 
 // 重命名
 const renameFile = () => {
@@ -650,91 +549,6 @@ const infoFile = () => {
   )
 }
 
-// 删除资源
-const deleteFile = (file?: any) => {
-  console.log("删除资源");
-  const curFile = file ? file : rightClickItem
-  ElMessageBox.confirm(
-    '确定删除文件吗?',
-    '删除文件',
-    {
-      confirmButtonText: '确定',
-      confirmButtonClass: "confirm-btn",
-      cancelButtonText: '取消',
-      type: 'warning',
-      center: true,
-    }
-  )
-    .then(() => {
-      fileApi.delFile(curFile.path, {
-        "message": "delete from FileHub",
-        "sha": curFile.sha
-      }).then((res: any) => {
-        console.log("删除成功", res)
-        if (res.status === 200) {
-          ElMessage({
-            message: '删除成功',
-            type: 'success',
-          })
-          gitFileList.splice(gitFileList.indexOf(curFile), 1)
-        } else {
-          ElMessage.error('删除失败:' + res.data.message)
-        }
-      }).catch((e) => {
-        console.log("删除错误：", e);
-        ElMessage.error('删除失败:' + e)
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Delete 失败',
-      })
-    })
-}
-
-// 新建文件夹
-const newDir = () => {
-  console.log("新建文件夹");
-  ElMessageBox.prompt('', '新建文件夹', {
-    confirmButtonText: '确定',
-    confirmButtonClass: "confirm-btn",
-    cancelButtonText: '取消',
-    inputPlaceholder: "请输入文件夹名称",
-    inputPattern:
-      /^[a-zA-Z0-9\u4E00-\u9FA5_]+$/,
-    inputErrorMessage: '文件夹名称不规范: 只能用中英文/数字/下划线组合',
-    center: true,
-  })
-    .then(({ value }) => {
-      fileApi.uploadFile(`${filePath.value}/${value}/.gitkeep`, {
-        "message": "Creat From FileHub",
-        "content": ""
-      }).then((res: any) => {
-        console.log("上传文件结果:", res);
-        getFileList(null)
-        ElMessage({
-          type: 'success',
-          message: `文件夹创建成功`,
-        })
-      }).catch(err => {
-        console.log("创建错误：", err)
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Input canceled',
-      })
-    })
-}
-
-// 上传文件
-const startUpload = () => {
-  const uploadBox = document.querySelector('div.el-upload-dragger') as HTMLDivElement
-  console.log('开始上传文件', uploadBox)
-  uploadBox.click()
-}
 
 // 搜索
 const search = ref('')
@@ -863,14 +677,21 @@ const getType = (fileType: string, curFile: any) => {
 // 发送请求获取根目录文件内容
 let gitSoureList: fileRes[] = []
 let gitFileList: fileRes[] = reactive([])
-const getFileList = (filter?: string | null) => {
+const getFileList = (filter?: string | null, fileType?: string | null, all?: string | null) => {
   loading.value = true
-  // 清空图片预览和文件列表
+  // 清空图片预览和文件列表:creator=${userStore.gitName}&state=all
   imgPreList.length = 0
   gitFileList.length = 0
-  fileApi.getShareFiles(filter ? filter : 'labels=share&state=closed').then((shares) => {
+  //       keyWord: string = 'FileHub',
+  //       lable: string = '+label:share',
+  //       state: string = '+state:closed',
+  //       author: string = '+author:USERNAME',
+  //       pageSize: number = 35,
+  //       pageNum: number = 1
+  fileApi.searchShare(filter ? filter : 'FileHub', fileType ? fileType : "", all ? "" : "+state:closed", all ? all : "", pageSize.value, currentPage.value).then((shares) => {
     console.log("shares------", shares)
-    gitFileList.push(...(shares.data as any).reduce((pre: fileRes[], cur: any) => {
+    pageTotal.value = (shares.data as any).total_count
+    gitFileList.push(...(shares.data as any).items.reduce((pre: fileRes[], cur: any) => {
       var fileInfo = cur.title.split("FileHub:")
       fileInfo[2] === "picture" && imgPreList.push(cur.body)
       cur.title.includes('FileHub:') && pre.push({
