@@ -131,7 +131,7 @@
       <!-- 网格布局的上传文件按钮 -->
       <div v-show="showStyle === 'grid' && fileList.length === 0" class="upload-file">
         <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
-          :before-upload="handleBeforeUpload" :show-file-list="false">
+          :show-file-list="false">
           <el-icon>
             <Plus />
           </el-icon>
@@ -540,7 +540,10 @@ const startUpFiles = async () => {
   console.log("开始多文件上传", fileList);
   for (let index = 0; index < fileList.length; index++) {
     const uploadFile = fileList[index];
-    // console.log("file---", element.name);
+    // 如果文件大小超过25M就跳过
+    if (uploadFile.size / 1024 / 1024 > 25) {
+      continue
+    }
     await new Promise((resolve, reject) => {
       // 当前日期
       var date = new Date()
@@ -579,20 +582,18 @@ const startUpFiles = async () => {
             uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
             uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
             console.log("上传文件结果:", res, imgPreList)
-            resolve("200")
-            upPropress.value = index + 1
           } else {
             ElMessage.error("上传失败:" + res.data.message)
             gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-            reject("409")
-            upPropress.value = index + 1
           }
+          upPropress.value = index + 1
+          resolve("200")
         }).catch(error => {
           uploadFileRaw.sha = 'error'
           gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
           console.log("上传文件错误:", error);
-          reject("409")
           upPropress.value = index + 1
+          resolve("200")
         })
       }
     })
@@ -607,14 +608,20 @@ let upTimer: number | null
 
 // 上传文件回调事件
 const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
-  console.log('handleUploadChange----', uploadFiles, fileList)
+  let fileSize = Number(uploadFile.size / 1024 / 1024);
+  console.log('handleUploadChange----', fileSize, uploadFile)
+  if (fileSize > 25) {
+    ElMessage.error('上传的文件大小不能超过25MB！')
+    // ElMessage({ message: '文件大小不能超过25MB!。', type: 'warning' })
+    return false
+  }
   fileList = uploadFiles
   upTimer && clearTimeout(upTimer)
   upTimer = setTimeout(() => {
     upTimer = null
     console.log('防抖 高频触发后n秒内只会执行一次  再次触发重新计时')
     startUpFiles() //说明此时change了所有文件了 可以上传了
-  }, 500)
+  }, 800)
   console.log('gitFileList-----', gitFileList)
 }
 

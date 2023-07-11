@@ -164,9 +164,10 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <el-pagination class="page-box" background layout="sizes, prev, pager, next, jumper" :total="1000"
+        :page-sizes="[100, 200, 300, 400]" />
     </div>
-    <!-- 分页 -->
-    <el-pagination background layout="prev, pager, next" :total="1000" />
     <!-- 文件右键菜单部分 -->
     <ul v-show="showMenu" :style="{
       left: position.left + 'px',
@@ -1047,6 +1048,12 @@ $column-gap: 16px;
   text-overflow: ellipsis;
 }
 
+.page-box {
+  width: 100%;
+  margin: 6px 0;
+  justify-content: center;
+}
+
 .list-name {
   height: 20px;
   overflow: hidden;
@@ -1061,7 +1068,7 @@ $column-gap: 16px;
 }
 
 .file-box {
-  height: 90%;
+  // height: calc(100% - 32px);
   margin-top: 36px;
   padding-bottom: 41px;
 }
