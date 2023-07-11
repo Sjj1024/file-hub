@@ -240,7 +240,7 @@
         <span class="dialog-footer">
           <el-button @click="shareMoreDialog = false">取消</el-button>
           <el-button type="primary" v-if="activeName !== 'five'" @click="copyMoreFileLink">复制</el-button>
-          <el-button type="primary" v-else @click="copyMoreFileLink">分享到资源广场</el-button>
+          <el-button type="primary" v-else @click="shareMoreFileToSource">分享到资源广场</el-button>
         </span>
       </template>
     </el-dialog>
@@ -371,6 +371,30 @@ const handleClick = (tab: any, event: Event) => {
   } else {
     fileLinkContent.value = '<img src="' + selectedLink.value.join('" alt="1" />\r<img src="') + '" alt="1" />'
   }
+}
+
+// 分享多个文件到资源广场
+const shareMoreFileToSource = () => {
+  gitFileList.forEach(file => {
+    // console.log("fileLinkContent", file.selected, file);
+    if (file.selected) {
+      // console.log("分享文件-", file);
+      const fileInfo = {
+        "body": `${file.openLink}`,
+        "title": `[share]FileHub:${file.name}FileHub:${file.type}FileHub:${file.size}`
+      }
+      fileApi.shareFile(fileInfo).then(res => {
+        console.log("分享成功", res);
+        ElMessage({
+          message: `${file.name}分享成功，审核通过后会在资源广场展示`,
+          type: 'success',
+        })
+      }).catch(err => {
+        console.log("分享失败: ", err);
+      })
+    }
+  })
+  shareMoreDialog.value = false
 }
 
 // 复制多文件分享链接内容

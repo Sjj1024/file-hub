@@ -101,16 +101,6 @@
             </el-icon> -->
         </div>
       </el-tooltip>
-      <!-- 网格布局的上传文件按钮 -->
-      <div v-show="showStyle === 'grid'" class="upload-file">
-        <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
-          :show-file-list="false">
-          <el-icon>
-            <Plus />
-          </el-icon>
-        </el-upload>
-        <div class="upload-name">上传文件</div>
-      </div>
       <!-- 列表布局 -->
       <el-table v-if="showStyle !== 'grid'" :data="gitFileList" style="width: 100%">
         <el-table-column width="26">
@@ -165,8 +155,11 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination class="page-box" background layout="sizes, prev, pager, next, jumper" :total="1000"
-        :page-sizes="[100, 200, 300, 400]" />
+      <el-pagination class="page-box"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+       background layout="total, sizes, prev, pager, next, jumper" :total="pageTotal"
+        :page-sizes="[25, 200, 300, 100]" />
     </div>
     <!-- 文件右键菜单部分 -->
     <ul v-show="showMenu" :style="{
@@ -175,11 +168,9 @@
       display: showMenu ? 'block' : 'none',
     }" class="filemenu">
       <li class="item" @click="copyLink">复制链接</li>
-      <li class="item" @click="shareFile">分享资源</li>
-      <li class="item" @click="renameFile">重新命名</li>
+      <li class="item" @click="shareFile">存入我的</li>
       <li class="item" @click="downFile">下载文件</li>
       <li class="item" @click="infoFile">详细信息</li>
-      <li class="item" @click="deleteFile">删除文件</li>
     </ul>
     <!-- 目录右键菜单 -->
     <ul v-show="dirShowMenu" :style="{
@@ -187,9 +178,7 @@
       top: position.top + 'px',
       display: dirShowMenu ? 'block' : 'none',
     }" class="filemenu">
-      <li class="item" @click="startUpload">上传文件</li>
-      <li class="item" @click="newDir">新建文件夹</li>
-      <li class="item" @click="getFileList(null)">刷新目录</li>
+      <li class="item" @click="getFileList(null)">刷新页面</li>
     </ul>
     <!-- 打开多文件分享链接弹窗 -->
     <el-dialog v-model="shareMoreDialog" title="分享链接" width="80%" center>
@@ -267,6 +256,11 @@ import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
 
 const userStore = useUserStore()
+
+// 分页大小
+const currentPage = ref(4)
+const pageSize = ref(100)
+const pageTotal = ref(100)
 
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
