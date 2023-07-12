@@ -276,7 +276,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onUnmounted, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import docum from '@/views/files/component/document.vue'
 import foler from '@/views/files/component/foler.vue'
@@ -346,11 +346,6 @@ const selectedLink = computed(() => gitFileList.reduce((pre: any, cur) => {
 // 多文件分享链接
 const fileLinkContent = ref()
 
-// 取消选择的文件
-const cancleSelectedFile = () => {
-  gitFileList.forEach(file => file.selected = false)
-}
-
 const shareMoreFile = () => {
   console.log("分享多个文件");
   fileLinkContent.value = selectedLink.value.join("\r")
@@ -396,6 +391,72 @@ const shareMoreFileToSource = () => {
   })
   shareMoreDialog.value = false
 }
+
+const listenPaste = (pe: any) => {
+  pe.preventDefault()
+  pe.stopPropagation()
+  var data = pe.clipboardData!.files[0]
+  if (!data) {
+    return
+  }
+  fileList.push(1)
+  var date = new Date()
+  var reader = new FileReader();
+  var uploadType = getType(data.type, data)
+  reader.readAsDataURL(data);
+  reader.onload = function (event) {
+    // 用于预览图片
+    var uploadFileRaw = reactive({
+      name: data.lastModified + data.name,
+      path: uploadType === 'picture' ? event!.target!.result as string : "",
+      type: uploadType,
+      size: (data.size / 1024 / 1024).toFixed(2).toString() + "M",
+      sha: "",
+      openLink: '',
+      downLink: '',
+      htmlLink: '',
+      creatTime: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+      selected: false,
+      showTips: false,
+      uploading: true,
+    })
+    gitFileList.push(uploadFileRaw)
+    // 用于上传图片
+    fileApi.uploadFile(`${filePath.value}/${data.lastModified + data.name}`, {
+      "message": "Upload From FileHub",
+      "content": (event!.target!.result! as string).split("base64,")[1]
+    }).then((res: any) => {
+      if (res.status === 201) {
+        uploadFileRaw.uploading = false
+        uploadFileRaw.path = res.data.content.path
+        uploadFileRaw.sha = res.data.content.sha
+        uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+        uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+        uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
+        console.log("上传文件结果:", res, imgPreList)
+      } else {
+        ElMessage.error("上传失败:" + res.data.message)
+        gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+      }
+      upPropress.value = 1
+      fileList.length = 0
+    }).catch(error => {
+      uploadFileRaw.sha = 'error'
+      gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+      console.log("上传文件错误:", error);
+      upPropress.value = 1
+      fileList.length = 0
+    })
+  }
+}
+
+// 图片黏贴上传功能
+document.addEventListener('paste', listenPaste)
+
+onUnmounted(() => {
+  document.removeEventListener("paste", listenPaste)
+  console.log("移除黏贴事件2---");
+})
 
 // 复制多文件分享链接内容
 const copyMoreFileLink = () => {
@@ -526,10 +587,6 @@ const closeMenu = () => {
   showMenu.value = false
   dirShowMenu.value = false
 }
-// 点击了文件更多操作
-const moreBtn = (e: any, file: any) => {
-  console.log('点击了菜单--', e, file)
-}
 
 // 表格表头的选择框
 const checkAll = ref(false)
@@ -544,15 +601,6 @@ const checkAllChange = (val: any) => {
 const fileSelChange = (e: any, item: any) => {
   item.selected = e
   console.log('fileSelChange---', e, item, selectedNum)
-}
-
-function handleBeforeUpload(file: any) {
-  //获取上传文件大小
-  let fileSize = Number(file.size / 1024 / 1024);
-  if (fileSize > 25) {
-    ElMessage({ message: '文件大小不能超过25MB，请重新上传。', type: 'warning' })
-    return false
-  }
 }
 
 // 文件上传的on-progress
