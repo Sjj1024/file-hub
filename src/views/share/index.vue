@@ -36,8 +36,7 @@
           <el-button type="primary" round plain @click="shareLink = true">
             分享资源
           </el-button>
-          <el-radio-group v-model="shareStatus" style="width: 132px; margin-left: 10px;"
-            @change="l => l === '全部' ? getFileList() : getFileList(`FileHub`, '', `+author:${userStore.gitName}`)">
+          <el-radio-group v-model="shareStatus" style="width: 132px; margin-left: 10px;" @change="filterFun">
             <el-radio-button label="全部" />
             <el-radio-button label="我的" />
           </el-radio-group>
@@ -146,6 +145,7 @@
                     <el-dropdown-item @click="copyLink(scope.row)">复制链接</el-dropdown-item>
                     <el-dropdown-item @click="shareFile(scope.row)">存入我的</el-dropdown-item>
                     <el-dropdown-item @click="downFile(scope.row)">下载文件</el-dropdown-item>
+                    <el-dropdown-item @click="downFile(scope.row)">举报文件</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -168,6 +168,7 @@
       <li class="item" @click="shareFile">存入我的</li>
       <li class="item" @click="downFile">下载文件</li>
       <li class="item" @click="infoFile">详细信息</li>
+      <li class="item" @click="infoFile">举报文件</li>
     </ul>
     <!-- 目录右键菜单 -->
     <ul v-show="dirShowMenu" :style="{
@@ -537,7 +538,6 @@ const infoFile = () => {
   ElMessageBox.alert(
     `<div style="min-width: 300px; text-align: left;"><strong>名称：</strong>${rightClickItem.name}</div>
      <div style="min-width: 300px; text-align: left;"><strong>类型：</strong>${fileTypes[rightClickItem.type]}</div>
-     <div style="min-width: 300px; text-align: left;"><strong>位置：</strong>${rightClickItem.path}</div>
      <div style="min-width: 300px; text-align: left;"><strong>大小：</strong>${rightClickItem.size}</div>`,
     '文件详情',
     {
@@ -593,13 +593,7 @@ const options = [
 // 过滤
 const filterFun = () => {
   gitFileList.length = 0
-  gitFileList.push(...gitSoureList.filter(file => {
-    if (filterFile.value === 'all') {
-      return true
-    } else if (filterFile.value === file.type) {
-      return true
-    }
-  }))
+  getFileList(search.value ? search.value : 'FileHub', filterFile.value === 'all' ? '' : `+label:${filterFile.value}`, shareStatus.value === '全部' ? '' : `+author:${userStore.gitName}`)
 }
 
 // 搜索内容:在仓库的issue里面搜索，最多返回100条

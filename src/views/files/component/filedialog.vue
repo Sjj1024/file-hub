@@ -44,13 +44,11 @@
 
 <script setup lang='ts'>
 import { ref } from 'vue'
-import loadingGif from "@/assets/image/loadColor.gif"
 import type { fileRes } from "@/utils/useTypes"
 import Hls from 'hls.js';
 import Flv from "flv.js";
 import '@/utils/webtorrent.min.js';
 import DPlayer from 'dplayer';
-import error from '@/assets/image/error.png'
 /**
  * 可以用于播放的视频
  * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
