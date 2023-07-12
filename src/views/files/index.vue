@@ -307,8 +307,8 @@ const linkForm = reactive({
 const importLink = ref(false)
 
 const importLinkAction = () => {
-  const importLinkName = btoa(encodeURIComponent(`${linkForm.link}  ${linkForm.name}  ${linkForm.type}`))
-  fileApi.uploadFile(`${filePath.value}/FileHub:${importLinkName}`, {
+  const importLinkName = `${linkForm.link}¡${linkForm.name}¡${linkForm.type}`.replaceAll("/", "¿")
+  fileApi.uploadFile(`${filePath.value}/${importLinkName}`, {
     "message": "Upload From FileHub",
     "content": ""
   }).then((res) => {
@@ -393,7 +393,7 @@ const shareMoreFileToSource = () => {
 }
 
 const listenPaste = (pe: any) => {
-  pe.preventDefault()
+  // pe.preventDefault()
   pe.stopPropagation()
   var data = pe.clipboardData!.files[0]
   if (!data) {
@@ -1036,9 +1036,9 @@ const getFileList = (path?: string | null) => {
     console.log("fileRes------", fileRes)
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
       // 是不是链接资源
-      if (cur.name.indexOf("FileHub:") === 0) {
-        const linkInfo = decodeURIComponent(atob(cur.name.replace('FileHub:', ''))).split("  ")
-        console.log("是链接资源-------", cur, linkInfo);
+      if (cur.name.indexOf("¿") !== -1) {
+        const linkInfo = cur.name.replaceAll("¿", "/").split("¡")
+        // console.log("是链接资源-------", cur, linkInfo);
         options.find(f => f.label === linkInfo[2])?.value as string === 'picture' && imgPreList.push(linkInfo[0])
         pre.push({
           name: linkInfo[1],
