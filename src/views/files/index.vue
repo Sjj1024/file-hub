@@ -700,7 +700,7 @@ const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
 // 复制链接
 const copyLink = (file?: any) => {
   console.log("rightClickItem----", file)
-  navigator.clipboard.writeText(file ? file.openLink : rightClickItem.openLink).then(() => {
+  navigator.clipboard.writeText(file.openLink ? file.openLink : rightClickItem.openLink).then(() => {
     ElMessage({
       message: '复制成功，快去分享吧',
       type: 'success',
