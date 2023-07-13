@@ -5,6 +5,11 @@ export const useUserStore = defineStore('userInfo', {
     state: () => {
         return {
             name: '1024小神',
+            gitAvatar: 'https://avatars.githubusercontent.com/u/48399687?v=4',
+            theme: localStorage.getItem('theme') || 'light',
+            gitName: localStorage.getItem('gitName') || 'sjj1024',
+            gitRepo: localStorage.getItem('gitRepo') || 'FileHub',
+            gitBranch: localStorage.getItem('gitBranch') || 'main',
             apiLimit: localStorage.getItem('apiLimit')
                 ? JSON.parse(localStorage.getItem('apiLimit')!)
                 : {
@@ -13,10 +18,6 @@ export const useUserStore = defineStore('userInfo', {
                       remaining: 5000,
                       reset: 1687853989,
                   },
-            theme: localStorage.getItem('theme') || 'light',
-            gitName: localStorage.getItem('gitName') || 'sjj1024',
-            gitRepo: localStorage.getItem('gitRepo') || 'FileHub',
-            gitBranch: localStorage.getItem('gitBranch') || 'main',
             gitPath:
                 localStorage.getItem('gitPath') ||
                 'https://api.github.com/repos/Sjj1024/HelloMyPic/contents',
@@ -38,7 +39,8 @@ export const useUserStore = defineStore('userInfo', {
     },
     // 定义getters
     getters: {
-        apiRate: (state) => (state.apiLimit.remaining / state.apiLimit.limit) * 100,
+        apiRate: (state) =>
+            (state.apiLimit.remaining / state.apiLimit.limit) * 100,
         threeAge: () => 6,
     },
     // 定义action
@@ -53,27 +55,29 @@ export const useUserStore = defineStore('userInfo', {
             this.gitPath = `https://api.github.com/repos/${this.gitName}/${this.gitRepo}/contents`
             this.fileCdn = `https://cdn.staticaly.com/gh/${this.gitName}/${this.gitRepo}@${this.gitBranch}/`
             this.gitIoCdn = `https://${this.gitName}.github.io/${this.gitRepo}`
-            localStorage.setItem("gitRepo", this.gitRepo)
-            localStorage.setItem("gitBranch", this.gitBranch)
-            localStorage.setItem("gitPath", this.gitPath)
-            localStorage.setItem("fileCdn", this.fileCdn)
-            localStorage.setItem("gitIoCdn", this.gitIoCdn)
+            localStorage.setItem('gitRepo', this.gitRepo)
+            localStorage.setItem('gitBranch', this.gitBranch)
+            localStorage.setItem('gitPath', this.gitPath)
+            localStorage.setItem('fileCdn', this.fileCdn)
+            localStorage.setItem('gitIoCdn', this.gitIoCdn)
         },
         setGitInfo(gitToken: string, gitInfo: any) {
             this.gitToken = gitToken
             this.gitInfo = gitInfo
             this.name = gitInfo.name
             this.gitName = gitInfo.login
+            this.gitAvatar = gitInfo.avatar_url
             this.gitPath = `https://api.github.com/repos/${this.gitName}/${this.gitRepo}/contents`
             this.fileCdn = `https://cdn.staticaly.com/gh/${this.gitName}/${this.gitRepo}@${this.gitBranch}/`
             this.gitIoCdn = `https://${this.gitName}.github.io/${this.gitRepo}`
             localStorage.setItem('gitToken', gitToken)
+            localStorage.setItem('gitAvatar', this.gitAvatar)
             localStorage.setItem('gitInfo', JSON.stringify(gitInfo))
-            localStorage.setItem("name",  this.name)
-            localStorage.setItem("gitName",  this.gitName)
-            localStorage.setItem("gitPath", this.gitPath)
-            localStorage.setItem("fileCdn", this.fileCdn)
-            localStorage.setItem("gitIoCdn", this.gitIoCdn)
+            localStorage.setItem('name', this.name)
+            localStorage.setItem('gitName', this.gitName)
+            localStorage.setItem('gitPath', this.gitPath)
+            localStorage.setItem('fileCdn', this.fileCdn)
+            localStorage.setItem('gitIoCdn', this.gitIoCdn)
         },
         setApiRate(apiInfo: any) {
             this.apiLimit = apiInfo
