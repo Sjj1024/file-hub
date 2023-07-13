@@ -224,6 +224,7 @@
           <el-radio-button label="视频"></el-radio-button>
           <el-radio-button label="音频"></el-radio-button>
           <el-radio-button label="文档"></el-radio-button>
+          <el-radio-button label="网站"></el-radio-button>
           <el-radio-button label="其他"></el-radio-button>
         </el-radio-group>
       </el-form-item>
@@ -583,6 +584,10 @@ const options = [
   {
     value: 'document',
     label: '文档',
+  },
+  {
+    value: 'web',
+    label: '网址',
   },
   {
     value: 'other',
