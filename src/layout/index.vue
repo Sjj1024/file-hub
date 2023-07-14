@@ -26,7 +26,7 @@ import AppMain from './components/AppMain.vue';
     flex-direction: row;
 
     .bar {
-      flex: 4;
+      // flex: 4;
       height: 100%;
     }
   }

@@ -46,6 +46,29 @@ const clickMenu = (menuPath: string, menuIndex: string) => {
   // border-bottom: 1px solid rgb(188, 187, 187);
   background-color: unset;
   width: 160px;
+  overflow-y: auto;
+}
+
+
+.el-menu-vertical::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.el-menu-vertical::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.el-menu-vertical::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #c3c3c3;
+}
+
+.el-menu-vertical::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
 :deep(.el-menu) {
@@ -57,9 +80,9 @@ const clickMenu = (menuPath: string, menuIndex: string) => {
   background-color: var(--menu-ative-bg);
 }
 
-:deep(.el-menu-item) {
-  margin-bottom: 1px;
-}
+// :deep(.el-menu-item) {
+//   margin-bottom: 1px;
+// }
 
 :deep(.el-menu-item:hover) {
   background-color: var(--menu-ative-bg);
