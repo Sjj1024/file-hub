@@ -12,6 +12,7 @@ import '@/style/theme.css'
 import '@/style/index.scss'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import i18n from './lang/index'
+import VueGtag from 'vue-gtag'
 
 const app = createApp(App)
 
@@ -31,5 +32,14 @@ app.use(i18n)
 // 使用路由
 app.use(router)
 // await router.isReady()
+
+// 使用google统计
+app.use(
+    VueGtag,
+    {
+        config: { id: 'G-66KMVSDKH9' },
+    },
+    router
+)
 
 app.mount('#app')

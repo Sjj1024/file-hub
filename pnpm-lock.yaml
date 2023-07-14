@@ -38,6 +38,9 @@ dependencies:
   vue:
     specifier: ^3.3.2
     version: registry.npmmirror.com/vue@3.3.2
+  vue-gtag:
+    specifier: ^2.0.1
+    version: registry.npmmirror.com/vue-gtag@2.0.1(vue@3.3.2)
   vue-i18n:
     specifier: 9.3.0-beta.19
     version: registry.npmmirror.com/vue-i18n@9.3.0-beta.19(vue@3.3.2)
@@ -2090,6 +2093,17 @@ packages:
     peerDependenciesMeta:
       '@vue/composition-api':
         optional: true
+    dependencies:
+      vue: registry.npmmirror.com/vue@3.3.2
+    dev: false
+
+  registry.npmmirror.com/vue-gtag@2.0.1(vue@3.3.2):
+    resolution: {integrity: sha512-aM4A58FVL0wV2ptYi+xzAjeg+pQVRyUcfBc5UkXAwQrR4t3WBhor50Izp2I+3Oo7+l+vWJ7u78DGcNzReb8S/A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-gtag/-/vue-gtag-2.0.1.tgz}
+    id: registry.npmmirror.com/vue-gtag/2.0.1
+    name: vue-gtag
+    version: 2.0.1
+    peerDependencies:
+      vue: ^3.0.0
     dependencies:
       vue: registry.npmmirror.com/vue@3.3.2
     dev: false
