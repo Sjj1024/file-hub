@@ -170,7 +170,6 @@
         <el-table-column label="操作" width="100" align='center' class-name="table-action">
           <template #default="scope">
             <div v-if="scope.row.uploading">上传中......</div>
-            <div v-if="scope.row.type === 'foler'">不可操作</div>
             <div v-else>
               <el-dropdown>
                 <span class="dropdown-icon">
@@ -180,10 +179,16 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="copyLink(scope.row)">复制链接</el-dropdown-item>
-                    <el-dropdown-item @click="shareFile(scope.row)">分享资源</el-dropdown-item>
-                    <el-dropdown-item @click="downFile(scope.row)">下载文件</el-dropdown-item>
-                    <el-dropdown-item @click="deleteFile(scope.row)">删除文件</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
+                      @click="copyLink(scope.row)">复制链接</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
+                      @click="shareFile(scope.row)">分享资源</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
+                      @click="downFile(scope.row)">下载文件</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
+                      @click="deleteFile(scope.row)">删除文件</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.type === 'foler'"
+                      @click="deleteFoler(scope.row)">删除文件夹</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -198,12 +203,13 @@
       top: position.top + 'px',
       display: showMenu ? 'block' : 'none',
     }" class="filemenu">
-      <li class="item" @click="copyLink">复制链接</li>
-      <li class="item" @click="shareFile">分享资源</li>
-      <li class="item" @click="renameFile">重新命名</li>
-      <li class="item" @click="downFile">下载文件</li>
-      <li class="item" @click="infoFile">详细信息</li>
-      <li class="item" @click="deleteFile">删除文件</li>
+      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="copyLink">复制链接</li>
+      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="shareFile">分享资源</li>
+      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="renameFile">重新命名</li>
+      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="downFile">下载文件</li>
+      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="infoFile">详细信息</li>
+      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="deleteFile">删除文件</li>
+      <li v-show="rightClickItem && rightClickItem.type === 'foler'" class="item" @click="deleteFoler">删除文件夹</li>
     </ul>
     <!-- 目录右键菜单 -->
     <ul v-show="dirShowMenu" :style="{
@@ -501,7 +507,7 @@ let rightClickItem: fileRes
 const openMenu = (e: MouseEvent, item: fileRes) => {
   dirShowMenu.value = false
   // 如果文件是上传状态，则直接返回
-  if (item.uploading || item.type === 'foler') {
+  if (item.uploading) {
     return
   }
   // 获取侧边菜单栏宽度和顶部栏高度
@@ -852,6 +858,63 @@ const deleteFile = (file?: any) => {
         console.log("删除错误：", e);
         ElMessage.error('删除失败:' + e)
       })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete 失败',
+      })
+    })
+}
+
+// 删除文件夹
+const deleteFoler = (foler?: any) => {
+  // 仅删除.gitkeep文件，如果文件夹中存在别的文件，需要手动删除，然后文件夹自然会被删除
+  console.log("删除文件夹:");
+  const curFile = foler.openLink ? foler : rightClickItem
+  ElMessageBox.confirm(
+    '确定删除文件夹吗?',
+    '删除文件夹',
+    {
+      confirmButtonText: '确定',
+      confirmButtonClass: "confirm-btn",
+      cancelButtonText: '取消',
+      type: 'warning',
+      center: true,
+    }
+  )
+    .then(() => {
+      // 先获取.gitkeep文件的sha，然后再删除
+      fileApi.getFiles(curFile.path + '/.gitkeep')
+        .then(getRes => {
+          console.log("获取到的文件是:", getRes);
+          if (getRes.status === 200) {
+            const folerSha = (getRes.data as any).sha
+            const folerPath = (getRes.data as any).path
+            fileApi.delFile(folerPath, {
+              "message": "delete from FileHub",
+              "sha": folerSha
+            }).then((res: any) => {
+              console.log("删除成功", res)
+              if (res.status === 200) {
+                ElMessage({
+                  message: '需要手动删除文件夹中的所有内容',
+                  type: 'success',
+                })
+                gitFileList.splice(gitFileList.indexOf(curFile), 1)
+              } else {
+                ElMessage.error('删除失败:' + res.data.message)
+              }
+            }).catch((e) => {
+              console.log("需要手动删除文件夹中的所有内容", e);
+              ElMessage.error('删除失败:' + e)
+            })
+          } else {
+            console.log("没有获取到gitkeep", getRes);
+          }
+        }).catch(err => {
+          console.log("获取文件错误：", err);
+        })
     })
     .catch(() => {
       ElMessage({
