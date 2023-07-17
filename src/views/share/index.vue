@@ -253,6 +253,9 @@ import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
+import { writeBinaryFile } from '@tauri-apps/api/fs';
+import { path, dialog } from '@tauri-apps/api';
+
 
 const userStore = useUserStore()
 
@@ -529,9 +532,33 @@ const renameFile = () => {
 }
 
 // 下载
-const downFile = (file?: any) => {
-  console.log("下载资源");
+const downFile = async (file?: any) => {
+  var fileURL = file.openLink ? file.openLink : rightClickItem.openLink
+  const basePath = await path.downloadDir() + `/${file.name ? file.name : rightClickItem.name}`;
+  let selPath = await dialog.save({
+    title: `保存文件: ${file.name ? file.name : rightClickItem.name}`,
+    defaultPath: basePath,
+    filters: [{
+      name: '*',
+      extensions: ['*']
+    }]
+  });
+  console.log("selPath----", selPath);
+  // 开始发送下载请求
+  selPath && fileApi.downFile(fileURL).then(async res => {
+    console.log("downRes----", res);
+    writeBinaryFile({ contents: res.data as any, path: `${selPath}` })
+      .then(res => {
+        ElMessage({
+          message: `${file.name ? file.name : rightClickItem.name}保存成功`,
+          type: 'success',
+        })
+      }).catch(err => {
+        ElMessage.error('文件保存失败:' + err)
+      })
+  })
 }
+
 
 // 详情
 const infoFile = () => {
