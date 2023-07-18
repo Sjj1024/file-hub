@@ -1,5 +1,6 @@
 <template>
-  <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading">
+  <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading" @dragenter="dragenterEvent"
+    @dragover="dragoverEvent" @dragleave="dragleaveEvent" @drop="dropEvent">
     <div class="tools-box">
       <div class="path-tool">
         <el-button text @click="backBtn" class="path-btn" :disabled="backPath.length === 1 || fileList.length !== 0">
@@ -284,14 +285,14 @@
 <script setup lang="ts">
 import { computed, onUnmounted, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import docum from '@/views/files/component/document.vue'
-import foler from '@/views/files/component/foler.vue'
-import music from '@/views/files/component/music.vue'
-import other from '@/views/files/component/other.vue'
-import pic from '@/views/files/component/picture.vue'
-import fileLoading from '@/views/files/component/uploading.vue'
-import vide from '@/views/files/component/video.vue'
-import fileDialog from "@/views/files/component/filedialog.vue"
+import docum from '@/components/document.vue'
+import foler from '@/components/foler.vue'
+import music from '@/components/music.vue'
+import other from '@/components/other.vue'
+import pic from '@/components/picture.vue'
+import fileLoading from '@/components/uploading.vue'
+import vide from '@/components/video.vue'
+import fileDialog from "@/components/filedialog.vue"
 import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
@@ -299,6 +300,97 @@ import fileApi from "@/apis/files"
 import { writeBinaryFile } from '@tauri-apps/api/fs';
 import { path, dialog } from '@tauri-apps/api';
 import { useFileStore } from '@/stores/files'
+
+
+const dragenterEvent = (event: any) => {
+  event.stopPropagation();
+  event.preventDefault();
+  console.log("拖拽进来了:");
+}
+
+const dragoverEvent = (event: any) => {
+  event.stopPropagation();
+  event.preventDefault();
+  console.log("拖拽结束了:");
+}
+
+const dragleaveEvent = (event: any) => {
+  event.stopPropagation();
+  event.preventDefault();
+  console.log("拖拽离开了:");
+}
+
+const dropEvent = async (event: any) => {
+  event.stopPropagation();
+  event.preventDefault();
+  const files = event.dataTransfer.files;
+  console.log("dropfiles-----", files);
+  fileList.length = files.length
+  for (let index = 0; index < files.length; index++) {
+    const uploadFile = files[index];
+    // 如果文件大小超过25M就跳过
+    if (uploadFile.size / 1024 / 1024 > 25) {
+      continue
+    }
+    await new Promise((resolve, reject) => {
+      // 当前日期
+      var date = new Date()
+      var reader = new FileReader()
+      var uploadType = getType(uploadFile.type, uploadFile)
+      reader.readAsDataURL(uploadFile)
+      reader.onload = function (event: any) {
+        // 用于预览图片
+        var uploadFileRaw = reactive({
+          name: uploadFile.name,
+          path: uploadType === 'picture' ? event!.target.result : "",
+          type: uploadType,
+          size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
+          sha: "",
+          openLink: 'https://element-plus.gitee.io/',
+          downLink: 'https://element-plus.gitee.io/',
+          htmlLink: '',
+          creatTime: `${date.getFullYear()}-${date.getMonth() + 1
+            }-${date.getDate()}`,
+          selected: false,
+          showTips: false,
+          uploading: true,
+        })
+        gitFileList.push(uploadFileRaw)
+        // 用于上传图片
+        fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
+          "message": "Upload From FileHub",
+          "content": event!.target.result.split("base64,")[1]
+        }).then((res: any) => {
+          console.log("上传文件返回:", res);
+          if (res.status === 201) {
+            uploadFileRaw.uploading = false
+            uploadFileRaw.path = res.data.content.path
+            uploadFileRaw.sha = res.data.content.sha
+            uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+            uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
+            uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
+            console.log("上传文件结果:", res, imgPreList)
+          } else {
+            ElMessage.error("上传失败:" + res.data.message)
+            gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+          }
+          upPropress.value = index + 1
+          resolve("200")
+        }).catch(error => {
+          uploadFileRaw.sha = 'error'
+          gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
+          console.log("上传文件错误:", error);
+          upPropress.value = index + 1
+          resolve("200")
+        })
+      }
+    })
+  }
+  // for上传完所有文件之后
+  console.log("drop for上传完所有文件之后", fileList);
+  upPropress.value = 0
+  fileList.length = 0
+}
 
 
 const uStore = useUserStore()
@@ -919,7 +1011,7 @@ const deleteFoler = (foler?: any) => {
   console.log("删除文件夹:");
   const curFile = foler.openLink ? foler : rightClickItem
   ElMessageBox.confirm(
-    '确定删除文件夹吗?',
+    '确定删除文件夹吗?需先手动删除里面的内容！',
     '删除文件夹',
     {
       confirmButtonText: '确定',
@@ -947,7 +1039,7 @@ const deleteFoler = (foler?: any) => {
                   message: '需要手动删除文件夹中的所有内容',
                   type: 'success',
                 })
-                gitFileList.splice(gitFileList.indexOf(curFile), 1)
+                getFileList()
               } else {
                 ElMessage.error('删除失败:' + res.data.message)
               }
@@ -957,6 +1049,10 @@ const deleteFoler = (foler?: any) => {
             })
           } else {
             console.log("没有获取到gitkeep", getRes);
+            ElMessage({
+              message: '需要手动删除文件夹中的所有内容',
+              type: 'success',
+            })
           }
         }).catch(err => {
           console.log("获取文件错误：", err);

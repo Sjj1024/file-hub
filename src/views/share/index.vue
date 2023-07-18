@@ -19,12 +19,12 @@
               <Download />
             </el-icon>
           </el-button>
-          <el-button type="success" round plain @click="shareMoreFile">
+          <!-- <el-button type="success" round plain @click="shareMoreFile">
             存入我的
             <el-icon class="el-icon--right">
               <Share />
             </el-icon>
-          </el-button>
+          </el-button> -->
         </template>
 
         <template v-else>
@@ -143,9 +143,8 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="copyLink(scope.row)">复制链接</el-dropdown-item>
-                    <el-dropdown-item @click="shareFile(scope.row)">存入我的</el-dropdown-item>
                     <el-dropdown-item @click="downFile(scope.row)">下载文件</el-dropdown-item>
-                    <el-dropdown-item @click="downFile(scope.row)">举报文件</el-dropdown-item>
+                    <el-dropdown-item>举报文件</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -165,7 +164,6 @@
       display: showMenu ? 'block' : 'none',
     }" class="filemenu">
       <li class="item" @click="copyLink">复制链接</li>
-      <li class="item" @click="shareFile">存入我的</li>
       <li class="item" @click="downFile">下载文件</li>
       <li class="item" @click="infoFile">详细信息</li>
       <li class="item" @click="infoFile">举报文件</li>
@@ -241,14 +239,14 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import docum from '@/views/files/component/document.vue'
-import foler from '@/views/files/component/foler.vue'
-import music from '@/views/files/component/music.vue'
-import other from '@/views/files/component/other.vue'
-import pic from '@/views/files/component/picture.vue'
-import fileLoading from '@/views/files/component/uploading.vue'
-import vide from '@/views/files/component/video.vue'
-import fileDialog from "@/views/files/component/filedialog.vue"
+import docum from '@/components/document.vue'
+import foler from '@/components/foler.vue'
+import music from '@/components/music.vue'
+import other from '@/components/other.vue'
+import pic from '@/components/picture.vue'
+import fileLoading from '@/components/uploading.vue'
+import vide from '@/components/video.vue'
+import fileDialog from "@/components/filedialog.vue"
 import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
 import type { fileRes } from "@/utils/useTypes"
 import { useUserStore } from '@/stores/user'
