@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" @click="dragging">
     <div class="logo">
       <img v-if="userStore.theme === 'light'" :src="logoLight" alt="" class="logo-img" />
       <img v-else :src="logoDark" alt="" class="logo-img" />
@@ -67,6 +67,23 @@
           </template>
         </el-dropdown>
       </div>
+      <div data-tauri-drag-region class="titlebar">
+        <div class="titlebar-button" id="titlebar-minimize">
+          <el-icon>
+            <Minus />
+          </el-icon>
+        </div>
+        <div class="titlebar-button" id="titlebar-maximize">
+          <el-icon>
+            <FullScreen />
+          </el-icon>
+        </div>
+        <div class="titlebar-button" id="titlebar-close">
+          <el-icon>
+            <Close />
+          </el-icon>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +98,22 @@ import useTheme from '@/hooks/theme'
 import { useI18n } from 'vue-i18n'
 import { timestampToTime } from "@/utils/index"
 import { getApiLimit } from '@/utils/request';
+import { appWindow, LogicalPosition } from '@tauri-apps/api/window'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  document.getElementById('titlebar-minimize')!.addEventListener('click', () => appWindow.minimize())
+  document.getElementById('titlebar-maximize')!.addEventListener('click', () => appWindow.toggleMaximize())
+  document.getElementById('titlebar-close')!.addEventListener('click', () => appWindow.close())
+  console.log("onMounted------", document.getElementById('titlebar-close'));
+})
+
+// 窗口拖动
+const dragging = async () => {
+  console.log("按下了---");
+  await appWindow.setPosition(new LogicalPosition(600, 300));
+  // await appWindow.startDragging();
+}
 
 getApiLimit()
 const { locale } = useI18n()
@@ -131,7 +164,7 @@ const changeLang = (lang: string) => {
 }
 
 .header {
-  height: 40px;
+  height: 50px;
   border-bottom: solid 1px var(--el-menu-border-color);
   display: flex;
   justify-content: space-between;
@@ -164,11 +197,11 @@ const changeLang = (lang: string) => {
     }
 
     .user-info {
-      margin-right: 30px;
+      margin-right: 5px;
 
       .user-img {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
         border: unset;
         border-radius: 18px;
         cursor: pointer;
@@ -178,6 +211,32 @@ const changeLang = (lang: string) => {
     .my-info {
       color: var(--el-text-color-regular);
       text-decoration: none;
+    }
+
+    .titlebar {
+      display: flex;
+      margin-right: 20px;
+      user-select: none;
+
+      .titlebar-button {
+        margin-left: 15px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+
+        &:hover {
+          background-color: rgb(242, 242, 242);
+        }
+      }
+
+      #titlebar-close {
+        &:hover {
+          color: white;
+          background-color: rgb(235, 32, 19);
+        }
+      }
     }
   }
 }

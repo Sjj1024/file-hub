@@ -784,7 +784,7 @@ $column-gap: 16px;
   // justify-content: space-between;
   position: fixed;
   z-index: 999;
-  top: 40px;
+  top: 50px;
   background-color: var(--bg-color);
 
   .path-tool {

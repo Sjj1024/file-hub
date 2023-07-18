@@ -48,7 +48,8 @@
                 "fileDropEnabled": false,
                 "width": 1031,
                 "height": 580,
-                "center": true
+                "center": true,
+                "decorations": false
             }
         ]
     }
