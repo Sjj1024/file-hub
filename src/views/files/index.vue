@@ -33,7 +33,7 @@
           <el-button round plain @click="gitFileList.forEach(file => file.selected = false)">
             取消选择({{ selectedNum }})
           </el-button>
-          <el-button type="primary" round plain>
+          <el-button type="primary" round plain @click="downMoreFile">
             下载文件
             <el-icon class="el-icon--right">
               <Download />
@@ -298,9 +298,12 @@ import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
 import { writeBinaryFile } from '@tauri-apps/api/fs';
 import { path, dialog } from '@tauri-apps/api';
+import { useFileStore } from '@/stores/files'
 
 
 const uStore = useUserStore()
+const fileStore = useFileStore()
+
 
 // 拉取自己Filehub仓库中的文件内容
 const filePath = ref('/root')
@@ -804,10 +807,10 @@ const renameFile = () => {
 }
 
 // 下载
-const downFile = async (file?: any) => {
+const downFile = async (file?: any, downPath?: string) => {
   var fileURL = file.openLink ? file.openLink : rightClickItem.openLink
   const basePath = await path.downloadDir() + `/${file.name ? file.name : rightClickItem.name}`;
-  let selPath = await dialog.save({
+  let selPath = downPath || await dialog.save({
     title: `保存文件: ${file.name ? file.name : rightClickItem.name}`,
     defaultPath: basePath,
     filters: [{
@@ -816,8 +819,11 @@ const downFile = async (file?: any) => {
     }]
   });
   console.log("selPath----", selPath);
+  if (selPath && !downPath) {
+    fileStore.setDownNum(fileStore.downNum += 1)
+  }
   // 开始发送下载请求
-  selPath && fileApi.downFile(fileURL).then(async res => {
+  selPath && fileURL && fileApi.downFile(fileURL).then(async res => {
     console.log("downRes----", res);
     writeBinaryFile({ contents: res.data as any, path: `${selPath}` })
       .then(res => {
@@ -827,8 +833,23 @@ const downFile = async (file?: any) => {
         })
       }).catch(err => {
         ElMessage.error('文件保存失败:' + err)
+      }).finally(() => {
+        fileStore.setDownDone(fileStore.downDone += 1)
       })
   })
+}
+
+// 多文件下载
+const downMoreFile = async () => {
+  fileStore.setDownNum(fileStore.downNum += selectedNum.value)
+  console.log("selectedNum------", selectedNum.value);
+  for (let index = 0; index < gitFileList.length; index++) {
+    const file = gitFileList[index];
+    if (file.selected) {
+      const basePath = await path.downloadDir() + `${file.name}`;
+      downFile(file, basePath)
+    }
+  }
 }
 
 // 详情
@@ -1129,7 +1150,7 @@ const getFileList = (path?: string | null) => {
         // console.log("是链接资源-------", cur, linkInfo);
         options.find(f => f.label === linkInfo[2])?.value as string === 'picture' && imgPreList.push(linkInfo[0])
         pre.push({
-          name: linkInfo[1],
+          name: linkInfo[1].includes('.') ? linkInfo[1] : linkInfo[1] + linkInfo[0].substring(linkInfo[0].lastIndexOf('.')),
           path: cur.path,
           type: options.find(f => f.label === linkInfo[2])?.value as string,
           size: "未知",

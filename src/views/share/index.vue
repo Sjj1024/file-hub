@@ -13,7 +13,7 @@
           <el-button round plain @click="gitFileList.forEach(file => file.selected = false)">
             取消选择({{ selectedNum }})
           </el-button>
-          <el-button type="primary" round plain>
+          <el-button type="primary" round plain @click="downMoreFile">
             下载文件
             <el-icon class="el-icon--right">
               <Download />
@@ -255,9 +255,11 @@ import { useUserStore } from '@/stores/user'
 import fileApi from "@/apis/files"
 import { writeBinaryFile } from '@tauri-apps/api/fs';
 import { path, dialog } from '@tauri-apps/api';
+import { useFileStore } from '@/stores/files'
 
 
 const userStore = useUserStore()
+const fileStore = useFileStore()
 
 // 分页大小
 const currentPage = ref(1)
@@ -328,11 +330,6 @@ const selectedLink = computed(() => gitFileList.reduce((pre: any, cur) => {
 
 // 多文件分享链接
 const fileLinkContent = ref()
-
-// 取消选择的文件
-const cancleSelectedFile = () => {
-  gitFileList.forEach(file => file.selected = false)
-}
 
 const shareMoreFile = () => {
   console.log("分享多个文件");
@@ -478,7 +475,7 @@ const fileSelChange = (e: any, item: any) => {
 // 复制链接
 const copyLink = (file?: any) => {
   console.log("rightClickItem----", file)
-  navigator.clipboard.writeText(file ? file.openLink : rightClickItem.openLink).then(() => {
+  navigator.clipboard.writeText(file.openLink ? file.openLink : rightClickItem.openLink).then(() => {
     ElMessage({
       message: '复制成功，快去分享吧',
       type: 'success',
@@ -489,7 +486,7 @@ const copyLink = (file?: any) => {
 // 分享资源
 const shareFile = (file?: any) => {
   console.log("分享资源");
-  const curFile = file ? file : rightClickItem
+  const curFile = file.openLink ? file : rightClickItem
   ElMessageBox.confirm(
     '分享成功后会在资源广场展示(所有人可见)，是否继续?',
     '分享到资源广场',
@@ -524,18 +521,11 @@ const shareFile = (file?: any) => {
     })
 }
 
-
-// 重命名
-const renameFile = () => {
-  console.log("重命名资源");
-  ElMessage.error('由于Github api暂时不支持重命名，所以延期开发...')
-}
-
 // 下载
-const downFile = async (file?: any) => {
+const downFile = async (file?: any, downPath?: string) => {
   var fileURL = file.openLink ? file.openLink : rightClickItem.openLink
   const basePath = await path.downloadDir() + `/${file.name ? file.name : rightClickItem.name}`;
-  let selPath = await dialog.save({
+  let selPath = downPath || await dialog.save({
     title: `保存文件: ${file.name ? file.name : rightClickItem.name}`,
     defaultPath: basePath,
     filters: [{
@@ -544,8 +534,11 @@ const downFile = async (file?: any) => {
     }]
   });
   console.log("selPath----", selPath);
+  if (selPath && !downPath) {
+    fileStore.setDownNum(fileStore.downNum += 1)
+  }
   // 开始发送下载请求
-  selPath && fileApi.downFile(fileURL).then(async res => {
+  selPath && fileURL && fileApi.downFile(fileURL).then(async res => {
     console.log("downRes----", res);
     writeBinaryFile({ contents: res.data as any, path: `${selPath}` })
       .then(res => {
@@ -555,10 +548,24 @@ const downFile = async (file?: any) => {
         })
       }).catch(err => {
         ElMessage.error('文件保存失败:' + err)
+      }).finally(() => {
+        fileStore.setDownDone(fileStore.downDone += 1)
       })
   })
 }
 
+// 多文件下载
+const downMoreFile = async () => {
+  fileStore.setDownNum(fileStore.downNum += selectedNum.value)
+  console.log("selectedNum------", selectedNum.value);
+  for (let index = 0; index < gitFileList.length; index++) {
+    const file = gitFileList[index];
+    if (file.selected) {
+      const basePath = await path.downloadDir() + `${file.name}`;
+      downFile(file, basePath)
+    }
+  }
+}
 
 // 详情
 const infoFile = () => {
@@ -655,50 +662,6 @@ const fileTypes = {
 // 维护一个图片列表，用于图片预览
 const imgPreList: string[] = []
 
-// 根据类型和文件名返回真实的文件类型
-const getType = (fileType: string, curFile: any) => {
-  if (fileType === 'dir') {
-    return 'foler'
-  } else {
-    const fileLast = curFile.name
-      .substring(curFile.name.lastIndexOf('.') + 1)
-      .toUpperCase()
-    if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
-      // 图片格式: 加入图片预览列表
-      curFile.path && imgPreList.push(`${userStore.fileCdn}${curFile.path}`)
-      return 'picture'
-    } else if (
-      ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP'].includes(
-        fileLast
-      )
-    ) {
-      // 视频格式
-      return 'video'
-    } else if (['WAV', 'MP3', 'WMA', 'M4A'].includes(fileLast)) {
-      // 音乐格式
-      return 'music'
-    } else if (
-      [
-        'DOC',
-        'WPS',
-        'XLS',
-        'PPT',
-        'HTML',
-        'XLSX',
-        'DOCX',
-        'TXT',
-        'CSV',
-      ].includes(fileLast)
-    ) {
-      // 文档格式
-      return 'document'
-    } else {
-      // 其他格式
-      return 'other'
-    }
-  }
-}
-
 
 // 发送请求获取根目录文件内容
 let gitSoureList: fileRes[] = []
@@ -721,7 +684,7 @@ const getFileList = (filter?: string | null, fileType?: string | null, all?: str
       var fileInfo = cur.title.split("FileHub:")
       fileInfo[2] === "picture" && imgPreList.push(cur.body)
       cur.title.includes('FileHub:') && pre.push({
-        name: fileInfo[1],
+        name: fileInfo[1].includes('.') ? fileInfo[1] : fileInfo[1] + cur.body.substring(cur.body.lastIndexOf('.')),
         path: "",
         type: fileInfo[2],
         size: fileInfo[3],
