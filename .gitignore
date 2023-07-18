@@ -12,7 +12,6 @@ dist
 /src/config/*
 dist-ssr
 *.local
-README.md
 
 # Editor directories and files
 .vscode/*
