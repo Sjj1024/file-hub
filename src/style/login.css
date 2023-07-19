@@ -120,7 +120,7 @@
   left: 0;
   height: 100%;
   width: 400px;
-  padding: 50px;
+  padding: 56px;
   z-index: 200;
   transition: 1.25s;
   background-color: #ecf0f3;
@@ -151,7 +151,7 @@
   flex-direction: column;
   position: absolute;
   width: 400px;
-  padding: 50px 55px;
+  padding: 56px 55px;
   transition: 1.25s;
 }
 .switch__button {

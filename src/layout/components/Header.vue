@@ -1,8 +1,8 @@
 <template>
-  <div class="header" @click="dragging">
-    <div class="logo">
-      <img v-if="userStore.theme === 'light'" :src="logoLight" alt="" class="logo-img" />
-      <img v-else :src="logoDark" alt="" class="logo-img" />
+  <div class="header" data-tauri-drag-region>
+    <div class="logo" data-tauri-drag-region>
+      <img v-if="userStore.theme === 'light'" :src="logoLight" alt="" class="logo-img" data-tauri-drag-region/>
+      <img v-else :src="logoDark" alt="" class="logo-img" data-tauri-drag-region/>
       <div class="api-pro">
         <el-progress :text-inside="true" :stroke-width="20" :percentage="userStore.apiRate" :color="colors"
           status="exception">
@@ -67,7 +67,7 @@
           </template>
         </el-dropdown>
       </div>
-      <div data-tauri-drag-region class="titlebar">
+      <div class="titlebar">
         <div class="titlebar-button" id="titlebar-minimize">
           <el-icon>
             <Minus />
@@ -164,7 +164,7 @@ const changeLang = (lang: string) => {
 }
 
 .header {
-  height: 50px;
+  height: 56px;
   border-bottom: solid 1px var(--el-menu-border-color);
   display: flex;
   justify-content: space-between;

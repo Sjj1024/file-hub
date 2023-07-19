@@ -21,8 +21,11 @@
                 "open": true
             },
             "fs": {
-              "all": true,
-              "scope": ["*", "$DOWNLOAD/*"]
+                "all": true,
+                "scope": ["*", "$DOWNLOAD/*"]
+            },
+            "window": {
+                "all": true
             }
         },
         "bundle": {
@@ -42,6 +45,7 @@
         },
         "windows": [
             {
+                "label": "customization",
                 "fullscreen": false,
                 "resizable": true,
                 "title": "FileHub",
