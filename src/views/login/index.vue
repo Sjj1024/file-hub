@@ -1,34 +1,53 @@
 sign_up
 <template>
-  <div class="theme">
-    <el-dropdown>
-      <span class="el-dropdown-link">
-        <i class="iconfont theme-i">&#xe645;</i>
-      </span>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item @click="useTheme('dark')">暗黑主题</el-dropdown-item>
-          <el-dropdown-item @click="useTheme('light')">亮白主题</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+  <div class="f-header" data-tauri-drag-region>
+    <div class="titlebar">
+      <div class="titlebar-button">
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <i class="iconfont theme-i">&#xe645;</i>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="useTheme('dark')">暗黑主题</el-dropdown-item>
+              <el-dropdown-item @click="useTheme('light')">亮白主题</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      <div class="titlebar-button">
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <i class="iconfont lang">&#xe616;</i>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="changeLang('en')">English</el-dropdown-item>
+              <el-dropdown-item @click="changeLang('zh')">简体中文</el-dropdown-item>
+              <el-dropdown-item>繁体中文</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      <div class="titlebar-button" id="titlebar-minimize">
+        <el-icon>
+          <Minus />
+        </el-icon>
+      </div>
+      <div class="titlebar-button" id="titlebar-maximize">
+        <el-icon>
+          <FullScreen />
+        </el-icon>
+      </div>
+      <div class="titlebar-button" id="titlebar-close">
+        <el-icon>
+          <Close />
+        </el-icon>
+      </div>
+    </div>
   </div>
-  <div class="language">
-    <el-dropdown>
-      <span class="el-dropdown-link">
-        <i class="iconfont lang">&#xe616;</i>
-      </span>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item @click="changeLang('en')">English</el-dropdown-item>
-          <el-dropdown-item @click="changeLang('zh')">简体中文</el-dropdown-item>
-          <el-dropdown-item>繁体中文</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-  </div>
-  <div v-if="loginModel === '注册'" class="container a-container" id="a-container">
-    <form class="form" id="a-form" method="" action="">
+  <div v-if="loginModel === '注册'" class="container a-container" id="a-container" data-tauri-drag-region>
+    <form class="form" id="a-form" method="" action="" data-tauri-drag-region>
       <h2 class="form_title title">{{ $t('welcomeToFileHub') }}</h2>
       <div class="form__icons">
         <img class="form__icon" src=" " />
@@ -57,8 +76,9 @@ sign_up
       </el-button>
     </form>
   </div>
-  <div v-else-if="loginModel === '登陆' || loginModel === 'token'" class="container b-container" id="b-container">
-    <form class="form" id="b-form" method="" action="">
+  <div v-else-if="loginModel === '登陆' || loginModel === 'token'" class="container b-container" id="b-container"
+    data-tauri-drag-region>
+    <form class="form" id="b-form" method="" action="" data-tauri-drag-region>
       <h2 class="form_title title">
         {{ $t('welcomeLoginFileHub') }}
       </h2>
@@ -112,6 +132,15 @@ import loginApi from '@/apis/user'
 import commonApi from '@/apis/common'
 import { rsaDecode, rsaEncode } from "@/utils/encode"
 import { guestToken } from '@/config'
+import { onMounted } from 'vue'
+import { appWindow } from '@tauri-apps/api/window'
+
+onMounted(() => {
+  document.getElementById('titlebar-minimize')!.addEventListener('click', () => appWindow.minimize())
+  document.getElementById('titlebar-maximize')!.addEventListener('click', () => appWindow.toggleMaximize())
+  document.getElementById('titlebar-close')!.addEventListener('click', () => appWindow.close())
+  console.log("onMounted------", document.getElementById('titlebar-close'));
+})
 
 const userStore = useUserStore()
 
@@ -306,7 +335,6 @@ const registUser = async () => {
     loadingBtn.value = false
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -328,29 +356,38 @@ const registUser = async () => {
   outline: none;
 }
 
-.theme {
+.f-header {
+  display: flex;
   position: fixed;
-  top: 50px;
-  right: 120px;
-  cursor: pointer;
-  font-size: 28px;
+  justify-content: center;
+  align-items: center;
+  top: 10px;
+  right: 10px;
 }
 
-.language {
-  position: fixed;
-  top: 50px;
-  right: 60px;
-  cursor: pointer;
-  font-size: 28px;
-}
+.titlebar {
+  display: flex;
+  margin-right: 5px;
+  user-select: none;
 
-.theme-i {
-  font-size: 28px;
-  color: #409eff;
-}
+  .titlebar-button {
+    margin-left: 15px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
 
-.lang {
-  font-size: 28px;
-  color: #409eff;
+    &:hover {
+      background-color: rgb(242, 242, 242);
+    }
+  }
+
+  #titlebar-close {
+    &:hover {
+      color: white;
+      background-color: rgb(235, 32, 19);
+    }
+  }
 }
 </style>
