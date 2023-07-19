@@ -47,6 +47,7 @@ const clickMenu = (menuPath: string, menuIndex: string) => {
   background-color: unset;
   width: 160px;
   overflow-y: auto;
+  user-select: none;
 }
 
 

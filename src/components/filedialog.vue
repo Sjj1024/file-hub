@@ -1,6 +1,11 @@
 <template>
   <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen class="file-dialog"
     @close="closeDialog">
+    <template #header>
+      <div class="dialog-header" data-tauri-drag-region>
+        {{ file.name }}
+      </div>
+    </template>
     <!-- <el-image v-if="file.type === 'picture'" :src="file.openLink" class="preview" fit="cover"
       :preview-src-list="imgPreList" :initial-index="preImgIndex" infinite @close="closePre">
       <template #placeholder>
@@ -255,6 +260,14 @@ defineExpose({
 
 <style lang="scss">
 .file-dialog {
+
+  .dialog-header{
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    height: 36px;
+    line-height: 36px;
+  }
 
   .img-box {
     width: 100%;
