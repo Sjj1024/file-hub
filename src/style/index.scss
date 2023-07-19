@@ -13,11 +13,23 @@ body {
     overflow: hidden;
 }
 
-
 #app {
     height: 100vh;
     background-color: var(--bg-color);
     overflow: hidden;
+}
+
+.dplayer-full-in-icon {
+    display: none !important;
+}
+
+.dplayer-menu {
+    display: none !important;
+}
+
+#dplayer {
+    width: 100%;
+    height: 100%;
 }
 
 a:hover {

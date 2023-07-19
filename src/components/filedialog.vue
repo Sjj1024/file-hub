@@ -49,6 +49,7 @@ import Hls from 'hls.js';
 import Flv from "flv.js";
 import '@/utils/webtorrent.min.js';
 import DPlayer from 'dplayer';
+import { appWindow } from '@tauri-apps/api/window'
 /**
  * 可以用于播放的视频
  * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
@@ -61,9 +62,6 @@ import DPlayer from 'dplayer';
 
 const centerDialogVisible = ref(false)
 
-const closePre = () => {
-  file.value.showTips = false
-}
 
 let file = ref({
   name: "",
@@ -86,7 +84,7 @@ let preImgIndex = ref(0)
 
 
 // 设施视频配置：预览图自动播放等
-let dplayer: { seek: (t: number) => void, destroy: () => void } | null = null
+let dplayer: { seek: (t: number) => void, destroy: () => void, on: (e: string, c: any) => void } | null = null
 const setVideoInit = (file: fileRes) => {
   console.log("setVideoInit-----", file);
   setTimeout(() => {
@@ -170,40 +168,17 @@ const setVideoInit = (file: fileRes) => {
     // 设置预览图和隐藏全屏按钮
     dplayer?.seek(0);
     console.log("dplayer--------", dplayer);
-    (document.querySelector('div#dplayer div.dplayer-full') as HTMLDivElement).style.display = 'none';
-    (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
+    dplayer?.on("fullscreen", function () {
+      console.log("全屏模式------");
+      appWindow.toggleMaximize()
+    })
+    dplayer?.on("fullscreen_cancel", function () {
+      console.log("取消全屏模式------");
+      appWindow.toggleMaximize()
+    })
   }, 1)
 }
 
-const randomBg = [
-  "https://23img.com/i/2023/06/22/zh812z.jpg",
-  "https://23img.com/i/2023/06/22/zh8bhm.jpg",
-  "https://23img.com/i/2023/06/22/zh8er1.jpg",
-  "https://23img.com/i/2023/06/22/zh8ury.jpg",
-  "https://23img.com/i/2023/06/22/zh958g.jpg",
-  "https://23img.com/i/2023/06/22/zh9cr0.jpg",
-  "https://23img.com/i/2023/06/22/zh9nft.jpg",
-  "https://23img.com/i/2023/06/22/zh9z9i.jpg",
-  "https://23img.com/i/2023/06/22/zha7ag.jpg",
-  "https://23img.com/i/2023/06/22/zhalnu.jpg",
-  "https://23img.com/i/2023/06/22/zhasi5.jpg",
-  "https://23img.com/i/2023/06/22/zhb5ap.jpg",
-  "https://23img.com/i/2023/06/22/zhbgtj.jpg",
-  "https://23img.com/i/2023/06/22/zhbvm5.jpg",
-  "https://23img.com/i/2023/06/22/zhc7du.jpg",
-  "https://23img.com/i/2023/06/22/zhcdut.jpg",
-  "https://23img.com/i/2023/06/22/zhcmc2.jpg",
-  "https://23img.com/i/2023/06/22/zhcpab.jpg",
-  "https://23img.com/i/2023/06/22/zhd8xt.jpg",
-  "https://23img.com/i/2023/06/22/zhdgs2.jpg",
-  "https://23img.com/i/2023/06/22/zhdlpn.jpg",
-  "https://23img.com/i/2023/06/22/zheqyu.jpg",
-  "https://23img.com/i/2023/06/22/zhf21x.jpg",
-  "https://23img.com/i/2023/06/22/zhfdew.jpg",
-  "https://23img.com/i/2023/06/22/zhfjg9.jpg",
-  "https://23img.com/i/2023/06/22/zhofmr.jpg",
-  "https://23img.com/i/2023/06/22/zhoptf.jpg",
-]
 
 const setMusicInit = (file: fileRes) => {
   console.log("setMusicInit-----", file);
@@ -277,6 +252,7 @@ defineExpose({
 
 </script>
 
+
 <style lang="scss">
 .file-dialog {
 
@@ -300,17 +276,10 @@ defineExpose({
     background-size: cover;
   }
 
-  :deep(.dplayer-notice-list, .dplayer-full) {
-    display: none;
-  }
 
-  .dplayer-full {
-    display: none;
-  }
-
-  :deep(.dplayer-full) {
-    display: none;
-  }
+  // .dplayer-full {
+  //   display: none;
+  // }
 
   #dplayer {
     height: 100%;
