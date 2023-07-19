@@ -361,8 +361,8 @@ const registUser = async () => {
   position: fixed;
   justify-content: center;
   align-items: center;
-  top: 10px;
-  right: 10px;
+  top: 13px;
+  right: 15px;
 }
 
 .titlebar {
