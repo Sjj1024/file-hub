@@ -1425,7 +1425,7 @@ $column-gap: 16px;
 .file-name {
   text-align: center;
   width: 90px;
-  // height: 20px;
+  user-select: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
