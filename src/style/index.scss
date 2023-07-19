@@ -32,6 +32,28 @@ body {
     height: 100%;
 }
 
+// 关闭按钮
+.titlebar-button {
+    margin-left: 15px !important;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    color: var(--el-button-text-color);
+
+    &:hover {
+        background-color: var(--el-fill-color-light) !important;
+    }
+}
+
+#titlebar-close {
+    &:hover {
+        color: white;
+        background-color: rgb(235, 32, 19) !important;
+    }
+}
+
 a:hover {
     color: #409eff;
 }

@@ -369,25 +369,5 @@ const registUser = async () => {
   display: flex;
   margin-right: 5px;
   user-select: none;
-
-  .titlebar-button {
-    margin-left: 15px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-
-    &:hover {
-      background-color: rgb(242, 242, 242);
-    }
-  }
-
-  #titlebar-close {
-    &:hover {
-      color: white;
-      background-color: rgb(235, 32, 19);
-    }
-  }
 }
 </style>
