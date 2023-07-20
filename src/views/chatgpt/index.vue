@@ -113,12 +113,10 @@
             <span>2023-06-27 09:59</span>
             <span>4条对话</span>
           </div>
-        </li>
-        <li class="chat-li">
-          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
-          <div class="chat-time">
-            <span>2023-06-27 09:59</span>
-            <span>4条对话</span>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
           </div>
         </li>
         <li class="chat-li">
@@ -127,12 +125,10 @@
             <span>2023-06-27 09:59</span>
             <span>4条对话</span>
           </div>
-        </li>
-        <li class="chat-li">
-          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
-          <div class="chat-time">
-            <span>2023-06-27 09:59</span>
-            <span>4条对话</span>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
           </div>
         </li>
         <li class="chat-li">
@@ -141,12 +137,10 @@
             <span>2023-06-27 09:59</span>
             <span>4条对话</span>
           </div>
-        </li>
-        <li class="chat-li">
-          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
-          <div class="chat-time">
-            <span>2023-06-27 09:59</span>
-            <span>4条对话</span>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
           </div>
         </li>
         <li class="chat-li">
@@ -155,12 +149,10 @@
             <span>2023-06-27 09:59</span>
             <span>4条对话</span>
           </div>
-        </li>
-        <li class="chat-li">
-          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
-          <div class="chat-time">
-            <span>2023-06-27 09:59</span>
-            <span>4条对话</span>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
           </div>
         </li>
         <li class="chat-li">
@@ -169,12 +161,70 @@
             <span>2023-06-27 09:59</span>
             <span>4条对话</span>
           </div>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
+          </div>
         </li>
         <li class="chat-li">
           <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
           <div class="chat-time">
             <span>2023-06-27 09:59</span>
             <span>4条对话</span>
+          </div>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
+          </div>
+        </li>
+        <li class="chat-li">
+          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
+          <div class="chat-time">
+            <span>2023-06-27 09:59</span>
+            <span>4条对话</span>
+          </div>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
+          </div>
+        </li>
+        <li class="chat-li">
+          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
+          <div class="chat-time">
+            <span>2023-06-27 09:59</span>
+            <span>4条对话</span>
+          </div>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
+          </div>
+        </li>
+        <li class="chat-li">
+          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
+          <div class="chat-time">
+            <span>2023-06-27 09:59</span>
+            <span>4条对话</span>
+          </div>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
+          </div>
+        </li>
+        <li class="chat-li">
+          <div class="chat-title">制定一个健身计划，我想要在一个月内减肥10斤</div>
+          <div class="chat-time">
+            <span>2023-06-27 09:59</span>
+            <span>4条对话</span>
+          </div>
+          <div class="close-li">
+            <el-icon>
+              <RemoveFilled />
+            </el-icon>
           </div>
         </li>
       </ul>
@@ -207,7 +257,8 @@ const messageList = reactive([
 
 <style scoped>
 :deep(.el-drawer__body) {
-  padding: 0 0 40px 0;
+  padding: 0 0 0 0;
+  background-color: #303b75;
 }
 
 :deep(.el-drawer__body)::-webkit-scrollbar {
@@ -224,7 +275,7 @@ const messageList = reactive([
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
-  background-color: #c3c3c3;
+  background-color: #252f5d;
 }
 
 :deep(.el-drawer__body)::-webkit-scrollbar-track {
@@ -238,7 +289,7 @@ const messageList = reactive([
 
   .guide-ico {
     position: fixed;
-    top: 28px;
+    top: 44px;
     left: 200px;
     font-size: 30px;
     cursor: pointer;
@@ -258,11 +309,14 @@ const messageList = reactive([
     // overflow-y: scroll;
 
     .chat-header {
-      height: 50px;
-      line-height: 50px;
+      height: 60px;
+      line-height: 60px;
       font-size: 20px;
       font-weight: 700;
       text-align: center;
+      color: white;
+      user-select: none;
+      background-color: #303b75;
 
       .new-chat {
         font-size: 16px;
@@ -277,18 +331,28 @@ const messageList = reactive([
 
     .chat-ul {
       padding: 0 10px;
+      color: white;
+      background-color: #303b75;
 
       .chat-li {
+        position: relative;
         list-style: none;
-        cursor: default;
+        cursor: pointer;
         padding: 10px;
-        // border: 1px solid white;
         border-radius: 10px;
-        background-color: white;
+        background-color: #4a589e;
         margin-bottom: 10px;
 
-        &:hover {
-          background-color: rgb(211, 209, 209);
+        &:hover .close-li {
+          display: block;
+        }
+
+        .close-li {
+          position: absolute;
+          top: -8px;
+          left: -8px;
+          font-size: 20px;
+          display: none;
         }
 
         .chat-title {
@@ -303,7 +367,6 @@ const messageList = reactive([
           font-size: 14px;
           font-weight: 400;
           display: flex;
-          color: gray;
           justify-content: space-between;
         }
       }
@@ -340,9 +403,9 @@ const messageList = reactive([
           color: white;
           font-size: 20px;
 
-          &:hover {
-            color: rgb(235, 235, 235) !important;
-          }
+          // &:hover {
+          //   color: rgb(235, 235, 235) !important;
+          // }
         }
 
         .gpt-png {
