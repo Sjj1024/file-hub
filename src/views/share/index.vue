@@ -769,6 +769,7 @@ $column-gap: 16px;
     .item {
       list-style: none;
       padding: 4px 6px;
+      min-width: 76px;
     }
 
     .item:hover {

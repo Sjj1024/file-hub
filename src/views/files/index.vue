@@ -1144,6 +1144,10 @@ const options = [
     label: '文档',
   },
   {
+    value: 'web',
+    label: '网址',
+  },
+  {
     value: 'other',
     label: '其他',
   },
@@ -1351,6 +1355,7 @@ $column-gap: 16px;
     .item {
       list-style: none;
       padding: 4px 6px;
+      min-width: 76px;
     }
 
     .item:hover {
