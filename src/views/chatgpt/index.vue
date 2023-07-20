@@ -377,7 +377,6 @@ const messageList = reactive([
     height: 100%;
     position: relative;
     padding: 10px 20px;
-    background-color: rgb(245, 245, 245);
     padding-bottom: 120px;
 
     .main-content {
@@ -399,13 +398,9 @@ const messageList = reactive([
         .msg-gpt {
           position: absolute;
           top: 15px;
-          left: 46px;
-          color: white;
+          left: 45.5px;
+          color: var(--menu-ative-bg);
           font-size: 20px;
-
-          // &:hover {
-          //   color: rgb(235, 235, 235) !important;
-          // }
         }
 
         .gpt-png {
@@ -417,14 +412,14 @@ const messageList = reactive([
           padding: 14px 10px;
           width: 60%;
           border-radius: 10px;
-          background-color: white;
+          background-color: var(--menu-ative-bg);
 
           &:hover {
             .msg-gpt {
-              color: rgb(235, 235, 235) !important;
+              color: var(--gpt-message-bg-hover) !important;
             }
 
-            background-color: rgb(235, 235, 235);
+            background-color: var(--gpt-message-bg-hover);
           }
         }
       }
@@ -468,6 +463,7 @@ const messageList = reactive([
       right: 26px;
       left: 180px;
       border-radius: 40px;
+      background-color: var(--bg-color);
       box-shadow: 0 15px 30px rgba(0, 0, 0, .3);
 
       .send-input {

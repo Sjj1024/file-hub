@@ -16,6 +16,7 @@
     --file-loading-hover: rgba(201, 211, 225, 0);
     --img-pre-btn-bg: rgb(31 45 61 / 11%);
     --img-pre-btn-bg-hover: rgb(31 45 61 / 33%);
+    --gpt-message-bg-hover: rgba(201, 211, 225, 0.2);
 }
 
 /* light主题 */
@@ -36,4 +37,5 @@
     --file-loading-hover: #ecf5ff3a;
     --img-pre-btn-bg: rgba(31, 45, 61, 0.11);
     --img-pre-btn-bg-hover: rgba(31, 45, 61, 0.53);
+    --gpt-message-bg-hover: rgba(9, 30, 66, 0.15);
 }
