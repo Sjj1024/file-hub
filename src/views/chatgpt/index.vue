@@ -435,7 +435,7 @@ const messageList = reactive([
           position: absolute;
           top: 15px;
           right: 46px;
-          color: rgb(149, 236, 105);
+          color: var(--gpt-me-message-bg);
           font-size: 20px;
         }
 
@@ -448,11 +448,11 @@ const messageList = reactive([
           padding: 14px 10px;
           max-width: 60%;
           border-radius: 10px;
-          background-color: rgb(149, 236, 105);
+          background-color: var(--gpt-me-message-bg);
         }
 
         .my-message:hover {
-          background-color: rgb(137, 217, 97);
+          background-color: var(--gpt-me-message-bg-hover);
         }
       }
     }
