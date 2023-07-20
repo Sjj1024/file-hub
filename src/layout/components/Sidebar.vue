@@ -36,8 +36,10 @@ const defaultMenu = localStorage.getItem("menuIndex") ? localStorage.getItem("me
 
 const clickMenu = (menuPath: string, menuIndex: string) => {
   console.log('点击了菜单--', '/index/' + menuPath, menuIndex)
-  localStorage.setItem('menuIndex', menuIndex)
   router.push('/index/' + menuPath)
+  // 默认菜单和路由
+  localStorage.setItem('menuIndex', menuIndex)
+  localStorage.setItem("menuRoute", '/index/' + menuPath)
 }
 </script>
 

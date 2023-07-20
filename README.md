@@ -8,12 +8,13 @@
 
 ### 登录注册：  
 使用用户名和密码注册账户，或者仅仅使用git token登陆。注册用户的时候，需要添加上git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要token。
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230719/image.6j20h1xx7yw0.webp)  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.2uh6124tv4a0.webp)  
 
 
 ### 文件系统：  
 文件(各类文件)上传、拖动上传，文件预览，视频播放，音乐播放，m3u8视频导入，资源链接导入，文件分享，文件下载，github cdn链接转换
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230719/image.4b5z7kdli1i0.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.4ikm9oo3l3m0.webp)
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.5nlodjb062c0.webp)
 
 
 # 本地开发配置
