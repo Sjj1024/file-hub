@@ -462,7 +462,7 @@ const messageList = reactive([
       bottom: 20px;
       right: 26px;
       left: 180px;
-      border-radius: 40px;
+      border-radius: 4px;
       background-color: var(--bg-color);
       box-shadow: 0 15px 30px rgba(0, 0, 0, .3);
 
