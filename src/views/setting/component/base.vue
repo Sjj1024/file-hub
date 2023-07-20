@@ -3,13 +3,13 @@
     <div class="base-line">
       <div class="base">
         <span class="line-lable">主题设置：</span>
-        <el-select v-model="themeVal" class="m-2" placeholder="Select">
+        <el-select v-model="themeVal" class="m-2" placeholder="默认亮白主题">
           <el-option v-for="item in themeOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <div class="base">
         <span class="line-lable">语言设置：</span>
-        <el-select v-model="langVal" class="m-2" placeholder="Select">
+        <el-select v-model="langVal" class="m-2" placeholder="默认简体中文">
           <el-option v-for="item in langOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
@@ -17,26 +17,25 @@
     <div class="base-line">
       <div class="base">
         <span class="line-lable">文件展示样式：</span>
-        <el-radio-group v-model="fileStyle">
-          <el-radio-button label="网格" />
-          <el-radio-button label="列表" />
-        </el-radio-group>
+        <el-select v-model="fileStyle" class="m-2" placeholder="Select">
+          <el-option v-for="item in fileOpt" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
       </div>
       <div class="base">
         <span class="line-lable">文件下载路径：</span>
-        <el-input v-model="filePath" placeholder="Please input" style="width: 220px;" />
+        <el-input v-model="filePath" placeholder="默认系统下载路径" style="width: 220px;" />
       </div>
     </div>
     <div class="base-line">
       <div class="base">
         <span class="line-lable">复制链接模板：</span>
-        <el-select v-model="copyTmp" class="m-2" placeholder="Select">
+        <el-select v-model="copyTmp" class="m-2" placeholder="默认原始链接">
           <el-option v-for="item in copyOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <div class="base">
-        <span class="line-lable">多文件默认模板：</span>
-        <el-select v-model="copyMoreTmp" class="m-2" placeholder="Select">
+        <span class="line-lable">多文件分享模板：</span>
+        <el-select v-model="copyMoreTmp" class="m-2" placeholder="默认原始链接">
           <el-option v-for="item in copyOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
@@ -81,7 +80,17 @@ const themeOpt = [
 ]
 
 // 文件展示样式
-const fileStyle = ref("网格")
+const fileStyle = ref("grid")
+const fileOpt = [
+  {
+    value: 'grid',
+    label: '网格布局',
+  },
+  {
+    value: 'list',
+    label: '列表布局',
+  }
+]
 
 // 文件下载路径
 const filePath = ref("")
@@ -91,12 +100,20 @@ const copyTmp = ref('')
 
 const copyOpt = [
   {
-    value: 'Option1',
+    value: 'souLink',
     label: '原始链接',
   },
   {
-    value: 'Option2',
-    label: 'Option2',
+    value: 'forLink',
+    label: '论坛代码',
+  },
+  {
+    value: 'mdLink',
+    label: 'MarkDown',
+  },
+  {
+    value: 'htmlLink',
+    label: 'HTML标签',
   }
 ]
 // 多文件复制模板
