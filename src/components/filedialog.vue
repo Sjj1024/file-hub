@@ -3,7 +3,7 @@
     @close="closeDialog">
     <template #header>
       <div class="dialog-header" data-tauri-drag-region>
-        <span v-if="titleSh">{{ file.name }}</span>
+        {{ file.name }}
       </div>
     </template>
     <!-- <el-image v-if="file.type === 'picture'" :src="file.openLink" class="preview" fit="cover"
@@ -67,7 +67,6 @@ import { appWindow } from '@tauri-apps/api/window'
 
 const centerDialogVisible = ref(false)
 
-
 let file = ref({
   name: "",
   path: "",
@@ -86,9 +85,6 @@ let imgPreList: string[] = []
 
 // 查找图片的索引
 let preImgIndex = ref(0)
-
-// 展示隐藏标题栏
-const titleSh = ref(true)
 
 // 设施视频配置：预览图自动播放等
 let dplayer: { seek: (t: number) => void, destroy: () => void, on: (e: string, c: any) => void } | null = null
@@ -182,14 +178,6 @@ const setVideoInit = (file: fileRes) => {
     dplayer?.on("fullscreen_cancel", function () {
       console.log("取消全屏模式------");
       appWindow.toggleMaximize()
-    })
-    dplayer?.on("playing", function () {
-      console.log("playing------隐藏标题");
-      setTimeout(() => titleSh.value = false, 3000)
-    })
-    dplayer?.on("pause", function () {
-      console.log("pause------显示标题");
-      titleSh.value = true
     })
   }, 1)
 }
@@ -305,12 +293,10 @@ defineExpose({
   // }
 
   #dplayer {
-    width: 100%;
     height: 100%;
   }
 
   :deep(#dplayer) {
-    width: 100%;
     height: 100%;
   }
 
