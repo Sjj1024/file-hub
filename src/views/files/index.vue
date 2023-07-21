@@ -1479,6 +1479,7 @@ $column-gap: 16px;
 
     .upload-name {
       margin-top: 18px;
+      user-select: none;
     }
 
     :deep(.el-upload-dragger) {
