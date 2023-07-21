@@ -1194,7 +1194,7 @@ const getType = (fileType: string, curFile: any) => {
     const fileLast = curFile.name
       .substring(curFile.name.lastIndexOf('.') + 1)
       .toUpperCase()
-    if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO'].includes(fileLast)) {
+    if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO', "WEBP"].includes(fileLast)) {
       // 图片格式: 加入图片预览列表
       curFile.path && imgPreList.push(`${uStore.fileCdn}${curFile.path}`)
       return 'picture'

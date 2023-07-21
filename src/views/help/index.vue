@@ -33,8 +33,8 @@
     <div>
       <h3>我的信息</h3>
       <span>曾就职于上海华为实验室，现自由开发者，如果你有开发需求，可以联系我合作，合作流程：按照合作谈定的价格，预付50%的项目款，开始工作。完成验收后，支付尾款。价格参考：视具体项目难度和工作量。<br />
-        技术栈：Python + Java + Kotlin + Swift + HTML + Js + Vue + React + Tauri等<br />
-        端开发：
+        技术栈：Python\Java\Kotlin\Swift\Go\HTML\Vue\React\UniAPP\Tauri\Rust等<br />
+        UI端开发：
         <a href="https://github.com/Sjj1024/GitVue" target="_blank" class="alink">Web网站</a> +
         <a href="https://github.com/Sjj1024/s-hub" target="_blank" class="alink">桌面端</a> +
         <a href="https://github.com/Sjj1024/VueM" target="_blank" class="alink">移动端</a> +
