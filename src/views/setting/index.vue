@@ -9,6 +9,9 @@
     <el-tab-pane label="ChatGPT" name="third">
       <ChatSet></ChatSet>
     </el-tab-pane>
+    <el-tab-pane label="账号设置" name="three">
+      <UserSet></UserSet>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -16,6 +19,7 @@
 import BaseSet from "./component/base.vue"
 import ImgSet from "./component/image.vue"
 import ChatSet from "./component/chatset.vue"
+import UserSet from "./component/user.vue"
 
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'

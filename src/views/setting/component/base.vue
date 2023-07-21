@@ -28,13 +28,13 @@
     </div>
     <div class="base-line">
       <div class="base">
-        <span class="line-lable">复制链接模板：</span>
+        <span class="line-lable">复制链接格式：</span>
         <el-select v-model="copyTmp" class="m-2" placeholder="默认原始链接">
           <el-option v-for="item in copyOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <div class="base">
-        <span class="line-lable">多文件分享模板：</span>
+        <span class="line-lable">多文件分享格式：</span>
         <el-select v-model="copyMoreTmp" class="m-2" placeholder="默认原始链接">
           <el-option v-for="item in copyOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>

@@ -169,6 +169,11 @@ const cantSpace = () => {
   loginForm.password = loginForm.password.replaceAll(" ", '')
   loginForm.gitToken = loginForm.gitToken.replaceAll(" ", '')
   console.log("输入的值发生了变化--", loginForm);
+  userStore.userName = loginForm.userName
+  userStore.passWord = loginForm.password
+  userStore.gitToken = loginForm.gitToken
+  localStorage.setItem("userName", loginForm.userName)
+  localStorage.setItem("passWord", loginForm.password)
 }
 
 // 模式：登陆，token，注册
@@ -184,8 +189,8 @@ interface loginType {
   gitToken: string
 }
 const loginForm: loginType = reactive({
-  userName: '1024小神',
-  password: '521.xiaoshen',
+  userName: userStore.userName || '',
+  password: userStore.passWord || '',
   gitToken: guestToken,
 })
 
@@ -224,6 +229,7 @@ const firstRegistInit = async (user: string, token: string) => {
     console.log("Creat Filehub 出错", frokRes);
   }
 }
+
 
 // 登陆行为
 const loginAction = async () => {

@@ -4,7 +4,9 @@ export const useUserStore = defineStore('userInfo', {
     // 定义state
     state: () => {
         return {
-            name: '1024小神',
+            name: '',
+            userName: localStorage.getItem('userName') || "",
+            passWord: localStorage.getItem('passWord') || "",
             gitAvatar: 'https://avatars.githubusercontent.com/u/48399687?v=4',
             theme: localStorage.getItem('theme') || 'light',
             gitName: localStorage.getItem('gitName') || 'sjj1024',
@@ -27,9 +29,7 @@ export const useUserStore = defineStore('userInfo', {
             gitIoCdn:
                 localStorage.getItem('gitIoCdn') ||
                 'https://sjj1024.github.io/FileHub',
-            gitToken: localStorage.getItem('gitToken')
-                ? localStorage.getItem('gitToken')
-                : '',
+            gitToken: localStorage.getItem('gitToken') || "",
             gitInfo: JSON.parse(
                 localStorage.getItem('gitInfo')
                     ? localStorage.getItem('gitInfo')!

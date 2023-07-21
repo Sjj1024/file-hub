@@ -1452,7 +1452,7 @@ $column-gap: 16px;
 .file-box {
   height: auto;
   margin-top: 36px;
-  padding-bottom: 41px;
+  padding-bottom: 58px;
 }
 
 .file-tips {
