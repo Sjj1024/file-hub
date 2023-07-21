@@ -30,7 +30,12 @@ const handleSelect = (key: string, keyPath: string[]) => {
   padding: 0 10px;
 }
 
+
 .el-tools {
   height: 44px;
+
+  .el-menu--popup {
+    width: 110px !important;
+  }
 }
 </style>
