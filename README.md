@@ -3,8 +3,9 @@
 本项目使用的技术栈：Tauri + Vue3 + TypeScript + Vite + Pinia + element-plus
 
 ## 软件功能介绍
-### 基本功能
+### 基本功能特性
 跨平台支持：windows + mac + linux都支持，多主题：暗黑主题和亮白主题，多语言切换：中英互换。   
+上传文件，在线预览图片，播放视频，音乐，分享资源等等
 
 ### 登录注册  
 使用用户名和密码注册账户，或者仅仅使用git token登陆。注册用户的时候，需要添加上git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要token。
@@ -34,7 +35,7 @@ chatgpt大语言模型聊天\问答等
 git clone https://github.com/Sjj1024/s-hub.git
 ```
 
-然后切换node环境为19.0.0以上，推荐使用nvm管理本地node环境，推荐使用pnpm来管理依赖包。
+然后切换node环境为19.0.0以上，推荐使用pnpm来管理依赖包。
 上述环境安装好后，开始安装依赖：
 ```
 pnpm i
@@ -53,9 +54,9 @@ yarn
 export const fileHubBoss = ""
 // DataHub根路径：用于用户注册，分享内容，评论等
 export const bossUrl = ""
-// 1024小神token：用于开发测试
+// token1：用于开发测试
 export const bossToken = ""
-// 1024回家token：用于开发测试
+// token2：用于开发测试
 export const guestToken = ""
 
 // 公私钥加解密秘钥

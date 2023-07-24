@@ -154,6 +154,8 @@ const changeLang = (lang: string) => {
   locale.value = lang
   localStorage.setItem('lang', lang)
 }
+
+
 const router = useRouter()
 // 忘记密码提示
 const forgetPassword = () => {

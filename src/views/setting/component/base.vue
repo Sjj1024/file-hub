@@ -2,14 +2,14 @@
   <div class="base-box">
     <div class="base-line">
       <div class="base">
-        <span class="line-lable">主题设置：</span>
-        <el-select v-model="themeVal" class="m-2" placeholder="默认亮白主题">
+        <span class="line-lable">{{ $t('setting.setTheme') }}：</span>
+        <el-select v-model="userStore.theme" class="m-2" placeholder="默认亮白主题" @change="val => useTheme(val)">
           <el-option v-for="item in themeOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <div class="base">
-        <span class="line-lable">语言设置：</span>
-        <el-select v-model="langVal" class="m-2" placeholder="默认简体中文">
+        <span class="line-lable">{{ $t('setting.setlang') }}：</span>
+        <el-select v-model="locale" class="m-2" placeholder="默认简体中文" @change="changeLang">
           <el-option v-for="item in langOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
@@ -17,25 +17,27 @@
     <div class="base-line">
       <div class="base">
         <span class="line-lable">文件展示样式：</span>
-        <el-select v-model="fileStyle" class="m-2" placeholder="Select">
+        <el-select v-model="fileStyle" class="m-2" placeholder="Select" @change="switchStyle">
           <el-option v-for="item in fileOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <div class="base">
         <span class="line-lable">文件下载路径：</span>
-        <el-input v-model="filePath" placeholder="默认系统下载路径" style="width: 220px;" />
+        <span @click="selDownPath">
+          <el-input v-model="filePath" placeholder="默认系统下载路径" style="width: 220px;" />
+        </span>
       </div>
     </div>
     <div class="base-line">
       <div class="base">
         <span class="line-lable">复制链接格式：</span>
-        <el-select v-model="copyTmp" class="m-2" placeholder="默认原始链接">
+        <el-select v-model="copyTmp" class="m-2" placeholder="默认原始链接" @change="copyHandler">
           <el-option v-for="item in copyOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <div class="base">
         <span class="line-lable">多文件分享格式：</span>
-        <el-select v-model="copyMoreTmp" class="m-2" placeholder="默认原始链接">
+        <el-select v-model="copyMoreTmp" class="m-2" placeholder="默认原始链接" @change="moreHandler">
           <el-option v-for="item in copyOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
@@ -43,38 +45,51 @@
     <div class="base-line">
       <div class="base">
         <span class="line-lable">开机自启动：</span>
-        <el-switch v-model="startOn" active-text="开启" inactive-text="关闭" />
+        <el-switch v-model="startOn" active-text="开启" inactive-text="关闭" @change="val => handlerOn(val, '')" />
       </div>
       <div class="base">
         <span class="line-lable">软件自动更新：</span>
-        <el-switch v-model="updateOn" active-text="开启" inactive-text="关闭" />
+        <el-switch v-model="updateOn" active-text="开启" inactive-text="关闭" @change="val => handlerOn('', val)" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue'
-const langVal = ref('简体中文')
+import { ref } from 'vue'
+import useTheme from '@/hooks/theme'
+import { useUserStore } from '@/stores/user'
+import { useI18n } from 'vue-i18n'
+import { open } from '@tauri-apps/api/dialog'
+
+
+const { locale } = useI18n()
+const userStore = useUserStore()
+
+// 语言切换
+const changeLang = (lang: string) => {
+  locale.value = lang
+  localStorage.setItem('lang', lang)
+}
+
 const langOpt = [
   {
-    value: '简体中文',
+    value: 'zh',
     label: '简体中文',
   },
   {
-    value: 'English',
+    value: 'en',
     label: 'English',
   }
 ]
 
-const themeVal = ref('亮白主题')
 const themeOpt = [
   {
-    value: '暗黑主题',
+    value: 'dark',
     label: '暗黑主题',
   },
   {
-    value: '亮白主题',
+    value: 'light',
     label: '亮白主题',
   }
 ]
@@ -92,11 +107,33 @@ const fileOpt = [
   }
 ]
 
+const switchStyle = (val: string) => {
+  localStorage.setItem('fileStyle', val)
+}
+
 // 文件下载路径
-const filePath = ref("")
+const filePath = ref(localStorage.getItem("downPath") || '')
+
+const selDownPath = async () => {
+  const selected = await open({
+    directory: true
+  })
+  console.log("选择下载路径----", selected)
+  selected && (filePath.value = selected as string) && localStorage.setItem("downPath", filePath.value)
+}
 
 // 复制链接模板
-const copyTmp = ref('')
+const copyTmp = ref(localStorage.getItem("copyTmp") || '')
+// 多文件复制模板
+const copyMoreTmp = ref(localStorage.getItem("moreTmp") || '')
+
+const copyHandler = (val: string) => {
+  localStorage.setItem("copyTmp", val)
+}
+
+const moreHandler = (val: string) => {
+  localStorage.setItem("moreTmp", val)
+}
 
 const copyOpt = [
   {
@@ -116,26 +153,18 @@ const copyOpt = [
     label: 'HTML标签',
   }
 ]
-// 多文件复制模板
-const copyMoreTmp = ref("")
+
 
 // 开机启动
-const startOn = ref(false)
+const startOn = ref(localStorage.getItem("startOn") === 'false' ? false : true)
 // 自动更新
-const updateOn = ref(false)
+const updateOn = ref(localStorage.getItem("updateOn") === 'false' ? false : true)
 
-const value = ref('')
-
-const options = [
-  {
-    value: 'Option1',
-    label: 'Option1',
-  },
-  {
-    value: 'Option2',
-    label: 'Option2',
-  }
-]
+const handlerOn = (start: any, update: any) => {
+  console.log("handlerOn------", start, update)
+  start !== '' ? localStorage.setItem("startOn", start + '') : ""
+  update !== '' ? localStorage.setItem("updateOn", update + '') : ""
+}
 
 </script>
 

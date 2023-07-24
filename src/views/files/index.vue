@@ -1366,7 +1366,7 @@ $column-gap: 16px;
 
 
 .tools-box {
-  width: 82%;
+  width: 82.8%;
   display: flex;
   // justify-content: space-between;
   position: fixed;
@@ -1420,7 +1420,6 @@ $column-gap: 16px;
     align-items: center;
 
     .show {
-      margin-right: 6px;
       font-size: 22px;
       cursor: pointer;
     }

@@ -1,20 +1,20 @@
 export default {
     login: {
         login: 'login',
-        register: "register",
+        register: 'register',
         userName: 'userName',
         password: 'password',
     },
-    menu:{
-      MyFiles:"我的文件",
-      ArticleManagement: "文章管理"
+    menu: {
+        MyFiles: '我的文件',
+        ArticleManagement: '文章管理',
     },
-    welcomeToFileHub: "Welcome to FileHub",
-    welcomeLoginFileHub: "Welcome to FileHub",
-    loginwithanaccount:"Login with account",
-    LoginusingToken: "Login use Token",
-    GetToken: "Obtain a Token",
-    Registeranewaccount:"Register new account",
+    welcomeToFileHub: 'Welcome to FileHub',
+    welcomeLoginFileHub: 'Welcome to FileHub',
+    loginwithanaccount: 'Login with account',
+    LoginusingToken: 'Login use Token',
+    GetToken: 'Obtain a Token',
+    Registeranewaccount: 'Register new account',
     captcha: 'Captcha',
     forgetPassword: 'Forget Password?',
     loginTip: 'The login result is random. Just fill in the captcha',
@@ -23,5 +23,19 @@ export default {
     errMsg: {
         inputRequired: 'Please Input {cont}',
         selectRequired: 'Please Select {cont}',
+    },
+    setting: {
+        baseSet: '常用设置',
+        imgSet: '图床设置',
+        chatSet: 'ChatGPT',
+        accountSet: '账户设置',
+        setTheme: 'Theme',
+        setlang: 'Language',
+        fileStyle: 'File Style',
+        downPath: 'Down Path',
+        copyTemp: 'Copy Link',
+        shareTemp: '多文件分享格式',
+        openStart: '开机自启动',
+        autoUpdate: '软件自动更新',
     },
 }

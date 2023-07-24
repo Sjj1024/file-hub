@@ -1,15 +1,15 @@
 <template>
   <el-tabs v-model="activeName" class="set-tabs" @tab-click="handleClick">
-    <el-tab-pane label="常用设置" name="first">
+    <el-tab-pane :label="$t('setting.baseSet')" name="first">
       <BaseSet></BaseSet>
     </el-tab-pane>
-    <el-tab-pane label="图床设置" name="second">
+    <el-tab-pane :label="$t('setting.imgSet')" name="second">
       <ImgSet></ImgSet>
     </el-tab-pane>
-    <el-tab-pane label="ChatGPT" name="third">
+    <el-tab-pane :label="$t('setting.chatSet')" name="third">
       <ChatSet></ChatSet>
     </el-tab-pane>
-    <el-tab-pane label="账号设置" name="three">
+    <el-tab-pane :label="$t('setting.accountSet')" name="three">
       <UserSet></UserSet>
     </el-tab-pane>
   </el-tabs>
