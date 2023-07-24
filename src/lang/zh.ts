@@ -3,7 +3,7 @@ export default {
         login: '登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;陆',
         register: '注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;册',
         userName: '用户名',
-        password: '密码',
+        passWord: '密码',
     },
     menu: {
         MyFiles: '我的文件',

@@ -265,6 +265,8 @@ defineExpose({
     user-select: none;
     height: 36px;
     line-height: 36px;
+    padding-left: 30px;
+    margin-right: 30px;
   }
 
   .img-box {

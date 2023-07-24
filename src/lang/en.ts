@@ -3,7 +3,7 @@ export default {
         login: 'login',
         register: 'register',
         userName: 'userName',
-        password: 'password',
+        passWord: 'passWord',
     },
     menu: {
         MyFiles: '我的文件',

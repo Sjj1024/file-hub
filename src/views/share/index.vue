@@ -780,12 +780,13 @@ $column-gap: 16px;
 
 
 .tools-box {
-  width: 82%;
   display: flex;
   // justify-content: space-between;
   position: fixed;
   z-index: 999;
   top: 56px;
+  left: 160px;
+  right: 8px;
   background-color: var(--bg-color);
 
   .path-tool {
@@ -835,7 +836,6 @@ $column-gap: 16px;
     }
 
     .show {
-      margin-right: 6px;
       font-size: 22px;
       cursor: pointer;
     }

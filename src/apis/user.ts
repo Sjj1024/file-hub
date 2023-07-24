@@ -36,6 +36,15 @@ export default {
             body,
         })
     },
+    updateUser(token: string, body: any){
+      return http(`/repos/Sjj1024/DataHub/issues`, {
+        method: 'put',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body,
+    })
+    },
     frokFileHub(token: string, body: any) {
         return http(`/repos/Sjj1024/FileHub/forks`, {
             method: 'post',

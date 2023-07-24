@@ -12,6 +12,16 @@
     </div>
     <div class="base-line">
       <div class="base">
+        <span class="line-lable">Token：</span>
+        <el-input v-model="userInfo.gitToken" placeholder="Github Token" style="width: 280px;" />
+      </div>
+      <div class="base">
+        <span class="line-lable">Server酱：</span>
+        <el-input v-model="userInfo.douyin" placeholder="Server酱的SENDKEY" style="width: 280px;" />
+      </div>
+    </div>
+    <div class="base-line">
+      <div class="base">
         <span class="line-lable">邮箱：</span>
         <el-input v-model="userInfo.email" placeholder="邮箱" style="width: 280px;" />
       </div>
@@ -30,41 +40,67 @@
         <el-input v-model="userInfo.douyin" placeholder="抖音号" style="width: 280px;" />
       </div>
     </div>
-    <div class="base-line">
-      <div class="base">
-        <span class="line-lable">Token：</span>
-        <el-input v-model="userInfo.token" placeholder="Github Token" style="width: 280px;" />
-      </div>
-      <div class="base">
-        <span class="line-lable">Server酱：</span>
-        <el-input v-model="userInfo.douyin" placeholder="Server酱的SENDKEY" style="width: 280px;" />
-      </div>
-    </div>
   </div>
   <div class="save-user">
-    <el-button type="primary">保存设置</el-button>
+    <el-button type="primary" @click="saveInfo">保存设置</el-button>
   </div>
 </template>
 
 <script setup lang='ts'>
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import loginApi from '@/apis/user'
+import { rsaEncode } from '@/utils/encode'
+import { ElMessage } from 'element-plus'
+
+const userStore = useUserStore()
 
 // 用户名密码等
 const userInfo = ref({
-  userName:"",
-  passWord:"",
-  email:"",
-  weixin:"",
-  qq:"",
-  douyin:"",
-  token:"",
+  userName: userStore.userName,
+  passWord: userStore.passWord,
+  email: userStore.email,
+  weixin: userStore.weixin,
+  qq: userStore.qq,
+  douyin: userStore.douyin,
+  gitToken: userStore.gitToken.replace('Bearer ', ''),
+  serverKey: userStore.serverKey
 })
+
+// 保存用户信息
+const saveInfo = async () => {
+  console.log("更新用户信息:", userInfo);
+  // 先获取对应的用户名.txt的文件内容和sha
+  const loginRes = await loginApi.loginUserName(userStore.userName)
+  console.log('updateRes------', loginRes, userInfo)
+  if (loginRes.status === 200) {
+    const res = await loginApi.getUserInfo(`${userInfo.value.gitToken}`)
+    if (res.status === 200) {
+      // 然后更新接口
+      const encodeUser = rsaEncode(JSON.stringify(userInfo.value))
+      console.log("加密后的用户信息.", res, encodeUser);
+      const updateInfo = {
+        "body": encodeUser,
+        "title": `[update]userName:${userStore.userName}`
+      }
+      const registRes = await loginApi.registUser(userInfo.value.gitToken, updateInfo)
+      if (registRes.status === 201) {
+        ElMessage({
+          message: '更新结果10分钟后生效!',
+          type: 'success',
+        })
+      }
+    }
+  } else {
+    console.log("更新出错-----");
+  }
+}
 
 
 </script>
 
 <style scoped lang='scss'>
-.save-user{
+.save-user {
   text-align: center;
   margin-top: 30px;
 }

@@ -19,7 +19,7 @@
         </el-progress>
       </div>
     </div>
-    <div class="header-tool" data-tauri-drag-region>
+    <div class="header-tool">
       <div class="theme">
         <el-dropdown>
           <span class="el-dropdown-link">

@@ -57,8 +57,8 @@ sign_up
       <!-- <span class="form__span">or use email for registration</span> -->
       <input class="form__input" type="text" @keydown.enter="registUser" v-model="loginForm.userName" @input="cantSpace"
         :placeholder="$t('login.userName')" />
-      <input class="form__input" type="password" @keydown.enter="registUser" v-model="loginForm.password"
-        @input="cantSpace" :placeholder="$t('login.password')" />
+      <input class="form__input" type="passWord" @keydown.enter="registUser" v-model="loginForm.passWord"
+        @input="cantSpace" :placeholder="$t('login.passWord')" />
       <input class="form__input" type="text" v-model="loginForm.gitToken" @input="cantSpace" placeholder="Github Token" />
       <div class="login-info">
         <a class="form__link" @click="forgetPassword">{{
@@ -90,14 +90,12 @@ sign_up
       </div>
       <input v-if="loginModel === '登陆'" class="form__input" @input="cantSpace" type="text" @keydown.enter="loginAction"
         v-model="loginForm.userName" :placeholder="$t('login.userName')" />
-      <input v-if="loginModel === '登陆'" class="form__input" type="password" v-model="loginForm.password"
-        :placeholder="$t('login.password')" @keydown.enter="loginAction" @input="cantSpace" />
+      <input v-if="loginModel === '登陆'" class="form__input" type="passWord" v-model="loginForm.passWord"
+        :placeholder="$t('login.passWord')" @keydown.enter="loginAction" @input="cantSpace" />
       <input v-if="loginModel === 'token'" @input="cantSpace" class="form__input" type="text" v-model="loginForm.gitToken"
         placeholder="Token" />
       <div class="login-info">
-        <a class="form__link" @click.prevent="forgetPassword">{{
-          $t('forgetPassword')
-        }}</a>
+        <a class="form__link" @click.prevent="forgetPassword">{{ $t('forgetPassword') }}</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <template v-if="loginModel === '登陆'">
           <a class="form__link" @click.prevent="switchModel('token')">{{ $t('LoginusingToken') }}
@@ -168,14 +166,14 @@ const forgetPassword = () => {
 // 密码输入框不能输入空格
 const cantSpace = () => {
   loginForm.userName = loginForm.userName.replaceAll(" ", '')
-  loginForm.password = loginForm.password.replaceAll(" ", '')
+  loginForm.passWord = loginForm.passWord.replaceAll(" ", '')
   loginForm.gitToken = loginForm.gitToken.replaceAll(" ", '')
   console.log("输入的值发生了变化--", loginForm);
   userStore.userName = loginForm.userName
-  userStore.passWord = loginForm.password
+  userStore.passWord = loginForm.passWord
   userStore.gitToken = loginForm.gitToken
   localStorage.setItem("userName", loginForm.userName)
-  localStorage.setItem("passWord", loginForm.password)
+  localStorage.setItem("passWord", loginForm.passWord)
 }
 
 // 模式：登陆，token，注册
@@ -187,27 +185,86 @@ const switchModel = (model: string) => {
 // 点击登陆后校验登陆逻辑，然后登陆
 interface loginType {
   userName: string
-  password: string
+  passWord: string
   gitToken: string
 }
 const loginForm: loginType = reactive({
   userName: userStore.userName || '',
-  password: userStore.passWord || '',
+  passWord: userStore.passWord || '',
   gitToken: guestToken,
+  email: "",
+  weixin: "",
+  qq: "",
+  douyin: "",
+  serverKey: ""
 })
 
 // 使用token登陆
 const userNameLogin = async (token: string) => {
+  loadingBtn.value = true
   const res = await loginApi.getUserInfo(`${token}`)
   if (res.status === 200) {
     userStore.setGitInfo(`Bearer ${token}`, res.data)
-    router.push('/index/files')
-    console.log("user----", res);
-    ElMessage({
-      message: `欢迎回来：${loginForm.userName}`,
-      type: 'success',
-    })
-    loadingBtn.value = false
+    // 直接用token登陆，需要校验是否已经有Filehub仓库存在了：用的话直接登陆，没有的话，需要先创建Filehub
+    loginApi.checkReady(`/repos/${(res.data as any).login}/FileHub/contents/README.md`)
+      .then(checkRes => {
+        console.log("checkReady----", checkRes);
+        if (checkRes.status === 200) {
+          loadingBtn.value = false
+          router.push('/index/files')
+          console.log("user----", res);
+          ElMessage({
+            message: `欢迎回来：${(res.data as any).login}`,
+            type: 'success',
+          })
+        } else {
+          firstRegistInit(token)
+          ElMessage({
+            message: '第一次，可能需要耐心等待一会...',
+            type: 'success',
+          })
+          // 定时检查仓库初始化状态，检测到了再跳转到主页
+          const timer = setInterval(() => {
+            loginApi.checkReady(`/repos/${(res.data as any).login}/FileHub/contents/README.md`).then(checkRes => {
+              console.log("checkReady----", checkRes);
+              if (checkRes.status === 200) {
+                clearInterval(timer)
+                loadingBtn.value = false
+                router.push('/index/files')
+                loadingBtn.value = false
+                ElMessage({
+                  message: '欢迎使用FileHub',
+                  type: 'success',
+                })
+                const gitPageBody = { "source": { "branch": "main", "path": "/" } }
+                commonApi.creatGitPage((res.data as any).login, 'FileHub', loginForm.gitToken, gitPageBody)
+                  .then((gitPageRes) => {
+                    console.log("creatGitpage 成功");
+                    if (gitPageRes.status === 201) {
+                      ElMessage({
+                        message: 'FileHub文件存储库初始化成功',
+                        type: 'success',
+                      })
+                    } else {
+                      console.log("gitPage 创建失败", gitPageRes);
+                    }
+                  }).catch(err => {
+                    ElMessage.error('FileHub文件存储库初始化失败，请联系管理员')
+                    console.log("creatGitPage 失败：", err);
+                  })
+              } else {
+                console.log("FileHub初始化还没做好...");
+              }
+            }).catch(err => {
+              console.log("err FileHub初始化还没做好...", err);
+            })
+          }, 1000)
+        }
+      })
+      .catch(err => {
+        console.log("没有检测到Filehub", err);
+        firstRegistInit(token)
+      })
   } else {
     console.log("登录错误");
     ElMessage.error('登陆失败：' + (res.data as any).message)
@@ -216,13 +273,13 @@ const userNameLogin = async (token: string) => {
 }
 
 // 验证token或用户名后：先校验是否有FileHub仓库，有的话拉取内容，没有的话，frok仓库FileHub，然后拉取内容
-const firstRegistInit = async (user: string, token: string) => {
+const firstRegistInit = async (token: string) => {
   // frok仓库FileHub，然后登陆
   const payload = {
     "name": "FileHub",
     "include_all_branches": false
   }
-  // const frokRes = await loginApi.frokFileHub(token, payload)
+  // 使用Filehub作为模板创建一个新仓库
   const frokRes = await loginApi.creatFileHub(token, payload)
   if (frokRes.status === 201) {
     console.log("Creat FileHub 成功");
@@ -236,16 +293,16 @@ const firstRegistInit = async (user: string, token: string) => {
 // 登陆行为
 const loginAction = async () => {
   loadingBtn.value = true
-  if (loginForm.userName && loginForm.password) {
+  if (loginForm.userName && loginForm.passWord && loginModel.value === "登陆") {
     const loginRes = await loginApi.loginUserName(loginForm.userName)
     console.log('loginRes------', loginRes, loginForm)
     if (loginRes.status === 200) {
-      const rsaContent = rsaDecode(atob((loginRes.data as any).content))
-      console.log("rsaConte----", rsaContent);
-      if (rsaContent.includes(`${loginForm.userName}  ${loginForm.password}  `)) {
-        const userNpt = rsaContent.split("  ")
-        console.log("用户名密码正确", userNpt);
-        userNameLogin(userNpt[2])
+      const rsaContent = JSON.parse(rsaDecode(atob((loginRes.data as any).content)))
+      console.log("rsaDecode----", rsaContent, loginForm);
+      if (rsaContent.userName === loginForm.userName && rsaContent.passWord === loginForm.passWord) {
+        console.log("用户名密码正确", rsaContent);
+        userNameLogin(rsaContent.gitToken)
+        userStore.setUserInfo(rsaContent)
       } else {
         console.log("密码不正确");
         ElMessage.error('登陆失败，账号密码不正确')
@@ -268,7 +325,7 @@ const loginAction = async () => {
 const registUser = async () => {
   loadingBtn.value = true
   ElMessage({
-    message: '第一次，可能需要耐心等一会...',
+    message: '第一次，可能需要耐心等待一会...',
     type: 'success',
   })
   // 先验证用户名是否重复
@@ -280,12 +337,12 @@ const registUser = async () => {
     return
   }
   // 先验证token是否有效，然后注册：pr到数据资产库
-  if (loginForm.userName && loginForm.password && loginForm.gitToken) {
+  if (loginForm.userName && loginForm.passWord && loginForm.gitToken) {
     const res = await loginApi.getUserInfo(`${loginForm.gitToken}`)
     if (res.status === 200) {
-      firstRegistInit((res.data as any).login, loginForm.gitToken)
+      firstRegistInit(loginForm.gitToken)
       // 文件名直接使用用户名，文件内容：用户名+密码+token加密
-      const encodeUser = rsaEncode(`${loginForm.userName}  ${loginForm.password}  ${loginForm.gitToken}`)
+      const encodeUser = rsaEncode(JSON.stringify(loginForm))
       const userInfo = {
         "body": encodeUser,
         "title": `[regist]userName:${loginForm.userName}`

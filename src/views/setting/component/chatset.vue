@@ -3,7 +3,7 @@
     <div class="base-line">
       <div class="base">
         <span class="line-lable">Open Key：</span>
-        <el-input v-model="userInfo.userName" placeholder="Open Ai key" style="width: 280px;" />
+        <el-input v-model="gptKey" placeholder="Open Ai key" style="width: 280px;" />
       </div>
       <!-- <div class="base">
         <span class="line-lable">密码：</span>
@@ -20,16 +20,7 @@
 import { ref } from 'vue'
 
 // 用户名密码等
-const userInfo = ref({
-  userName:"",
-  passWord:"",
-  email:"",
-  weixin:"",
-  qq:"",
-  douyin:"",
-  token:"",
-})
-
+const gptKey = ref("暂不支持设置")
 
 </script>
 

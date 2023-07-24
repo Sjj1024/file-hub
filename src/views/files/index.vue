@@ -1366,12 +1366,12 @@ $column-gap: 16px;
 
 
 .tools-box {
-  width: 82.8%;
   display: flex;
-  // justify-content: space-between;
   position: fixed;
   z-index: 999;
   top: 56px;
+  left: 162px;
+  right: 8px;
   background-color: var(--bg-color);
 
   .path-tool {

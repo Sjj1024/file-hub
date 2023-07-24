@@ -5,8 +5,14 @@ export const useUserStore = defineStore('userInfo', {
     state: () => {
         return {
             name: '',
-            userName: localStorage.getItem('userName') || "",
-            passWord: localStorage.getItem('passWord') || "",
+            userName: localStorage.getItem('userName') || '',
+            passWord: localStorage.getItem('passWord') || '',
+            email: localStorage.getItem('email') || '',
+            weixin: localStorage.getItem('weixin') || '',
+            qq: localStorage.getItem('qq') || '',
+            douyin: localStorage.getItem('douyin') || '',
+            gitToken: localStorage.getItem('gitToken') || '',
+            serverKey: localStorage.getItem('serverKey') || '',
             gitAvatar: 'https://avatars.githubusercontent.com/u/48399687?v=4',
             theme: localStorage.getItem('theme') || 'light',
             gitName: localStorage.getItem('gitName') || 'sjj1024',
@@ -29,7 +35,6 @@ export const useUserStore = defineStore('userInfo', {
             gitIoCdn:
                 localStorage.getItem('gitIoCdn') ||
                 'https://sjj1024.github.io/FileHub',
-            gitToken: localStorage.getItem('gitToken') || "",
             gitInfo: JSON.parse(
                 localStorage.getItem('gitInfo')
                     ? localStorage.getItem('gitInfo')!
@@ -71,13 +76,32 @@ export const useUserStore = defineStore('userInfo', {
             this.fileCdn = `https://cdn.staticaly.com/gh/${this.gitName}/${this.gitRepo}@${this.gitBranch}/`
             this.gitIoCdn = `https://${this.gitName}.github.io/${this.gitRepo}`
             localStorage.setItem('gitToken', gitToken)
-            localStorage.setItem('gitAvatar', this.gitAvatar)
             localStorage.setItem('gitInfo', JSON.stringify(gitInfo))
+            localStorage.setItem('gitAvatar', this.gitAvatar)
             localStorage.setItem('name', this.name)
             localStorage.setItem('gitName', this.gitName)
             localStorage.setItem('gitPath', this.gitPath)
             localStorage.setItem('fileCdn', this.fileCdn)
             localStorage.setItem('gitIoCdn', this.gitIoCdn)
+        },
+        setUserInfo(setInfo: any) {
+            this.userName = setInfo.userName
+            this.passWord = setInfo.passWord
+            this.gitToken = setInfo.token
+            this.serverKey = setInfo.serverKey
+            this.email = setInfo.email
+            this.weixin = setInfo.weixin
+            this.qq = setInfo.qq
+            this.douyin = setInfo.douyin
+            localStorage.setItem('userName', this.userName)
+            localStorage.setItem('passWord', this.passWord)
+            localStorage.setItem('gitToken', this.gitToken)
+            localStorage.setItem('serverKey', this.serverKey)
+            localStorage.setItem('email', this.email)
+            localStorage.setItem('weixin', this.weixin)
+            localStorage.setItem('qq', this.qq)
+            localStorage.setItem('douyin', this.douyin)
+            console.log('setUserInfo------', setInfo)
         },
         setApiRate(apiInfo: any) {
             this.apiLimit = apiInfo

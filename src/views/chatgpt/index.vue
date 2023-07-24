@@ -89,9 +89,9 @@
         </div>
       </div>
       <div class="main-send">
-        <el-input v-model="input1" class="send-input" placeholder="请输入消息内容">
+        <el-input v-model="input1" class="send-input" placeholder="请输入消息内容" @keydown.enter="sendMessage">
           <template #suffix>
-            <el-icon class="send-icon">
+            <el-icon class="send-icon" @click="sendMessage">
               <Promotion />
             </el-icon>
           </template>
@@ -237,7 +237,7 @@ import { reactive, ref } from 'vue'
 import gptImg from "@/assets/image/chat.png"
 import { useUserStore } from '@/stores/user'
 import { Promotion } from '@element-plus/icons-vue'
-
+import { ElMessage } from 'element-plus'
 
 const uStore = useUserStore()
 const drawer = ref(false)
@@ -252,6 +252,13 @@ const messageList = reactive([
     session: "",
   }
 ])
+
+const sendMessage = () => {
+  ElMessage({
+    message: '功能还在开发中....',
+    type: 'success',
+  })
+}
 
 </script>
 
