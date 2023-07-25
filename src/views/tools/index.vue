@@ -11,7 +11,7 @@
       <el-menu-item index="3">签到打卡</el-menu-item>
       <el-menu-item index="4">定时任务</el-menu-item>
     </el-menu>
-    插件工具：下载视频，解析视频，无水印下载等，下载文档，Python定时任务，定时签到，打卡消息提醒等等，没有时间精力开发，佛系开发.....
+    插件工具：下载视频，解析视频，无水印下载等，下载文档，Python定时任务，定时签到，打卡消息提醒等等，佛系开发中.....
   </div>
 </template>
 
