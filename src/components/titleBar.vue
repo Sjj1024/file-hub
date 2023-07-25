@@ -22,17 +22,19 @@ import { appWindow } from '@tauri-apps/api/window'
 import commonApi from '@/apis/common'
 import { open } from '@tauri-apps/api/shell';
 import { ElMessageBox } from 'element-plus'
+import { getVersion } from '@tauri-apps/api/app';
 
 // 获取更新信息等
 commonApi.getHubInfo().then(async res => {
   console.log("获取到的HubInfo", res);
+  const version = 'v' + await getVersion()
   // 更新和消息提醒
   const fh = res.data as any
   // 存储到本地然后对比是否一样，判断是否二次提醒
-  if (fh.FileHub.update.active && localStorage.getItem("fileUpdate") !== JSON.stringify(fh)) {
+  if (fh.FileHub.update.active && version !== fh.FileHub.update.version && localStorage.getItem("fileUpdate") !== JSON.stringify(fh)) {
     console.log("更新提醒:");
     ElMessageBox.confirm(
-      `FileHub有新版本V${fh.FileHub.update?.version}可用，<br/>${fh.FileHub.update?.notes}，<br/>立即更新？`,
+      `FileHub有新版本V${fh.FileHub.update.version}可用，<br/>${fh.FileHub.update.notes}，<br/>立即更新？`,
       'FileHub更新提醒',
       {
         confirmButtonText: '确认',
