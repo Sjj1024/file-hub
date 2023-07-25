@@ -55,6 +55,7 @@ import Flv from "flv.js";
 import '@/utils/webtorrent.min.js';
 import DPlayer from 'dplayer';
 import { appWindow } from '@tauri-apps/api/window'
+import musicBg from '@/assets/image/musicBg.gif'
 /**
  * 可以用于播放的视频
  * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
@@ -198,7 +199,7 @@ const setMusicInit = (file: fileRes) => {
     });
     // 设置音乐背景随机
     // const bg = `url(${randomBg[Math.floor((Math.random() * randomBg.length))]})`;
-    const bg = `url(https://23img.com/i/2023/06/26/gx45dx.gif)`;
+    const bg = `url(${musicBg})`;
     (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
     (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
     // 隐藏全屏按钮
