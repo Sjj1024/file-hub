@@ -208,10 +208,6 @@ const setMusicInit = (file: fileRes) => {
   }, 1)
 }
 
-// background-image: url(https://23img.com/i/2023/06/22/zh812z.jpg);
-// .dplayer-video-wrap
-
-
 const showFileDialog = (imgList: [], f: fileRes) => {
   // 弹窗
   centerDialogVisible.value = true
