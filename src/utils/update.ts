@@ -21,7 +21,7 @@ try {
         )
         const confirmed = await confirm(
             `FileHub有新版本V${manifest?.version}可用，\n${manifest?.body}，\n立即更新？`,
-            'FileHub更新'
+            'FileHub更新提醒'
         )
         console.log('configrmed--', confirmed, manifest)
         if (confirmed) {
