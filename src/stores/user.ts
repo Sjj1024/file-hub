@@ -32,6 +32,7 @@ export const useUserStore = defineStore('userInfo', {
             fileCdn:
                 localStorage.getItem('fileCdn') ||
                 'https://cdn.staticaly.com/gh/sjj1024/FileHub@main',
+            cdnLink: localStorage.getItem('cdnLink') || "Staticaly",
             gitIoCdn:
                 localStorage.getItem('gitIoCdn') ||
                 'https://sjj1024.github.io/FileHub',
@@ -65,6 +66,11 @@ export const useUserStore = defineStore('userInfo', {
             localStorage.setItem('gitPath', this.gitPath)
             localStorage.setItem('fileCdn', this.fileCdn)
             localStorage.setItem('gitIoCdn', this.gitIoCdn)
+        },
+        setFileCdn(cdnPath: string) {
+            this.fileCdn = cdnPath
+            localStorage.setItem('fileCdn', cdnPath)
+            localStorage.setItem("cdnLink", this.cdnLink)
         },
         setGitInfo(gitToken: string, gitInfo: any) {
             this.gitToken = gitToken

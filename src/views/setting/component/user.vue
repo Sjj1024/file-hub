@@ -17,7 +17,7 @@
       </div>
       <div class="base">
         <span class="line-lable">Server酱：</span>
-        <el-input v-model="userInfo.douyin" placeholder="Server酱的SENDKEY" style="width: 280px;" />
+        <el-input v-model="userInfo.serverKey" placeholder="Server酱的SENDKEY" style="width: 280px;" />
       </div>
     </div>
     <div class="base-line">

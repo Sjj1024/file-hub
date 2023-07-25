@@ -3,7 +3,7 @@
     <div class="base-line">
       <div class="base">
         <span class="line-lable">链接规则：</span>
-        <el-select v-model="linkVal" class="m-2" placeholder="默认亮白主题">
+        <el-select v-model="userStore.cdnLink" class="m-2" placeholder="默认Staticaly" @change="handlerCdn">
           <el-option v-for="item in linkOpt" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <div class="tips">
@@ -19,7 +19,7 @@
               <span>GitHub：</span>
               <span v-pre>https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}</span><br />
               <span>GitHub IO：</span>
-              <span v-pre>https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}</span><br />
+              <span v-pre>https://{{owner}}.github.io/{{repo}}/{{path}}</span><br />
             </div>
             <template #reference>
               <el-icon>
@@ -95,30 +95,42 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/user'
 
-const linkVal = ref('Staticaly')
+const userStore = useUserStore()
+
 const linkOpt = [
   {
-    value: 'Staticaly',
+    value: `https://cdn.staticaly.com/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}`,
     label: 'Staticaly',
   },
   {
-    value: 'ChinaJsDelivr',
+    value: `https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}`,
     label: 'ChinaJsDelivr',
   },
   {
-    value: 'jsDelivr',
+    value: `https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}`,
     label: 'jsDelivr',
   },
   {
-    value: 'GitHub',
+    value: `https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}`,
     label: 'GitHub',
   },
   {
-    value: 'GitHub IO',
+    value: 'https://{{owner}}.github.io/{{repo}}/{{path}}',
     label: 'GitHub IO',
   }
 ]
+
+const handlerCdn = (val: string) => {
+  // userStore.setFileCdn(val)
+  console.log("设置的fileCdn是:", val);
+  const resCdn = val.replace("{{owner}}", userStore.gitName).replace("{{repo}}", userStore.gitRepo).replace("{{branch}}", userStore.gitBranch).replace("{{path}}", "")
+  console.log("真正的cdn值：", resCdn);
+  userStore.setFileCdn(resCdn)
+  console.log("设置后的cdn值是:", userStore.fileCdn);
+
+}
 
 const autoLink = ref(false)
 const autoLinkOpt = [
