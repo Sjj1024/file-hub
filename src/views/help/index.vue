@@ -9,23 +9,19 @@
       <span class="praise">
         <span class="pay-box">
           <div>微信赞赏码</div>
-          <img class="pay-code" src="https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/1689847652597.6i0znxu1jdw0.webp"
-            alt="">
+          <img class="pay-code" :src="codeInfo.wxPayCode" alt="">
         </span>
         <span class="pay-box">
           <div>支付宝打赏</div>
-          <img class="pay-code" src="https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/1689847572913.33cz885q50m0.webp"
-            alt="">
+          <img class="pay-code" :src="codeInfo.aliPayCode" alt="">
         </span>
         <span class="pay-box">
           <div>QQ交流群</div>
-          <img class="pay-code" src="https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/bf4f2af962c3a4d1ad68d4fe3a44005.7g13fdeag8g0.webp"
-            alt="">
+          <img class="pay-code" :src="codeInfo.qqChatCode" alt="">
         </span>
         <span class="pay-box">
           <div>微信交流群</div>
-          <img class="pay-code" src="https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/bb5ddfe09143dc3a91e8d3f2b8a45f9.25wgk51qzyb.webp"
-            alt="">
+          <img class="pay-code" :src="codeInfo.wxChatCode" alt="">
         </span>
       </span>
     </div>
@@ -48,13 +44,21 @@
         <a href="https://github.com/Sjj1024/s-hub" target="_blank" class="alink">抖音主页</a>&nbsp;&nbsp;&nbsp;
         <a href="https://github.com/Sjj1024/s-hub" target="_blank" class="alink">微信公众号</a>&nbsp;&nbsp;&nbsp;
         <a href="https://github.com/Sjj1024/s-hub" target="_blank" class="alink">今日头条</a><br />
-        联系邮箱：1024xiaoshen@gmail.com  &nbsp;&nbsp;&nbsp;&nbsp;QQ/微信: 2950525265<br />
+        联系邮箱：1024xiaoshen@gmail.com &nbsp;&nbsp;&nbsp;&nbsp;QQ/微信: 2950525265<br />
       </span>
     </div>
   </div>
 </template>
 
 <script setup lang='ts'>
+
+const codeInfo = {
+  "wxPayCode": localStorage.getItem("wxPayCode") || "https://sjj1024.github.io/DataHub/FileData/config/wx.webp",
+  "aliPayCode": localStorage.getItem("aliPayCode") || "https://sjj1024.github.io/DataHub/FileData/config/zf.webp",
+  "qqChatCode": localStorage.getItem("qqChatCode") || "https://sjj1024.github.io/DataHub/FileData/config/qq.webp",
+  "wxChatCode": localStorage.getItem("wxChatCode") || "https://sjj1024.github.io/DataHub/FileData/config/wxq.webp"
+}
+
 </script>
 
 <style scoped lang='scss'>

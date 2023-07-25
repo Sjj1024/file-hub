@@ -76,6 +76,11 @@ commonApi.getHubInfo().then(async res => {
   } else {
     console.log('消息提醒关闭');
   }
+  // 关于页面的几个二维码
+  localStorage.setItem("wxPayCode", fh.FileHub.about.wxPayCode)
+  localStorage.setItem("aliPayCode", fh.FileHub.about.aliPayCode)
+  localStorage.setItem("qqChatCode", fh.FileHub.about.qqChatCode)
+  localStorage.setItem("wxChatCode", fh.FileHub.about.wxChatCode)
   localStorage.setItem("fileUpdate", JSON.stringify(fh))
 }).catch(err => {
   console.log("访问HubInfo出错:", err);
