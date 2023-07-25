@@ -8,7 +8,7 @@
     },
     "package": {
         "productName": "s-hub",
-        "version": "0.0.0"
+        "version": "0.1.0"
     },
     "tauri": {
         "allowlist": {
@@ -38,10 +38,28 @@
                 "icons/128x128@2x.png",
                 "icons/icon.icns",
                 "icons/icon.ico"
-            ]
+            ],
+            "shortDescription": "万物可存储",
+            "longDescription": "只要你想，没有不可以",
+            "windows": {
+                "webviewInstallMode": {
+                    "type": "embedBootstrapper"
+                },
+                "wix": {
+                    "language": "zh-CN"
+                }
+            }
         },
         "security": {
             "csp": null
+        },
+        "updater": {
+            "active": true,
+            "endpoints": [
+                "https://sjj1024.github.io/DataHub/FileData/update/index.json"
+            ],
+            "dialog": false,
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEMxNDAyRUI1NjlDQThCRUYKUldUdmk4cHB0UzVBd2FFbk91T1FXSnVWdERRK09tY0dSM2tyV01Tb2pIUVM2ME5qRDJuZGMwalEK"
         },
         "windows": [
             {

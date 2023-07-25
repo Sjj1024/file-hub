@@ -1,8 +1,12 @@
 <template>
   <div class="header" data-tauri-drag-region>
     <div class="logo" data-tauri-drag-region>
-      <img v-if="userStore.theme === 'light'" :src="logoLight" alt="" class="logo-img" data-tauri-drag-region/>
-      <img v-else :src="logoDark" alt="" class="logo-img" data-tauri-drag-region/>
+      <el-popover placement="right" trigger="hover" :content="appVersion">
+        <template #reference>
+          <img v-if="userStore.theme === 'light'" :src="logoLight" class="logo-img" data-tauri-drag-region />
+          <img v-else :src="logoDark" class="logo-img" data-tauri-drag-region />
+        </template>
+      </el-popover>
       <div class="api-pro">
         <el-progress :text-inside="true" :stroke-width="20" :percentage="userStore.apiRate" :color="colors"
           status="exception">
@@ -68,21 +72,7 @@
         </el-dropdown>
       </div>
       <div class="titlebar">
-        <div class="titlebar-button" id="titlebar-minimize">
-          <el-icon>
-            <Minus />
-          </el-icon>
-        </div>
-        <div class="titlebar-button" id="titlebar-maximize">
-          <el-icon>
-            <FullScreen />
-          </el-icon>
-        </div>
-        <div class="titlebar-button" id="titlebar-close">
-          <el-icon>
-            <Close />
-          </el-icon>
-        </div>
+        <TitleBar></TitleBar>
       </div>
     </div>
   </div>
@@ -98,22 +88,16 @@ import useTheme from '@/hooks/theme'
 import { useI18n } from 'vue-i18n'
 import { timestampToTime } from "@/utils/index"
 import { getApiLimit } from '@/utils/request';
-import { appWindow, LogicalPosition } from '@tauri-apps/api/window'
-import { onMounted } from 'vue'
+import TitleBar from '@/components/titleBar.vue'
+import { getVersion } from '@tauri-apps/api/app';
+import { onMounted, ref } from 'vue'
 
-onMounted(() => {
-  document.getElementById('titlebar-minimize')!.addEventListener('click', () => appWindow.minimize())
-  document.getElementById('titlebar-maximize')!.addEventListener('click', () => appWindow.toggleMaximize())
-  document.getElementById('titlebar-close')!.addEventListener('click', () => appWindow.close())
-  console.log("onMounted------", document.getElementById('titlebar-close'));
+let appVersion = ref("版本:")
+onMounted(async () => {
+  const version = await getVersion()
+  console.log("appVersion", version);
+  appVersion.value = "当前版本: V" + version
 })
-
-// 窗口拖动
-const dragging = async () => {
-  console.log("按下了---");
-  await appWindow.setPosition(new LogicalPosition(600, 300));
-  // await appWindow.startDragging();
-}
 
 getApiLimit()
 const { locale } = useI18n()

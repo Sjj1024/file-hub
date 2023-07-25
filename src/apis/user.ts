@@ -1,6 +1,5 @@
 import http from '@/utils/request'
-import { useUserStore } from '@/stores/user'
-const userStore = useUserStore()
+
 
 export default {
     getFiles() {

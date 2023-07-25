@@ -13,6 +13,7 @@ import '@/style/index.scss'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import i18n from './lang/index'
 import VueGtag from 'vue-gtag'
+import './utils/update'
 
 const app = createApp(App)
 

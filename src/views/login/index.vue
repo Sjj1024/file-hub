@@ -1,6 +1,6 @@
 sign_up
 <template>
-  <div class="f-header" data-tauri-drag-region>
+  <div class="f-header">
     <div class="titlebar">
       <div class="titlebar-button">
         <el-dropdown>
@@ -29,21 +29,7 @@ sign_up
           </template>
         </el-dropdown>
       </div>
-      <div class="titlebar-button" id="titlebar-minimize">
-        <el-icon>
-          <Minus />
-        </el-icon>
-      </div>
-      <div class="titlebar-button" id="titlebar-maximize">
-        <el-icon>
-          <FullScreen />
-        </el-icon>
-      </div>
-      <div class="titlebar-button" id="titlebar-close">
-        <el-icon>
-          <Close />
-        </el-icon>
-      </div>
+      <TitleBar></TitleBar>
     </div>
   </div>
   <div v-if="loginModel === '注册'" class="container a-container" id="a-container" data-tauri-drag-region>
@@ -130,19 +116,11 @@ import loginApi from '@/apis/user'
 import commonApi from '@/apis/common'
 import { rsaDecode, rsaEncode } from "@/utils/encode"
 import { guestToken } from '@/config'
-import { onMounted } from 'vue'
-import { appWindow } from '@tauri-apps/api/window'
+import TitleBar from '@/components/titleBar.vue'
 
-onMounted(() => {
-  document.getElementById('titlebar-minimize')!.addEventListener('click', () => appWindow.minimize())
-  document.getElementById('titlebar-maximize')!.addEventListener('click', () => appWindow.toggleMaximize())
-  document.getElementById('titlebar-close')!.addEventListener('click', () => appWindow.close())
-  console.log("onMounted------", document.getElementById('titlebar-close'));
-})
 
 const userStore = useUserStore()
 
-console.log("userStore-------", userStore);
 // 登陆loading状态
 const loadingBtn = ref(false)
 
@@ -426,8 +404,8 @@ const registUser = async () => {
   position: fixed;
   justify-content: center;
   align-items: center;
-  top: 13px;
-  right: 15px;
+  padding: 13px 15px 0 0;
+  right: 0px;
 }
 
 .titlebar {

@@ -1,12 +1,5 @@
 import http from '@/utils/request'
-
-// {
-//   "body": "I'm having a problem with this.",
-//   "labels": [
-//       "bug"
-//   ],
-//   "title": "Found a bug"
-// }
+import { ResponseType } from '@tauri-apps/api/http'
 
 export default {
     gitRatelimit() {
@@ -29,7 +22,7 @@ export default {
             body,
         })
     },
-    creatGitPage(user: string, repo:string, token: string, body: any) {
+    creatGitPage(user: string, repo: string, token: string, body: any) {
         return http(`/repos/${user}/${repo}/pages`, {
             method: 'post',
             headers: {
@@ -37,5 +30,14 @@ export default {
             },
             body,
         })
+    },
+    getHubInfo() {
+        return http(
+            `https://sjj1024.github.io/DataHub/FileData/update/index.json`,
+            {
+                method: 'get',
+                responseType: ResponseType.JSON,
+            }
+        )
     },
 }
