@@ -20,7 +20,7 @@ try {
             `Installing update ${manifest?.version}, ${manifest?.date}, ${manifest?.body}`
         )
         const confirmed = await confirm(
-            `FileHub有新版本V${manifest?.version}可用，\n更新内容：${manifest?.body}，\n立即更新？`,
+            `FileHub有新版本V${manifest?.version}可用，\n${manifest?.body}，\n立即更新？`,
             'FileHub更新'
         )
         console.log('configrmed--', confirmed, manifest)
