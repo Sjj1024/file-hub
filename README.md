@@ -37,7 +37,7 @@ chatgpt大语言模型聊天\问答等
 
 ### 插件工具  
 视频无水印下载等
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230725/image.6izgb7v20yw0.webp)  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.61j93kheyy80.webp)  
 
 ### 设置中心   
 常用设置+图床设置+ChatGPT设置+用户设置等
