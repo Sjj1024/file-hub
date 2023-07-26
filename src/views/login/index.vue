@@ -51,7 +51,7 @@ sign_up
           $t('forgetPassword')
         }}</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <a class="form__link" href="https://www.baidu.com/" target="_blank">{{ $t('GetToken') }}</a>
+        <a class="form__link" href="https://xiaoshen.blog.csdn.net/article/details/131933687" target="_blank">{{ $t('GetToken') }}</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a class="form__link" @click="switchModel('登陆')">{{ $t('loginwithanaccount') }}
         </a>

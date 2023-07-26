@@ -4,7 +4,7 @@
       <h3>项目介绍：<a href="https://github.com/Sjj1024/s-hub" target="_blank" class="alink">Github主页</a></h3>
       <span>
         FileHub是一个依托Github
-        Api开发的开源免费文件系统软件，功能类似百度云，但没有百度云的会员限制。主要用作图床和网络文件存储。其他附加功能并不是本软件的核心功能，但是就是想集成进去，因为可能是我个人常用的功能。如果对你有帮助，可以请我喝个咖啡：
+        Api开发的开源免费文件系统软件，功能类似百度云，但没有百度云的会员限制。主要用作图床和网络文件存储。其他附加功能并不是本软件的核心功能，但是就是想集成进去，因为可能是我个人常用的功能。有问题请<a href="https://github.com/Sjj1024/s-hub/issues" target="_blank" class="alink">提交Issue</a>。如果对你有帮助，可以请我喝个咖啡：
       </span><br />
       <span class="praise">
         <span class="pay-box">

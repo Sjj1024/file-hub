@@ -1,11 +1,17 @@
 # FileHub介绍
-一个基于Github Api 开发的文件存储软件，美其名曰：FileHub，类似于百度云盘的功能，但是功能上肯定达不到百度云盘的效果，但是基本功能还是有的：例如登录注册，文件上传查看下载，资源分享等等。当然，还在努力添加ChatGPT功能，gitpage网站一键部署，gitpage主题切换，视频解析和视频无水印下载等等功能。  
+一个基于Github开发的文件存储软件，美其名曰：FileHub，可存万物，而且绝不和谐任何文件。类似于百度云盘的功能，但是功能上肯定达不到百度云盘的效果，但是基本功能还是有的：例如登录注册，文件上传查看下载，资源分享等等。当然，还在努力添加ChatGPT功能，gitpage网站一键部署，gitpage主题切换，视频解析和视频无水印下载等等功能。如果对你有帮助，请给个Star吧  
 本项目使用的技术栈：Tauri + Vue3 + TypeScript + Vite + Pinia + element-plus
 
 ## 软件功能介绍
 ### 基本功能特性
 跨平台支持：windows + mac + linux都支持，多主题：暗黑主题和亮白主题，多语言切换：中英互换。   
-上传文件，在线预览图片，播放视频，音乐，分享资源等等
+上传文件，在线预览图片，播放视频，音乐，分享资源等等，修改Token，修改密码，修改用户名，修改图片链接CDN，加快访问速度。     
+待开发功能：  
+1.AI产品集成：ChatGPT，WormGPT(邪恶版ChatGPT)，Bard，AI绘画，AI写作等智能AI应用接口  
+2.依托Github进行文章笔记管理：文章分类，文章发布，文章加密，文章分享等  
+3.依托Github Page发布自己的网站：使用Github Page发布自己的网站，可以设置不同的网站主题等等
+4.常用工具插件：各平台视频无水印下载，音频下载，图片下载等，视频/音频/图片等转存到我的文件  
+5.依托Github Action实现：定时打卡签到等，定时爬虫任务，爬虫任务资源存储到我的文件等  
 
 ### 登录注册  
 使用用户名和密码注册账户，或者仅仅使用git token登陆。注册用户的时候，需要添加上git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要token。
@@ -27,6 +33,20 @@
 ### ChatGPT集成效果
 chatgpt大语言模型聊天\问答等
 ![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.32nkp0ib2r20.webp)  
+
+
+### 插件工具  
+视频无水印下载等
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230725/image.6izgb7v20yw0.webp)  
+
+### 设置中心   
+常用设置+图床设置+ChatGPT设置+用户设置等
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.7ifcl62dqew0.webp)  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.2myajqua1sy0.webp)  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.9e8nookw6o0.webp)  
+
+### 帮助反馈  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.2umhfyy4khq0.webp)
 
 
 # 本地开发配置
@@ -77,12 +97,11 @@ pnpm tauri build
 
 
 # TODO:
-1.软件自动更新
-2.其他页面的demo样式
-3.暗黑亮白模式样式适配: chatgpt模式
-4.多语言配置
-5.更改token，登陆时更改，设置页面更改
-6.用户名和密码记住功能
+1.多语言配置，等最后再集成吧
+2.集成ChatGPT
+3.开发文章管理
+4.开发网站管理
+
 
 
 # 20230717：Done
@@ -91,3 +110,8 @@ pnpm tauri build
 3.资源分享页面分页展示
 4.下载文件
 5.多文件下载
+6.软件自动更新
+7.其他页面的demo样式
+8.暗黑亮白模式样式适配: chatgpt模式
+9.更改token，登陆时更改，设置页面更改
+10.用户名和密码记住功能
