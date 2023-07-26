@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+
+  # 手动触发一个工作流
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: '手动触发'
  
 jobs:
   release:
