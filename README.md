@@ -16,6 +16,7 @@
 ### 登录注册  
 使用用户名和密码注册账户，或者仅仅使用git token登陆。注册用户的时候，需要添加上git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要token。
 ![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.2uh6124tv4a0.webp)  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.3p83ldepb780.webp)  
 
 
 ### 文件系统  
@@ -23,6 +24,9 @@
 ![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.4ikm9oo3l3m0.webp)
 ![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.5nlodjb062c0.webp)
 
+### 资源广场  
+用户可以分享自己的资源到资源广场，实现资源的共享，可以分享m3u8类型的视频资源，也可以分享图片等等  
+![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.7lcpf67knyo0.webp)
 
 ### 图片视频音乐播放  
 图片预览\放大\缩小\旋转等，视频播放\倍速\全屏播放\循环播放等，支持大多数视频文件，可以将网上的视频文件链接导入到文件中，音乐播放\倍速\循环播放，音乐后台播放等   
