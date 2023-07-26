@@ -56,7 +56,8 @@ jobs:
                   echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
                   cd src/
                   mkdir config
-                  echo "1111" >> index.ts
+                  cd config/
+                  echo ${{ secrets.FILEHUB_CONFIG }} >> index.ts
                   ls
                   cat index.ts
 
