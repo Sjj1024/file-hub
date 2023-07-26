@@ -54,6 +54,7 @@ jobs:
               shell: bash
               run: |
                   echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+                  ls
                   echo "我爱你" >> src/config/index.ts
                   cd src/config && ls
 
