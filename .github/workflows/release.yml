@@ -31,8 +31,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-
-	  # 此处使用项目相同的包管理器
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 6.0.2
