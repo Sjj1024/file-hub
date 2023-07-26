@@ -1,56 +1,81 @@
-name: Release
-# 可手动触发，也会在 git push --tag 时 tag 正则匹配为 vxxx 时触发
+name: Release CI
+
 on:
     push:
+        # Sequence of patterns matched against refs/tags
         tags:
-            - 'v*'
-    # 手动触发一个工作流
+            - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
     workflow_dispatch:
-        inputs:
-            tags:
-                description: 'Test scenario tags'
 
 jobs:
     release:
+        permissions:
+            contents: write
         strategy:
             fail-fast: false
             matrix:
-                platform: [macos-latest, ubuntu-latest, windows-latest]
+                # 选择编译平台
+                platform: [macos-latest, ubuntu-20.04, windows-latest]
         runs-on: ${{ matrix.platform }}
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
-            - name: Node.js setup
-              uses: actions/setup-node@v1
-              with:
-                  node-version: 16
-                  cache: 'pnpm'
-
-            - name: Rust setup
-              uses: actions-rs/toolchain@v1
-              with:
-                  toolchain: stable
-            
             - name: Install dependencies (ubuntu only)
-              if: matrix.platform == 'ubuntu-latest'
+              if: matrix.platform == 'ubuntu-20.04'
+              # You can remove libayatana-appindicator3-dev if you don't use the system tray feature.
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-            - name: Install app dependencies and build web
+                  sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
+
+            - name: Rust setup
+              uses: dtolnay/rust-toolchain@stable
+
+            - name: Rust cache
+              uses: swatinem/rust-cache@v2
+              with:
+                  workspaces: './src-tauri -> target'
+
+            - name: Sync node version and insatll nodejs
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 'lts/*'
+
+            # 使用 pnpm 作为包管理器
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2
+              id: pnpm-install
+              with:
+                  version: 7
+                  run_install: false
+
+            - name: Get pnpm store directory
+              id: pnpm-cache
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+            - uses: actions/cache@v3
+              name: Setup pnpm cache
+              with:
+                  path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Install frontend dependencies
+              # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
               run: pnpm install && pnpm bundle
 
             - name: Build the app
               uses: tauri-apps/tauri-action@v0
-
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-
               with:
-                  tagName: v__VERSION__ # tauri-action replaces \_\_VERSION\_\_ with the app version
-                  releaseName: 'v__VERSION__'
-                  releaseBody: 'See the assets to download this version and install.'
+                  tagName: ${{ github.ref_name }} # This only works if your workflow triggers on new tags.
+                  releaseName: 'App Name v__VERSION__' # 自定义 release 名称，__VERSION__ 将自动填写为版本信息
+                  releaseBody: 'See the assets to download and install this version.'
                   releaseDraft: true
                   prerelease: false
