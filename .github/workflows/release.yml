@@ -58,8 +58,6 @@ jobs:
                   mkdir config
                   cd config/
                   echo ${{ secrets.FILEHUB_CONFIG }} >> index.ts
-                  ls
-                  cat index.ts
 
             - uses: actions/cache@v3
               name: Setup pnpm cache
