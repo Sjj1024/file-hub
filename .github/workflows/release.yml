@@ -6,7 +6,8 @@ on:
       - 'v*'
   # 手动触发一个工作流
   workflow_dispatch:
-    tags:
+    inputs:
+      tags:
         description: 'Test scenario tags'
   
 
