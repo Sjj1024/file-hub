@@ -46,7 +46,7 @@ jobs:
               uses: pnpm/action-setup@v2
               id: pnpm-install
               with:
-                  version: 7
+                  version: 8
                   run_install: false
 
             - name: Get pnpm store directory
@@ -63,12 +63,9 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-pnpm-store-
 
-            - name: Install frontend dependencies
-              # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
-              run: pnpm install && pnpm bundle
-
-            - name: Build the app
-              uses: tauri-apps/tauri-action@v0
+            - name: Install app dependencies and build it
+              run: pnpm && pnpm bundle
+            - uses: tauri-apps/tauri-action@v0.3
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
