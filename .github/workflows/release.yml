@@ -54,8 +54,11 @@ jobs:
               shell: bash
               run: |
                   echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-                  touch hhhhhhhhhhh.ts
+                  cd src/
+                  mkdir config
+                  echo "1111" >> index.ts
                   ls
+                  cat index.ts
 
             - uses: actions/cache@v3
               name: Setup pnpm cache
