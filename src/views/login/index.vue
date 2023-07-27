@@ -115,7 +115,6 @@ import { useUserStore } from '@/stores/user'
 import loginApi from '@/apis/user'
 import commonApi from '@/apis/common'
 import { rsaDecode, rsaEncode } from "@/utils/encode"
-import { guestToken } from '@/config'
 import TitleBar from '@/components/titleBar.vue'
 
 
@@ -169,7 +168,7 @@ interface loginType {
 const loginForm: loginType = reactive({
   userName: userStore.userName || '',
   passWord: userStore.passWord || '',
-  gitToken: guestToken,
+  gitToken: "",
   email: "",
   weixin: "",
   qq: "",

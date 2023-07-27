@@ -1,6 +1,9 @@
 # FileHub介绍
 一个基于Github开发的文件存储软件，美其名曰：FileHub，可存万物，而且绝不和谐任何文件。类似于百度云盘的功能，但是功能上肯定达不到百度云盘的效果，但是基本功能还是有的：例如登录注册，文件上传查看下载，资源分享等等。当然，还在努力添加ChatGPT功能，gitpage网站一键部署，gitpage主题切换，视频解析和视频无水印下载等等功能。如果对你有帮助，请给个Star吧  
 本项目使用的技术栈：Tauri + Vue3 + TypeScript + Vite + Pinia + element-plus
+Windows安装包：
+Mac电脑安装包：
+Linux安装包：
 
 ## 软件功能介绍
 ### 基本功能特性
@@ -14,7 +17,7 @@
 5.依托Github Action实现：定时打卡签到等，定时爬虫任务，爬虫任务资源存储到我的文件等  
 
 ### 登录注册  
-使用用户名和密码注册账户，或者仅仅使用git token登陆。注册用户的时候，需要添加上git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要token。
+使用用户名和密码注册账户，或者仅仅使用git token登陆。注册用户的时候，需要添加上git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要token。(我会对你的token进行公私钥加密存储，所以可放心食用)
 ![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.2uh6124tv4a0.webp)  
 ![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.3p83ldepb780.webp)  
 

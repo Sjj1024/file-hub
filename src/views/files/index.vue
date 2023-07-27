@@ -928,6 +928,10 @@ const downFile = async (file?: any, downPath?: string) => {
       }).finally(() => {
         fileStore.setDownDone(fileStore.downDone += 1)
       })
+  }).catch(err => {
+    console.log("文件下载失败--")
+    ElMessage.error('文件保存失败:' + err)
+    fileStore.setDownNum(fileStore.downNum -= 1)
   })
 }
 

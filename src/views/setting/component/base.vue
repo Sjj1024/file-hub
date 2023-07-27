@@ -156,7 +156,7 @@ const copyOpt = [
 
 
 // 开机启动
-const startOn = ref(localStorage.getItem("startOn") === 'false' ? false : true)
+const startOn = ref(localStorage.getItem("startOn") === 'true' ? true : false)
 // 自动更新
 const updateOn = ref(localStorage.getItem("updateOn") === 'false' ? false : true)
 
