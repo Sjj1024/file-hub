@@ -39,7 +39,7 @@ jobs:
             - name: Sync node version and insatll nodejs
               uses: actions/setup-node@v3
               with:
-                  node-version: 'lts/*'
+                  node-version: 16
 
             # 使用 pnpm 作为包管理器
             - name: Install pnpm
@@ -54,10 +54,6 @@ jobs:
               shell: bash
               run: |
                   echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-                  cd src/
-                  mkdir config
-                  cd config/
-                  echo ${{ secrets.FILEHUB_CONFIG }} >> index.ts
 
             - uses: actions/cache@v3
               name: Setup pnpm cache
@@ -69,7 +65,13 @@ jobs:
 
             - name: Install app dependencies and build it
               run: pnpm i && pnpm bundle
-            - uses: tauri-apps/tauri-action@v0.3
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+                  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+            
+            - name: Tauri Action
+              uses: tauri-apps/tauri-action@v0.3
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
