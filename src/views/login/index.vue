@@ -364,7 +364,7 @@ const registUser = async () => {
           })
         }, 1000)
       } else {
-        ElMessage.error("用户名已存在，请更换用户名")
+        ElMessage.error("注册出错:" + (registRes.data as any).message)
         loadingBtn.value = false
       }
     } else {

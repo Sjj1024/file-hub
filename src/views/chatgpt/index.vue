@@ -399,7 +399,7 @@ const sendMessage = () => {
         position: relative;
         margin-bottom: 10px;
         display: flex;
-        justify-content: start;
+        justify-content: flex-start;
         // background-color: pink;
 
         .msg-gpt {
@@ -435,7 +435,7 @@ const sendMessage = () => {
         position: relative;
         margin-bottom: 10px;
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         align-items: center;
 
         .msg-send {
