@@ -410,8 +410,8 @@ const linkForm = reactive({
 const importLink = ref(false)
 
 const importLinkAction = () => {
-  const importLinkName = `${linkForm.link}¡${linkForm.name}¡${linkForm.type}`.replaceAll("/", "¿")
-  fileApi.uploadFile(`${filePath.value}/${importLinkName}`, {
+  const linkName = `${linkForm.link}¡${linkForm.name}¡${linkForm.type}`.replaceAll("/", "¿").replace(":", "Α")
+  fileApi.uploadFile(`${filePath.value}/${linkName}`, {
     "message": "Upload From FileHub",
     "content": ""
   }).then((res) => {
@@ -1203,7 +1203,7 @@ const getType = (fileType: string, curFile: any) => {
       curFile.path && imgPreList.push(`${uStore.fileCdn}${curFile.path}`)
       return 'picture'
     } else if (
-      ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP'].includes(
+      ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP', "M3U8"].includes(
         fileLast
       )
     ) {
@@ -1250,7 +1250,7 @@ const getFileList = (path?: string | null) => {
     gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
       // 是不是链接资源
       if (cur.name.indexOf("¿") !== -1) {
-        const linkInfo = cur.name.replaceAll("¿", "/").split("¡")
+        const linkInfo = cur.name.replaceAll("¿", "/").replace("Α", ":").split("¡")
         // console.log("是链接资源-------", cur, linkInfo);
         options.find(f => f.label === linkInfo[2])?.value as string === 'picture' && imgPreList.push(linkInfo[0])
         pre.push({
