@@ -853,7 +853,7 @@ const shareFile = (file?: any) => {
 const deleteMoreFile = () => {
   console.log("删除多个文件");
   ElMessageBox.confirm(
-    '确定删除多个文件吗?',
+    '确定删除选中的文件吗?',
     '删除多个文件',
     {
       confirmButtonText: '确定',

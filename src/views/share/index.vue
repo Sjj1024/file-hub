@@ -13,6 +13,9 @@
           <el-button round plain @click="gitFileList.forEach(file => file.selected = false)">
             取消选择({{ selectedNum }})
           </el-button>
+          <el-button type="danger" v-if="userStore.gitName === 'Sjj1024'" round plain @click="updateFile">
+            删除选中({{ selectedNum }})
+          </el-button>
           <el-button type="primary" round plain @click="downMoreFile">
             下载文件
             <el-icon class="el-icon--right">
@@ -633,6 +636,43 @@ const filterFun = () => {
   getFileList(search.value ? search.value : 'FileHub', filterFile.value === 'all' ? '' : `+label:${filterFile.value}`, shareStatus.value === '全部' ? '' : `+author:${userStore.gitName}`)
 }
 
+// 更新分享的文件：因为没有删除接口，暂时先做更新
+const updateFile = () => {
+  ElMessageBox.confirm(
+    '确定删除选中的文件吗?',
+    '删除多个文件',
+    {
+      confirmButtonText: '确定',
+      confirmButtonClass: "confirm-btn",
+      cancelButtonText: '取消',
+      type: 'warning',
+      center: true,
+    }
+  )
+    .then(async () => {
+      for (let index = 0; index < gitFileList.length; index++) {
+        const file = gitFileList[index];
+        if (file.selected) {
+          console.log("删除更新文件:", file);
+          await fileApi.updateShare(file.path, {
+            title: `[Error]ErrorHub:${file.name}ErrorHub:${file.type}ErrorHub:${file.size}`,
+            labels: [
+              'error'
+            ],
+          }).then(res => {
+            console.log("删除更细结果", res);
+            ElMessage({
+              message: `${file.name}删除成功`,
+              type: 'success',
+            })
+          })
+        }
+      }
+      getFileList()
+    })
+
+}
+
 // 搜索内容:在仓库的issue里面搜索，最多返回100条
 const searchFun = () => {
   gitFileList.length = 0
@@ -683,7 +723,7 @@ const getFileList = (filter?: string | null, fileType?: string | null, all?: str
       fileInfo[2] === "picture" && imgPreList.push(cur.body)
       cur.title.includes('FileHub:') && pre.push({
         name: fileInfo[1].includes('.') ? fileInfo[1] : fileInfo[1] + cur.body.substring(cur.body.lastIndexOf('.')),
-        path: "",
+        path: cur.number,
         type: fileInfo[2],
         size: fileInfo[3],
         sha: cur.labels.length === 1 ? "审核不通过" : cur.labels.length === 2 ? "审核通过" : "待审核",
