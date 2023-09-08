@@ -9,7 +9,6 @@
         "types": ["element-plus/global"],
         "sourceMap": true,
         "noImplicitAny": true,
-        "suppressImplicitAnyIndexErrors": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
         "esModuleInterop": true,
