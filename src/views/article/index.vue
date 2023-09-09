@@ -33,7 +33,6 @@
           :label="index"
           :value="index"
         />
-        <!-- <el-option label="2" value="beijing" /> -->
       </el-select>
       <el-select
         v-model="searchForm.month"
@@ -49,24 +48,31 @@
       </el-select>
       <el-button type="primary">搜索</el-button>
     </div>
-    <div class="art-list">列表</div>
+    <div class="art-list">
+      <Note v-for="note in noteList" :key="note.issueNum" :note="note"></Note>
+    </div>
   </div>
 </template>
 
 <script setup lang='ts'>
 import { ref, reactive } from "vue";
+import Note from "./component/note.vue";
+import NoteApi from "@/apis/article";
+
 const searchForm = reactive({
   keyword: "",
   type: "",
   year: "",
   month: "",
 });
+
+const noteList = NoteApi.getNotes();
 </script>
 
 <style scoped lang='scss'>
 .art-main {
-  padding: 0 10px;
   .art-header {
+    padding: 0 10px;
     .header-status {
       margin-right: 36px;
       color: #666;
@@ -85,7 +91,8 @@ const searchForm = reactive({
   }
 
   .art-filter {
-    margin: 10px 0;
+    padding: 0 10px;
+    margin: 10px 0 5px 0;
     .search-item {
       margin-right: 10px;
     }
@@ -99,6 +106,10 @@ const searchForm = reactive({
     .month {
       width: 80px;
     }
+  }
+
+  .art-list {
+    padding-bottom: 50px;
   }
 }
 </style>
