@@ -1,7 +1,7 @@
 # FileHub 介绍
 
 <div style="text-align: center; width:100%">
-<img src="https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/fileHub.3z5pyj461dq0.webp"/>
+<img src="https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/fileHub.3z5pyj461dq0.webp"/>
 </div>
 一个基于Github开发的文件存储软件，美其名曰：FileHub，可存万物，而且绝不和谐任何文件。类似于百度云盘的功能，但是功能上肯定达不到百度云盘的效果，但是基本功能还是有的：例如登录注册，文件上传查看下载，资源分享等等。当然，还在努力添加ChatGPT功能，gitpage网站一键部署，gitpage主题切换，视频解析和视频无水印下载等等功能。如果对你有帮助，请给个Star吧，有问题请提交Isue吧  
 本项目使用的技术栈：Tauri + Vue3 + TypeScript + Vite + Pinia + element-plus
@@ -38,26 +38,26 @@ Github 下载链接: [下载地址一](https://Sjj1024.github.io/FileHub/root/Fi
 ### 登录注册
 
 使用用户名和密码注册账户，或者仅仅使用 git token 登陆。注册用户的时候，需要添加上 git token，这个是必须项。注册成功后，就可以使用用户名和密码登陆，而不再需要 token。(我会对你的 token 进行公私钥加密存储，所以可放心食用)
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.2uh6124tv4a0.webp)  
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.3p83ldepb780.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230720/image.2uh6124tv4a0.webp)  
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.3p83ldepb780.webp)
 
 ### 文件系统
 
 文件(各类文件)上传、拖动上传，文件预览，视频播放，音乐播放，m3u8 视频导入，资源链接导入，文件分享，文件下载，github cdn 链接转换。多文件选择多文件上传，多文件下载等
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.4ikm9oo3l3m0.webp)
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.5nlodjb062c0.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230720/image.4ikm9oo3l3m0.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230720/image.5nlodjb062c0.webp)
 
 ### 资源广场
 
 用户可以分享自己的资源到资源广场，实现资源的共享，可以分享 m3u8 类型的视频资源，也可以分享图片等等  
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.7lcpf67knyo0.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.7lcpf67knyo0.webp)
 
 ### 图片视频音乐播放
 
 图片预览\放大\缩小\旋转等，视频播放\倍速\全屏播放\循环播放等，支持大多数视频文件，可以将网上的视频文件链接导入到文件中，音乐播放\倍速\循环播放，音乐后台播放等  
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.69xjc9jm1800.webp)
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.26skfpadn5og.webp)
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230720/image.2whu0rbw5la0.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230720/image.69xjc9jm1800.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230720/image.26skfpadn5og.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230720/image.2whu0rbw5la0.webp)
 
 ### ChatGPT 集成效果
 
@@ -67,28 +67,31 @@ chatgpt 大语言模型聊天\问答等
 ### 插件工具
 
 视频无水印下载等
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.61j93kheyy80.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.61j93kheyy80.webp)
 
 ### 设置中心
 
 常用设置+图床设置+ChatGPT 设置+用户设置等
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.7ifcl62dqew0.webp)  
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.2myajqua1sy0.webp)  
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.9e8nookw6o0.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.7ifcl62dqew0.webp)  
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.2myajqua1sy0.webp)  
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.9e8nookw6o0.webp)
 
 ### 帮助反馈
 
-![](https://cdn.staticaly.com/gh/1024huijia/QingChunMeizi@master/20230726/image.2umhfyy4khq0.webp)
+![](https://jsd.cdn.zzko.cn/gh/1024huijia/QingChunMeizi@master/20230726/image.2umhfyy4khq0.webp)
 
-# 本地开发配置
 
-先克隆项目：
+# 本地开发配置  
+
+1.需要安装tauri开发环境哦：https://tauri.app/zh-cn/  
+
+2.克隆项目：
 
 ```
 git clone https://github.com/Sjj1024/s-hub.git
 ```
 
-然后切换 node 环境为 19.0.0 以上，推荐使用 pnpm 来管理依赖包。
+3.然后切换 node 环境为 19.0.0 以上，推荐使用 pnpm 来管理依赖包。
 上述环境安装好后，开始安装依赖：
 
 ```
@@ -101,7 +104,7 @@ npm i
 yarn
 ```
 
-基于安全原因，本地开发需要先在 src 目录下创建一个 config 文件夹，并添加 index.ts 文件，文件配置如下：
+4.基于安全原因，本地开发需要先在 src 目录下创建一个 config 文件夹，并添加 index.ts 文件，文件配置如下：
 
 ```
 // Filehub根路径地址：用于存储文件和被Frok
@@ -119,13 +122,13 @@ export const publickKey = ``
 export const privateKey = ``
 ```
 
-启动项目：
+5.启动项目：
 
 ```
 pnpm tauri dev
 ```
 
-编译项目：
+6.编译项目：
 
 ```
 pnpm tauri build
