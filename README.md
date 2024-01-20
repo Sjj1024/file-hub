@@ -9,17 +9,17 @@
 ##### Windows 安装包
 
 Github 下载链接: [下载地址一](https://1024huijia.github.io/FileHub/root/filehub/FileHub_0.0.2_x64_zh-CN.msi)  
-蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/ipnKO14uwf2f)
+蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/iwatV1lp3rud)
 
 ##### Mac 电脑安装包
 
 Github 下载链接: [下载地址一](https://1024huijia.github.io/FileHub/root/filehub/FileHub_0.0.2_x64.dmg)  
-蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/ipnKO14uwf2f)
+蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/iwatV1lp3rud)
 
 ##### Linux 安装包
 
 Github 下载链接: [下载地址一](https://1024huijia.github.io/FileHub/root/filehub/file-hub_0.0.2_amd64.deb)  
-蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/ipnKO14uwf2f)
+蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/iwatV1lp3rud)
 
 ## 软件功能介绍
 
