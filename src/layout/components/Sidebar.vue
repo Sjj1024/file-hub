@@ -1,36 +1,20 @@
 <template>
-  <el-menu
-    :default-active="router.currentRoute.value.name"
-    unique-opened
-    class="el-menu-vertical"
-  >
+  <el-menu :default-active="defaultMenu" unique-opened class="el-menu-vertical">
     <div v-for="(item, index) in routes[1].children" :key="index">
-      <el-sub-menu :index="item.name" v-if="item.children && item.meta!.show">
+      <el-sub-menu :index="index.toString()" v-if="item.children && item.meta!.show">
         <template #title>
           <el-icon>
             <component :is="item.meta!.icon"></component>
           </el-icon>
           <span>{{ item.meta!.title }}</span>
         </template>
-        <el-menu-item
-          :index="chil.name"
-          v-for="(chil, cid) in item.children"
-          :key="cid"
-          @click="
-            clickMenu(
-              `${item.path}/${chil.path}`,
-              `${index.toString()}-${cid.toString()}`
-            )
-          "
-        >
+        <el-menu-item :index="`${index.toString()}-${cid.toString()}`" v-for="(chil, cid) in item.children" :key="cid"
+          @click="clickMenu(`${item.path}/${chil.path}`, `${index.toString()}-${cid.toString()}`)">
           {{ chil.meta!.title }}
         </el-menu-item>
       </el-sub-menu>
-      <el-menu-item
-        :index="item.name"
-        v-else-if="item.meta!.show"
-        @click="clickMenu(`${item.path}`, index.toString())"
-      >
+      <el-menu-item :index="index.toString()" v-else-if="item.meta!.show"
+        @click="clickMenu(`${item.path}`, index.toString())">
         <el-icon>
           <component :is="item.meta!.icon"></component>
         </el-icon>
@@ -41,15 +25,22 @@
 </template>
 
 <script lang="ts" setup>
-import { routes } from "@/route/index";
-import { useRouter } from "vue-router";
+import { routes } from '@/route/index'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
+
+console.log('routes----', routes)
+
+const defaultMenu = localStorage.getItem("menuIndex") ? localStorage.getItem("menuIndex") as string : "0"
 
 const clickMenu = (menuPath: string, menuIndex: string) => {
-  console.log("点击了菜单--", "/index/" + menuPath);
-  router.push("/index/" + menuPath);
-};
+  console.log('点击了菜单--', '/index/' + menuPath, menuIndex)
+  router.push('/index/' + menuPath)
+  // 默认菜单和路由
+  localStorage.setItem('menuIndex', menuIndex)
+  localStorage.setItem("menuRoute", '/index/' + menuPath)
+}
 </script>
 
 <style scoped lang="scss">
@@ -60,6 +51,7 @@ const clickMenu = (menuPath: string, menuIndex: string) => {
   overflow-y: auto;
   user-select: none;
 }
+
 
 .el-menu-vertical::-webkit-scrollbar {
   width: 6px;
@@ -90,6 +82,10 @@ const clickMenu = (menuPath: string, menuIndex: string) => {
   // background-color: rgba(9, 30, 66, 0.08);
   background-color: var(--menu-ative-bg);
 }
+
+// :deep(.el-menu-item) {
+//   margin-bottom: 1px;
+// }
 
 :deep(.el-menu-item:hover) {
   background-color: var(--menu-ative-bg);

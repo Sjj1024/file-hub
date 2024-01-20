@@ -1,29 +1,62 @@
 <template>
-  <div class="my-files" @click="closeMenu" @contextmenu.self="openDirMenu" v-loading="loading" @dragenter="dragenterEvent"
-    @dragover="dragoverEvent" @dragleave="dragleaveEvent" @drop="dropEvent">
+  <div
+    class="my-files"
+    @click="closeMenu"
+    @contextmenu.self="openDirMenu"
+    v-loading="loading"
+    @dragenter="dragenterEvent"
+    @dragover="dragoverEvent"
+    @dragleave="dragleaveEvent"
+    @drop="dropEvent"
+  >
     <div class="tools-box">
       <div class="path-tool">
-        <el-button text @click="backBtn" class="path-btn" :disabled="backPath.length === 1 || fileList.length !== 0">
+        <el-button
+          text
+          @click="backBtn"
+          class="path-btn"
+          :disabled="backPath.length === 1 || fileList.length !== 0"
+        >
           <el-icon class="path-icon">
             <ArrowLeft />
           </el-icon>
         </el-button>
-        <el-button text @click="frontBtn" class="path-btn" :disabled="frontPath.length === 0 || fileList.length !== 0">
+        <el-button
+          text
+          @click="frontBtn"
+          class="path-btn"
+          :disabled="frontPath.length === 0 || fileList.length !== 0"
+        >
           <el-icon class="path-icon">
             <ArrowRight />
           </el-icon>
         </el-button>
-        <el-button text @click="getFileList('/root')" class="path-btn" :disabled="fileList.length !== 0">
+        <el-button
+          text
+          @click="getFileList('/root')"
+          class="path-btn"
+          :disabled="fileList.length !== 0"
+        >
           <el-icon class="path-icon">
             <HomeFilled />
           </el-icon>
         </el-button>
-        <el-button text @click="getFileList(null)" class="path-btn" :disabled="fileList.length !== 0">
+        <el-button
+          text
+          @click="getFileList(null)"
+          class="path-btn"
+          :disabled="fileList.length !== 0"
+        >
           <el-icon class="path-icon">
             <RefreshRight />
           </el-icon>
         </el-button>
-        <el-tooltip class="box-item" effect="dark" :content="'当前路径：' + filePath" placement="right">
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="'当前路径：' + filePath"
+          placement="right"
+        >
           <div class="path">:{{ filePath }}</div>
         </el-tooltip>
       </div>
@@ -31,7 +64,11 @@
         <!-- 多选文件时候的下载，分享，删除按钮  -->
         <template v-if="selectedNum">
           <!-- <el-tag class="ml-2" type="success" size="large" style="margin-right: 10px;">已选择{{ selectedNum }}个文件</el-tag> -->
-          <el-button round plain @click="gitFileList.forEach(file => file.selected = false)">
+          <el-button
+            round
+            plain
+            @click="gitFileList.forEach((file) => (file.selected = false))"
+          >
             取消选择({{ selectedNum }})
           </el-button>
           <el-button type="primary" round plain @click="downMoreFile">
@@ -46,7 +83,13 @@
               <Share />
             </el-icon>
           </el-button>
-          <el-button type="danger" round plain @click="deleteMoreFile" style="margin-right: 10px">
+          <el-button
+            type="danger"
+            round
+            plain
+            @click="deleteMoreFile"
+            style="margin-right: 10px"
+          >
             删除文件
             <el-icon class="el-icon--right">
               <DeleteFilled />
@@ -55,10 +98,17 @@
         </template>
 
         <template v-else>
-          <el-progress v-if="fileList.length" :text-inside="true" :stroke-width="32"
-            :percentage="upPropress / fileList.length * 100" style="width: 120px; margin-right: 10px;">
-            <span style="font-size: 13.5px;">
-              上传进度:{{ upPropress }}/{{ fileList.length ? fileList.length : "0" }}
+          <el-progress
+            v-if="fileList.length"
+            :text-inside="true"
+            :stroke-width="32"
+            :percentage="(upPropress / fileList.length) * 100"
+            style="width: 120px; margin-right: 10px"
+          >
+            <span style="font-size: 13.5px">
+              上传进度:{{ upPropress }}/{{
+                fileList.length ? fileList.length : "0"
+              }}
             </span>
           </el-progress>
           <el-button v-else type="primary" round plain @click="startUpload">
@@ -73,56 +123,118 @@
               <FolderAdd />
             </el-icon>
           </el-button>
-          <el-select v-model="filterFile" class="file-type" placeholder="筛选" @change="filterFun">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="filterFile"
+            class="file-type"
+            placeholder="筛选"
+            @change="filterFun"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
-          <el-input v-model="search" placeholder="请输入搜索内容" clearable @input="searchFun" class="search-input">
+          <el-input
+            v-model="search"
+            placeholder="请输入搜索内容"
+            clearable
+            @input="searchFun"
+            class="search-input"
+          >
             <template #append>
               <el-button :icon="Search" @click="searchFun" />
             </template>
           </el-input>
         </template>
         <span @click="switchStyle">
-          <span v-if="showStyle === 'grid'" class="iconfont show">&#xe7f6;</span>
+          <span v-if="showStyle === 'grid'" class="iconfont show"
+            >&#xe7f6;</span
+          >
           <span v-else class="iconfont show">&#xe7f7;</span>
         </span>
       </div>
     </div>
-    <div :class="{ 'file-box': true, 'grid-style': showStyle === 'grid' }" @contextmenu.self="openDirMenu">
+    <div
+      :class="{ 'file-box': true, 'grid-style': showStyle === 'grid' }"
+      @contextmenu.self="openDirMenu"
+    >
       <!-- 网格布局 -->
       <!-- 提示文件信息内容 -->
-      <el-tooltip placement="bottom" :visible="file.showTips" v-if="showStyle === 'grid'"
-        v-for="(file, index) in gitFileList" :key="index">
+      <el-tooltip
+        placement="bottom"
+        :visible="file.showTips"
+        v-if="showStyle === 'grid'"
+        v-for="(file, index) in gitFileList"
+        :key="index"
+      >
         <template #content>
           <div class="file-tips">
             名称: {{ file.name }}<br />
             <span v-if="file.type !== 'foler'">大小: {{ file.size }}</span>
           </div>
         </template>
-        <div v-if="file.name !== ''" :class="{
-          'file-item': true,
-          'item-seled': file.selected,
-          'file-loading': file.uploading,
-        }" @contextmenu.prevent="openMenu($event, file)" @mouseenter="(e) => fileShowTips(e, file)"
-          @mouseleave="fileCloseTips(file)" @dblclick.stop="handleFileDblClick(file)" @click.self="fileCloseTips(file)">
-          <docum v-if="file.type === 'document'" v-loading="file.uploading"></docum>
-          <foler v-else-if="file.type === 'foler'" v-loading="file.uploading"></foler>
-          <music v-else-if="file.type === 'music'" v-loading="file.uploading"></music>
-          <pic v-else-if="file.type === 'picture' && !file.uploading" :imgUrl="file.openLink" :srcList="imgPreList"
-            v-loading="file.uploading" :fileImg="file">
+        <div
+          v-if="file.name !== ''"
+          :class="{
+            'file-item': true,
+            'item-seled': file.selected,
+            'file-loading': file.uploading,
+          }"
+          @contextmenu.prevent="openMenu($event, file)"
+          @mouseenter="(e) => fileShowTips(e, file)"
+          @mouseleave="fileCloseTips(file)"
+          @dblclick.stop="handleFileDblClick(file)"
+          @click.self="fileCloseTips(file)"
+        >
+          <docum
+            v-if="file.type === 'document'"
+            v-loading="file.uploading"
+          ></docum>
+          <foler
+            v-else-if="file.type === 'foler'"
+            v-loading="file.uploading"
+          ></foler>
+          <music
+            v-else-if="file.type === 'music'"
+            v-loading="file.uploading"
+          ></music>
+          <pic
+            v-else-if="file.type === 'picture' && !file.uploading"
+            :imgUrl="file.openLink"
+            :srcList="imgPreList"
+            v-loading="file.uploading"
+            :fileImg="file"
+          >
           </pic>
-          <fileLoading v-else-if="file.type === 'picture' && file.uploading" :imgUrl="file.path"
-            v-loading="file.uploading"></fileLoading>
-          <vide v-else-if="file.type === 'video'" v-loading="file.uploading" :videoUrl="file.openLink"
-            :videoIndex="index"></vide>
-          <other v-else="file.type === 'other'" v-loading="file.uploading"></other>
+          <fileLoading
+            v-else-if="file.type === 'picture' && file.uploading"
+            :imgUrl="file.path"
+            v-loading="file.uploading"
+          ></fileLoading>
+          <vide
+            v-else-if="file.type === 'video'"
+            v-loading="file.uploading"
+            :videoUrl="file.openLink"
+            :videoIndex="index"
+          ></vide>
+          <other
+            v-else="file.type === 'other'"
+            v-loading="file.uploading"
+          ></other>
           <div class="file-name">{{ file.name }}</div>
           <!-- 多选框 -->
-          <el-checkbox v-if="!file.uploading" :class="{
-            'file-select': true,
-            'hiden-check': file.type === 'foler',
-            'check-show': file.selected,
-          }" v-model="file.selected" @change="(e) => fileSelChange(e, file)"></el-checkbox>
+          <el-checkbox
+            v-if="!file.uploading"
+            :class="{
+              'file-select': true,
+              'hiden-check': file.type === 'foler',
+              'check-show': file.selected,
+            }"
+            v-model="file.selected"
+            @change="(e) => fileSelChange(e, file)"
+          ></el-checkbox>
           <!-- 文件属性提示符 -->
           <!-- <el-icon class="more-action" @click="(e) => moreBtn(e, file)">
               <Operation />
@@ -130,9 +242,19 @@
         </div>
       </el-tooltip>
       <!-- 网格布局的上传文件按钮 -->
-      <div v-show="showStyle === 'grid' && fileList.length === 0" class="upload-file">
-        <el-upload class="upload-inner" ref="uploadBox" :auto-upload="false" drag multiple :on-change="handleUploadChange"
-          :show-file-list="false">
+      <div
+        v-show="showStyle === 'grid' && fileList.length === 0"
+        class="upload-file"
+      >
+        <el-upload
+          class="upload-inner"
+          ref="uploadBox"
+          :auto-upload="false"
+          drag
+          multiple
+          :on-change="handleUploadChange"
+          :show-file-list="false"
+        >
           <el-icon>
             <Plus />
           </el-icon>
@@ -140,21 +262,35 @@
         <div class="upload-name">上传文件</div>
       </div>
       <!-- 列表布局 -->
-      <el-table v-if="showStyle !== 'grid'" :data="gitFileList" style="width: 100%">
+      <el-table
+        v-if="showStyle !== 'grid'"
+        :data="gitFileList"
+        style="width: 100%"
+      >
         <el-table-column width="26">
+          <!-- 因为文件可能包含文件，不能设置多选 -->
           <template #header>
-            <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="checkAllChange"></el-checkbox>
+            <el-checkbox
+              v-model="checkAll"
+              :indeterminate="isIndeterminate"
+              @change="checkAllChange"
+            ></el-checkbox>
           </template>
           <template #default="scope">
-            <el-checkbox v-model="scope.row.selected" @change="(e) => fileSelChange(e, scope.row)"
-              :disabled="scope.row.uploading || scope.row.type === 'foler'">
+            <el-checkbox
+              v-model="scope.row.selected"
+              @change="(e) => fileSelChange(e, scope.row)"
+              :disabled="scope.row.uploading || scope.row.type === 'foler'"
+            >
             </el-checkbox>
           </template>
         </el-table-column>
         <el-table-column label="文件名称">
           <template #default="scope">
             <el-tooltip :content="scope.row.name" placement="bottom">
-              <div class="list-name" @dblclick="handleFileDblClick(scope.row)">{{ scope.row.name }}</div>
+              <div class="list-name" @dblclick="handleFileDblClick(scope.row)">
+                {{ scope.row.name }}
+              </div>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -164,11 +300,15 @@
           }}</template>
         </el-table-column> -->
         <el-table-column label="类型" width="80">
-          <template #default="scope">
-            {{ fileTypes[scope.row.type] }}</template>
+          <template #default="scope"> {{ fileTypes[scope.row.type] }}</template>
         </el-table-column>
         <el-table-column property="size" width="80" label="大小" />
-        <el-table-column label="操作" width="100" align='center' class-name="table-action">
+        <el-table-column
+          label="操作"
+          width="100"
+          align="center"
+          class-name="table-action"
+        >
           <template #default="scope">
             <div v-if="scope.row.uploading">上传中......</div>
             <div v-else>
@@ -180,16 +320,31 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
-                      @click="copyLink(scope.row)">复制链接</el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
-                      @click="shareFile(scope.row)">分享资源</el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
-                      @click="downFile(scope.row)">下载文件</el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.type !== 'foler'"
-                      @click="deleteFile(scope.row)">删除文件</el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.type === 'foler'"
-                      @click="deleteFoler(scope.row)">删除文件夹</el-dropdown-item>
+                    <el-dropdown-item
+                      v-if="scope.row.type !== 'foler'"
+                      @click="copyLink(scope.row)"
+                      >复制链接</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      v-if="scope.row.type !== 'foler'"
+                      @click="shareFile(scope.row)"
+                      >分享资源</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      v-if="scope.row.type !== 'foler'"
+                      @click="downFile(scope.row)"
+                      >下载文件</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      v-if="scope.row.type !== 'foler'"
+                      @click="deleteFile(scope.row)"
+                      >删除文件</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      v-if="scope.row.type === 'foler'"
+                      @click="deleteFoler(scope.row)"
+                      >删除文件夹</el-dropdown-item
+                    >
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -199,26 +354,78 @@
       </el-table>
     </div>
     <!-- 文件右键菜单部分 -->
-    <ul v-show="showMenu" :style="{
-      left: position.left + 'px',
-      top: position.top + 'px',
-      display: showMenu ? 'block' : 'none',
-    }" class="filemenu">
-      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="copyLink">复制链接</li>
-      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="shareFile">分享资源</li>
-      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="renameFile">重新命名</li>
-      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="downFile">下载文件</li>
-      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="infoFile">详细信息</li>
-      <li v-show="rightClickItem && rightClickItem.type !== 'foler'" class="item" @click="deleteFile">删除文件</li>
-      <li v-show="rightClickItem && rightClickItem.type === 'foler'" class="item" @click="deleteFoler">删除文件夹</li>
+    <ul
+      v-show="showMenu"
+      :style="{
+        left: position.left + 'px',
+        top: position.top + 'px',
+        display: showMenu ? 'block' : 'none',
+      }"
+      class="filemenu"
+    >
+      <li
+        v-show="rightClickItem && rightClickItem.type !== 'foler'"
+        class="item"
+        @click="copyLink"
+      >
+        复制链接
+      </li>
+      <li
+        v-show="rightClickItem && rightClickItem.type !== 'foler'"
+        class="item"
+        @click="shareFile"
+      >
+        分享资源
+      </li>
+      <li
+        v-show="rightClickItem && rightClickItem.type !== 'foler'"
+        class="item"
+        @click="renameFile"
+      >
+        重新命名
+      </li>
+      <li
+        v-show="rightClickItem && rightClickItem.type !== 'foler'"
+        class="item"
+        @click="downFile"
+      >
+        下载文件
+      </li>
+      <li
+        v-show="rightClickItem && rightClickItem.type !== 'foler'"
+        class="item"
+        @click="infoFile"
+      >
+        详细信息
+      </li>
+      <li
+        v-show="rightClickItem && rightClickItem.type !== 'foler'"
+        class="item"
+        @click="deleteFile"
+      >
+        删除文件
+      </li>
+      <li
+        v-show="rightClickItem && rightClickItem.type === 'foler'"
+        class="item"
+        @click="deleteFoler"
+      >
+        删除文件夹
+      </li>
     </ul>
     <!-- 目录右键菜单 -->
-    <ul v-show="dirShowMenu" :style="{
-      left: position.left + 'px',
-      top: position.top + 'px',
-      display: dirShowMenu ? 'block' : 'none',
-    }" class="filemenu">
-      <li class="item" @click="startUpload" v-if="fileList.length === 0">上传文件</li>
+    <ul
+      v-show="dirShowMenu"
+      :style="{
+        left: position.left + 'px',
+        top: position.top + 'px',
+        display: dirShowMenu ? 'block' : 'none',
+      }"
+      class="filemenu"
+    >
+      <li class="item" @click="startUpload" v-if="fileList.length === 0">
+        上传文件
+      </li>
       <li class="item" @click="importLink = true">导入资源</li>
       <li class="item" @click="newDir">新建文件夹</li>
       <li class="item" @click="getFileList(null)">刷新目录</li>
@@ -227,27 +434,58 @@
     <el-dialog v-model="shareMoreDialog" title="分享链接" width="80%" center>
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="原始链接" name="first">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
+          <el-input
+            readonly
+            v-model="fileLinkContent"
+            :autosize="{ minRows: 8, maxRows: 8 }"
+            type="textarea"
+          />
         </el-tab-pane>
         <el-tab-pane label="论坛代码" name="second">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
+          <el-input
+            readonly
+            v-model="fileLinkContent"
+            :autosize="{ minRows: 8, maxRows: 8 }"
+            type="textarea"
+          />
         </el-tab-pane>
         <el-tab-pane label="MarkDown" name="third">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
+          <el-input
+            readonly
+            v-model="fileLinkContent"
+            :autosize="{ minRows: 8, maxRows: 8 }"
+            type="textarea"
+          />
         </el-tab-pane>
         <el-tab-pane label="HTML标签" name="fourth">
-          <el-input readonly v-model="fileLinkContent" :autosize="{ minRows: 8, maxRows: 8 }" type="textarea" />
+          <el-input
+            readonly
+            v-model="fileLinkContent"
+            :autosize="{ minRows: 8, maxRows: 8 }"
+            type="textarea"
+          />
         </el-tab-pane>
         <el-tab-pane label="资源广场" name="five">
-          <el-input readonly value="分享到资源广场，审核通过后，会在资源广场展示(所有人可见)，是否继续?" :autosize="{ minRows: 4, maxRows: 8 }"
-            type="textarea" />
+          <el-input
+            readonly
+            value="分享到资源广场，审核通过后，会在资源广场展示(所有人可见)，是否继续?"
+            :autosize="{ minRows: 4, maxRows: 8 }"
+            type="textarea"
+          />
         </el-tab-pane>
       </el-tabs>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="shareMoreDialog = false">取消</el-button>
-          <el-button type="primary" v-if="activeName !== 'five'" @click="copyMoreFileLink">复制</el-button>
-          <el-button type="primary" v-else @click="shareMoreFileToSource">分享到资源广场</el-button>
+          <el-button
+            type="primary"
+            v-if="activeName !== 'five'"
+            @click="copyMoreFileLink"
+            >复制</el-button
+          >
+          <el-button type="primary" v-else @click="shareMoreFileToSource"
+            >分享到资源广场</el-button
+          >
         </span>
       </template>
     </el-dialog>
@@ -255,7 +493,13 @@
   <!-- 文件打开弹窗 -->
   <fileDialog ref="fileLog"></fileDialog>
   <!-- 打开导入资源弹窗 -->
-  <el-dialog v-model="importLink" title="导入外部资源" width="50%" center class="import-box">
+  <el-dialog
+    v-model="importLink"
+    title="导入外部资源"
+    width="50%"
+    center
+    class="import-box"
+  >
     <el-form label-position="right" label-width="70px" :model="linkForm">
       <el-form-item label="资源链接">
         <el-input v-model.trim="linkForm.link" />
@@ -283,345 +527,380 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, reactive, ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
-import docum from '@/components/document.vue'
-import foler from '@/components/foler.vue'
-import music from '@/components/music.vue'
-import other from '@/components/other.vue'
-import pic from '@/components/picture.vue'
-import fileLoading from '@/components/uploading.vue'
-import vide from '@/components/video.vue'
-import fileDialog from "@/components/filedialog.vue"
-import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
-import type { fileRes } from "@/utils/useTypes"
-import { useUserStore } from '@/stores/user'
-import fileApi from "@/apis/files"
-import { writeBinaryFile } from '@tauri-apps/api/fs';
-import { path, dialog } from '@tauri-apps/api';
-import { useFileStore } from '@/stores/files'
-
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
+import { Search } from "@element-plus/icons-vue";
+import docum from "@/components/document.vue";
+import foler from "@/components/foler.vue";
+import music from "@/components/music.vue";
+import other from "@/components/other.vue";
+import pic from "@/components/picture.vue";
+import fileLoading from "@/components/uploading.vue";
+import vide from "@/components/video.vue";
+import fileDialog from "@/components/filedialog.vue";
+import { ElMessage, ElMessageBox, ElTable } from "element-plus";
+import type { fileRes } from "@/utils/useTypes";
+import { useUserStore } from "@/stores/user";
+import fileApi from "@/apis/files";
+import { writeBinaryFile } from "@tauri-apps/api/fs";
+import { path, dialog } from "@tauri-apps/api";
+import { useFileStore } from "@/stores/files";
 
 const dragenterEvent = (event: any) => {
   event.stopPropagation();
   event.preventDefault();
   console.log("拖拽进来了:");
-}
+};
 
 const dragoverEvent = (event: any) => {
   event.stopPropagation();
   event.preventDefault();
   console.log("拖拽结束了:");
-}
+};
 
 const dragleaveEvent = (event: any) => {
   event.stopPropagation();
   event.preventDefault();
   console.log("拖拽离开了:");
-}
+};
 
 const dropEvent = async (event: any) => {
   event.stopPropagation();
   event.preventDefault();
   const files = event.dataTransfer.files;
   console.log("dropfiles-----", files);
-  fileList.length = files.length
+  fileList.length = files.length;
   for (let index = 0; index < files.length; index++) {
     const uploadFile = files[index];
     // 如果文件大小超过25M就跳过
     if (uploadFile.size / 1024 / 1024 > 25) {
-      continue
+      continue;
     }
     await new Promise((resolve, reject) => {
       // 当前日期
-      var date = new Date()
-      var reader = new FileReader()
-      var uploadType = getType(uploadFile.type, uploadFile)
-      reader.readAsDataURL(uploadFile)
+      var date = new Date();
+      var reader = new FileReader();
+      var uploadType = getType(uploadFile.type, uploadFile);
+      reader.readAsDataURL(uploadFile);
       reader.onload = function (event: any) {
         // 用于预览图片
         var uploadFileRaw = reactive({
           name: uploadFile.name,
-          path: uploadType === 'picture' ? event!.target.result : "",
+          path: uploadType === "picture" ? event!.target.result : "",
           type: uploadType,
           size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
           sha: "",
-          openLink: 'https://element-plus.gitee.io/',
-          downLink: 'https://element-plus.gitee.io/',
-          htmlLink: '',
-          creatTime: `${date.getFullYear()}-${date.getMonth() + 1
-            }-${date.getDate()}`,
+          openLink: "https://element-plus.gitee.io/",
+          downLink: "https://element-plus.gitee.io/",
+          htmlLink: "",
+          creatTime: `${date.getFullYear()}-${
+            date.getMonth() + 1
+          }-${date.getDate()}`,
           selected: false,
           showTips: false,
           uploading: true,
-        })
-        gitFileList.push(uploadFileRaw)
+        });
+        gitFileList.push(uploadFileRaw);
         // 用于上传图片
-        fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
-          "message": "Upload From FileHub",
-          "content": event!.target.result.split("base64,")[1]
-        }).then((res: any) => {
-          console.log("上传文件返回:", res);
-          if (res.status === 201) {
-            uploadFileRaw.uploading = false
-            uploadFileRaw.path = res.data.content.path
-            uploadFileRaw.sha = res.data.content.sha
-            uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-            uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-            uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
-            console.log("上传文件结果:", res, imgPreList)
-          } else {
-            ElMessage.error("上传失败:" + res.data.message)
-            gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-          }
-          upPropress.value = index + 1
-          resolve("200")
-        }).catch(error => {
-          uploadFileRaw.sha = 'error'
-          gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-          console.log("上传文件错误:", error);
-          upPropress.value = index + 1
-          resolve("200")
-        })
-      }
-    })
+        fileApi
+          .uploadFile(`${filePath.value}/${uploadFile.name}`, {
+            message: "Upload From FileHub",
+            content: event!.target.result.split("base64,")[1],
+          })
+          .then((res: any) => {
+            console.log("上传文件返回:", res);
+            if (res.status === 201) {
+              uploadFileRaw.uploading = false;
+              uploadFileRaw.path = res.data.content.path;
+              uploadFileRaw.sha = res.data.content.sha;
+              uploadFileRaw.openLink =
+                uploadType === "picture"
+                  ? `${uStore.fileCdn}${res.data.content.path}`
+                  : `${uStore.gitIoCdn}/${res.data.content.path}`;
+              uploadFileRaw.downLink =
+                uploadType === "picture"
+                  ? `${uStore.fileCdn}${res.data.content.path}`
+                  : `${uStore.gitIoCdn}/${res.data.content.path}`;
+              uploadType === "picture" &&
+                imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`);
+              console.log("上传文件结果:", res, imgPreList);
+            } else {
+              ElMessage.error("上传失败:" + res.data.message);
+              gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1);
+            }
+            upPropress.value = index + 1;
+            resolve("200");
+          })
+          .catch((error) => {
+            uploadFileRaw.sha = "error";
+            gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1);
+            console.log("上传文件错误:", error);
+            upPropress.value = index + 1;
+            resolve("200");
+          });
+      };
+    });
   }
   // for上传完所有文件之后
   console.log("drop for上传完所有文件之后", fileList);
-  upPropress.value = 0
-  fileList.length = 0
-}
+  upPropress.value = 0;
+  fileList.length = 0;
+};
 
-
-const uStore = useUserStore()
-const fileStore = useFileStore()
-
+const uStore = useUserStore();
+const fileStore = useFileStore();
 
 // 拉取自己Filehub仓库中的文件内容
-const filePath = ref('/root')
-const loading = ref(true)
+const filePath = ref("/root");
+const loading = ref(true);
 
 const linkForm = reactive({
-  link: '',
-  name: '',
-  type: '图片',
-})
+  link: "",
+  name: "",
+  type: "图片",
+});
 
-const importLink = ref(false)
+const importLink = ref(false);
 
 const importLinkAction = () => {
-  const linkName = `${linkForm.link}¡${linkForm.name}¡${linkForm.type}`.replaceAll("/", "¿").replace(":", "Α")
-  fileApi.uploadFile(`${filePath.value}/${linkName}`, {
-    "message": "Upload From FileHub",
-    "content": ""
-  }).then((res) => {
-    console.log("导入文件成功-----", res);
-    if (res.status === 201) {
-      ElMessage({
-        message: '导入文件成功',
-        type: 'success',
-      })
-      linkForm.link = ""
-      linkForm.name = ""
-      linkForm.type = "图片"
-      importLink.value = false
-      getFileList()
-    } else {
-      ElMessage.error("导入失败：可能文件已存在")
-    }
-  }).catch(err => {
-    console.log("导入文件失败:", err);
-  })
-}
+  const linkName = `${linkForm.link}¡${linkForm.name}¡${linkForm.type}`
+    .replaceAll("/", "¿")
+    .replace(":", "Α");
+  fileApi
+    .uploadFile(`${filePath.value}/${linkName}`, {
+      message: "Upload From FileHub",
+      content: "",
+    })
+    .then((res) => {
+      console.log("导入文件成功-----", res);
+      if (res.status === 201) {
+        ElMessage({
+          message: "导入文件成功",
+          type: "success",
+        });
+        linkForm.link = "";
+        linkForm.name = "";
+        linkForm.type = "图片";
+        importLink.value = false;
+        getFileList();
+      } else {
+        ElMessage.error("导入失败：可能文件已存在");
+      }
+    })
+    .catch((err) => {
+      console.log("导入文件失败:", err);
+    });
+};
 
 // 计算属性：计算选中了几个文件
-const selectedNum = computed(() => gitFileList.reduce((pre: any, cur: any) => {
-  cur.selected && pre.push(cur)
-  return pre
-}, []).length)
+const selectedNum = computed(
+  () =>
+    gitFileList.reduce((pre: any, cur: any) => {
+      cur.selected && pre.push(cur);
+      return pre;
+    }, []).length
+);
 
 // 选中文件的链接
-const selectedLink = computed(() => gitFileList.reduce((pre: any, cur) => {
-  cur.selected && pre.push(cur.openLink)
-  return pre
-}, []))
+const selectedLink = computed(() =>
+  gitFileList.reduce((pre: any, cur) => {
+    cur.selected && pre.push(cur.openLink);
+    return pre;
+  }, [])
+);
 
 // 多文件分享链接
-const fileLinkContent = ref()
+const fileLinkContent = ref();
 
 const shareMoreFile = () => {
   console.log("分享多个文件");
-  fileLinkContent.value = selectedLink.value.join("\r")
-  shareMoreDialog.value = true
-  activeName.value = "first"
-}
+  fileLinkContent.value = selectedLink.value.join("\r");
+  shareMoreDialog.value = true;
+  activeName.value = "first";
+};
 
-const shareMoreDialog = ref(false)
-const activeName = ref('first')
+const shareMoreDialog = ref(false);
+const activeName = ref("first");
 const handleClick = (tab: any, event: Event) => {
-  console.log("selectedLink------", tab.props.label, event, selectedLink)
-  if (tab.props.label === '原始链接') {
-    fileLinkContent.value = selectedLink.value.join("\r")
+  console.log("selectedLink------", tab.props.label, event, selectedLink);
+  if (tab.props.label === "原始链接") {
+    fileLinkContent.value = selectedLink.value.join("\r");
   } else if (tab.props.label === "论坛代码") {
-    fileLinkContent.value = "[img]" + selectedLink.value.join("[/img]\r[img]") + "[/img]"
+    fileLinkContent.value =
+      "[img]" + selectedLink.value.join("[/img]\r[img]") + "[/img]";
   } else if (tab.props.label === "MarkDown") {
-    fileLinkContent.value = "![](" + selectedLink.value.join(")\r![](") + ")"
+    fileLinkContent.value = "![](" + selectedLink.value.join(")\r![](") + ")";
   } else {
-    fileLinkContent.value = '<img src="' + selectedLink.value.join('" alt="1" />\r<img src="') + '" alt="1" />'
+    fileLinkContent.value =
+      '<img src="' +
+      selectedLink.value.join('" alt="1" />\r<img src="') +
+      '" alt="1" />';
   }
-}
+};
 
 // 分享多个文件到资源广场
 const shareMoreFileToSource = () => {
-  gitFileList.forEach(file => {
+  gitFileList.forEach((file) => {
     // console.log("fileLinkContent", file.selected, file);
     if (file.selected) {
       // console.log("分享文件-", file);
       const fileInfo = {
-        "body": `${file.openLink}`,
-        "title": `[share]FileHub:${file.name}FileHub:${file.type}FileHub:${file.size}`
-      }
-      fileApi.shareFile(fileInfo).then(res => {
-        console.log("分享成功", res);
-        ElMessage({
-          message: `${file.name}分享成功，审核通过后会在资源广场展示`,
-          type: 'success',
+        body: `${file.openLink}`,
+        title: `[share]FileHub:${file.name}FileHub:${file.type}FileHub:${file.size}`,
+      };
+      fileApi
+        .shareFile(fileInfo)
+        .then((res) => {
+          console.log("分享成功", res);
+          ElMessage({
+            message: `${file.name}分享成功，审核通过后会在资源广场展示`,
+            type: "success",
+          });
         })
-      }).catch(err => {
-        console.log("分享失败: ", err);
-      })
+        .catch((err) => {
+          console.log("分享失败: ", err);
+        });
     }
-  })
-  shareMoreDialog.value = false
-}
+  });
+  shareMoreDialog.value = false;
+};
 
 const listenPaste = (pe: any) => {
   // pe.preventDefault()
-  pe.stopPropagation()
-  var data = pe.clipboardData!.files[0]
+  pe.stopPropagation();
+  var data = pe.clipboardData!.files[0];
   if (!data) {
-    return
+    return;
   }
-  fileList.push(1)
-  var date = new Date()
+  fileList.push(1);
+  var date = new Date();
   var reader = new FileReader();
-  var uploadType = getType(data.type, data)
+  var uploadType = getType(data.type, data);
   reader.readAsDataURL(data);
   reader.onload = function (event) {
     // 用于预览图片
     var uploadFileRaw = reactive({
       name: data.lastModified + data.name,
-      path: uploadType === 'picture' ? event!.target!.result as string : "",
+      path: uploadType === "picture" ? (event!.target!.result as string) : "",
       type: uploadType,
       size: (data.size / 1024 / 1024).toFixed(2).toString() + "M",
       sha: "",
-      openLink: '',
-      downLink: '',
-      htmlLink: '',
-      creatTime: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+      openLink: "",
+      downLink: "",
+      htmlLink: "",
+      creatTime: `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDate()}`,
       selected: false,
       showTips: false,
       uploading: true,
-    })
-    gitFileList.push(uploadFileRaw)
+    });
+    gitFileList.push(uploadFileRaw);
     // 用于上传图片
-    fileApi.uploadFile(`${filePath.value}/${data.lastModified + data.name}`, {
-      "message": "Upload From FileHub",
-      "content": (event!.target!.result! as string).split("base64,")[1]
-    }).then((res: any) => {
-      if (res.status === 201) {
-        uploadFileRaw.uploading = false
-        uploadFileRaw.path = res.data.content.path
-        uploadFileRaw.sha = res.data.content.sha
-        uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-        uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-        uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
-        console.log("上传文件结果:", res, imgPreList)
-      } else {
-        ElMessage.error("上传失败:" + res.data.message)
-        gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-      }
-      upPropress.value = 1
-      fileList.length = 0
-    }).catch(error => {
-      uploadFileRaw.sha = 'error'
-      gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-      console.log("上传文件错误:", error);
-      upPropress.value = 1
-      fileList.length = 0
-    })
-  }
-}
+    fileApi
+      .uploadFile(`${filePath.value}/${data.lastModified + data.name}`, {
+        message: "Upload From FileHub",
+        content: (event!.target!.result! as string).split("base64,")[1],
+      })
+      .then((res: any) => {
+        if (res.status === 201) {
+          uploadFileRaw.uploading = false;
+          uploadFileRaw.path = res.data.content.path;
+          uploadFileRaw.sha = res.data.content.sha;
+          uploadFileRaw.openLink =
+            uploadType === "picture"
+              ? `${uStore.fileCdn}${res.data.content.path}`
+              : `${uStore.gitIoCdn}/${res.data.content.path}`;
+          uploadFileRaw.downLink =
+            uploadType === "picture"
+              ? `${uStore.fileCdn}${res.data.content.path}`
+              : `${uStore.gitIoCdn}/${res.data.content.path}`;
+          uploadType === "picture" &&
+            imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`);
+          console.log("上传文件结果:", res, imgPreList);
+        } else {
+          ElMessage.error("上传失败:" + res.data.message);
+          gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1);
+        }
+        upPropress.value = 1;
+        fileList.length = 0;
+      })
+      .catch((error) => {
+        uploadFileRaw.sha = "error";
+        gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1);
+        console.log("上传文件错误:", error);
+        upPropress.value = 1;
+        fileList.length = 0;
+      });
+  };
+};
 
 // 图片黏贴上传功能
-document.addEventListener('paste', listenPaste)
+document.addEventListener("paste", listenPaste);
 
 onUnmounted(() => {
-  document.removeEventListener("paste", listenPaste)
+  document.removeEventListener("paste", listenPaste);
   console.log("移除黏贴事件2---");
-})
+});
 
 // 复制多文件分享链接内容
 const copyMoreFileLink = () => {
-  navigator.clipboard.writeText(fileLinkContent.value).then(res => {
+  navigator.clipboard.writeText(fileLinkContent.value).then((res) => {
     ElMessage({
-      message: '内容已复制到剪切板',
-      type: 'success',
-    })
-    shareMoreDialog.value = false
-  })
-}
+      message: "内容已复制到剪切板",
+      type: "success",
+    });
+    shareMoreDialog.value = false;
+  });
+};
 
 // 文件弹窗
-const fileLog = ref()
+const fileLog = ref();
 
 // 文件右键菜单
-const showMenu = ref(false)
+const showMenu = ref(false);
 // 文件夹右键菜单
-const dirShowMenu = ref(false)
+const dirShowMenu = ref(false);
 const position = ref({
   top: 0,
   left: 0,
-})
-
-
+});
 
 // 鼠标进去后显示这个文件的提示
 const fileShowTips = (e: any, file: fileRes) => {
-  file.showTips = true
+  file.showTips = true;
   // console.log("fileShowTips--", file.showTips);
   // 鼠标不在文件上右键后，再到文件上右键的bug
   // e.target.click()
-}
+};
 // 鼠标退出后关闭提示
 const fileCloseTips = (file: fileRes) => {
-  file.showTips = false
+  file.showTips = false;
   // 鼠标放上文件后，就给图片组件传递数据，等待预览
   // console.log("点击文件后---", file);
-}
+};
 // 选中的某一个文件项
-let rightClickItem: fileRes
+let rightClickItem: fileRes;
 const openMenu = (e: MouseEvent, item: fileRes) => {
-  dirShowMenu.value = false
+  dirShowMenu.value = false;
   // 如果文件是上传状态，则直接返回
   if (item.uploading) {
-    return
+    return;
   }
   // 获取侧边菜单栏宽度和顶部栏高度
   const sideBarWidth = (
-    document.querySelector('.el-menu-vertical') as HTMLDivElement
-  ).offsetWidth
-  const headerHeight = (
-    document.querySelector('.tools-box') as HTMLDivElement
-  ).offsetTop
-  const scroTop = (document.querySelector('div.main-box') as HTMLDivElement).scrollTop
-  showMenu.value = true
-  position.value.top = e.pageY - headerHeight - 36 + scroTop
-  position.value.left = e.clientX - sideBarWidth + 2
-  rightClickItem = item
+    document.querySelector(".el-menu-vertical") as HTMLDivElement
+  ).offsetWidth;
+  const headerHeight = (document.querySelector(".tools-box") as HTMLDivElement)
+    .offsetTop;
+  const scroTop = (document.querySelector("div.main-box") as HTMLDivElement)
+    .scrollTop;
+  showMenu.value = true;
+  position.value.top = e.pageY - headerHeight - 36 + scroTop;
+  position.value.left = e.clientX - sideBarWidth + 2;
+  rightClickItem = item;
   // 显示文件提示内容
-  item.showTips = false
-}
+  item.showTips = false;
+};
 
 // 路径返回和前进：维护两个栈结构的数组Ab，a存储前进路径，b维护后退路径
 /**
@@ -632,84 +911,96 @@ const openMenu = (e: MouseEvent, item: fileRes) => {
 回退后，将栈顶c入栈B。
 再前进，从栈B中取出栈顶c进行访问。
  */
-const backPath: any[] = ["/root"]
-const frontPath: any[] = []
+const backPath: any[] = ["/root"];
+const frontPath: any[] = [];
 
 const backBtn = () => {
-  loading.value = true
-  backPath.length > 1 && frontPath.push(backPath.pop())
-  filePath.value = backPath.length > 0 ? backPath[backPath.length - 1] : "/root"
-  getFileList(null)
+  loading.value = true;
+  backPath.length > 1 && frontPath.push(backPath.pop());
+  filePath.value =
+    backPath.length > 0 ? backPath[backPath.length - 1] : "/root";
+  getFileList(null);
   console.log("后退按钮", backPath, frontPath);
-}
+};
 
 const frontBtn = () => {
-  loading.value = true
-  frontPath.length > 0 && backPath.push(frontPath.pop())
-  filePath.value = backPath[backPath.length - 1]
-  getFileList(null)
+  loading.value = true;
+  frontPath.length > 0 && backPath.push(frontPath.pop());
+  filePath.value = backPath[backPath.length - 1];
+  getFileList(null);
   console.log("前进按钮", backPath, frontPath);
-}
+};
 
 // 双击文件后打开文件
 const handleFileDblClick = (file: fileRes) => {
   console.log("双击元素---", file, fileLog);
   // 如果是上传中或者是图片，就不允许双击
-  if (file.uploading || file.type === "document" || file.type === "other" || (file.type === "picture" && showStyle.value === "grid")) {
-    return
+  if (
+    file.uploading ||
+    file.type === "document" ||
+    file.type === "other" ||
+    (file.type === "picture" && showStyle.value === "grid")
+  ) {
+    return;
   } else if (file.type === "foler") {
-    loading.value = true
-    filePath.value = "/" + file.path
-    backPath.push(filePath.value)
+    loading.value = true;
+    filePath.value = "/" + file.path;
+    backPath.push(filePath.value);
     console.log("打开文件夹", backPath);
-    getFileList(null)
+    getFileList(null);
   } else {
     // 根据文件类型展示不同的内容，如果是文件夹就进入新的文件夹，如果是图片/视频/音频就播放，是文档就打开，未知文件就预览
-    fileLog.value.showFileDialog(imgPreList, file)
+    fileLog.value.showFileDialog(imgPreList, file);
   }
-}
+};
 
 const openDirMenu = (e: MouseEvent) => {
-  console.log('打开文件上传菜单', e)
-  showMenu.value = false
-  e.preventDefault()
+  console.log("打开文件上传菜单", e);
+  showMenu.value = false;
+  e.preventDefault();
   // 获取侧边菜单栏宽度和顶部栏高度
   const sideBarWidth = (
-    document.querySelector('.el-menu-vertical') as HTMLDivElement
-  ).offsetWidth
-  const headerHeight = (
-    document.querySelector('.tools-box') as HTMLDivElement
-  ).offsetTop
-  dirShowMenu.value = true
-  const scroTop = (document.querySelector('div.main-box') as HTMLDivElement).scrollTop
-  position.value.top = e.clientY - headerHeight - 36 + scroTop
-  position.value.left = e.clientX - sideBarWidth + 2
-}
+    document.querySelector(".el-menu-vertical") as HTMLDivElement
+  ).offsetWidth;
+  const headerHeight = (document.querySelector(".tools-box") as HTMLDivElement)
+    .offsetTop;
+  dirShowMenu.value = true;
+  const scroTop = (document.querySelector("div.main-box") as HTMLDivElement)
+    .scrollTop;
+  position.value.top = e.clientY - headerHeight - 36 + scroTop;
+  position.value.left = e.clientX - sideBarWidth + 2;
+};
 // 点击项目后关闭右键
 const closeMenu = () => {
-  showMenu.value = false
-  dirShowMenu.value = false
-}
+  showMenu.value = false;
+  dirShowMenu.value = false;
+};
 
 // 表格表头的选择框
-const checkAll = ref(false)
+const checkAll = ref(false);
 // 中间状态
-const isIndeterminate = ref(false)
+const isIndeterminate = ref(false);
 // 全选事件
 const checkAllChange = (val: any) => {
-  console.log('checkAllChange--', val)
-}
+  console.log("checkAllChange--", val, checkAll.value);
+  // 判断是否多选，是的话就让文件中不是文件夹的状态全选
+  gitFileList.forEach((file) => {
+    if (file.type !== "foler") {
+      file.selected = val;
+    }
+  });
+};
 
 // 多选框选项
 const fileSelChange = (e: any, item: any) => {
-  item.selected = e
-  console.log('fileSelChange---', e, item, selectedNum)
-}
+  item.selected = e;
+  console.log("fileSelChange---", e, item, selectedNum);
+};
 
 // 文件上传的on-progress
-const upPropress = ref(0)
+const upPropress = ref(0);
 
-let fileList: any[] = []
+let fileList: any[] = [];
 
 const startUpFiles = async () => {
   console.log("开始多文件上传", fileList);
@@ -717,586 +1008,668 @@ const startUpFiles = async () => {
     const uploadFile = fileList[index];
     // 如果文件大小超过25M就跳过
     if (uploadFile.size / 1024 / 1024 > 25) {
-      continue
+      continue;
     }
     await new Promise((resolve, reject) => {
       // 当前日期
-      var date = new Date()
-      var reader = new FileReader()
-      var uploadType = getType(uploadFile.raw.type, uploadFile)
-      reader.readAsDataURL(uploadFile.raw)
+      var date = new Date();
+      var reader = new FileReader();
+      var uploadType = getType(uploadFile.raw.type, uploadFile);
+      reader.readAsDataURL(uploadFile.raw);
       reader.onload = function (event: any) {
         // 用于预览图片
         var uploadFileRaw = reactive({
           name: uploadFile.name,
-          path: uploadType === 'picture' ? event!.target.result : "",
+          path: uploadType === "picture" ? event!.target.result : "",
           type: uploadType,
           size: (uploadFile.size / 1024 / 1024).toFixed(2).toString() + "M",
           sha: "",
-          openLink: 'https://element-plus.gitee.io/',
-          downLink: 'https://element-plus.gitee.io/',
-          htmlLink: '',
-          creatTime: `${date.getFullYear()}-${date.getMonth() + 1
-            }-${date.getDate()}`,
+          openLink: "https://element-plus.gitee.io/",
+          downLink: "https://element-plus.gitee.io/",
+          htmlLink: "",
+          creatTime: `${date.getFullYear()}-${
+            date.getMonth() + 1
+          }-${date.getDate()}`,
           selected: false,
           showTips: false,
           uploading: true,
-        })
-        gitFileList.push(uploadFileRaw)
+        });
+        gitFileList.push(uploadFileRaw);
         // 用于上传图片
-        fileApi.uploadFile(`${filePath.value}/${uploadFile.name}`, {
-          "message": "Upload From FileHub",
-          "content": event!.target.result.split("base64,")[1]
-        }).then((res: any) => {
-          console.log("上传文件返回:", res);
-          if (res.status === 201) {
-            uploadFileRaw.uploading = false
-            uploadFileRaw.path = res.data.content.path
-            uploadFileRaw.sha = res.data.content.sha
-            uploadFileRaw.openLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-            uploadFileRaw.downLink = uploadType === 'picture' ? `${uStore.fileCdn}${res.data.content.path}` : `${uStore.gitIoCdn}/${res.data.content.path}`
-            uploadType === 'picture' && imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`)
-            console.log("上传文件结果:", res, imgPreList)
-          } else {
-            ElMessage.error("上传失败:" + res.data.message)
-            gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-          }
-          upPropress.value = index + 1
-          resolve("200")
-        }).catch(error => {
-          uploadFileRaw.sha = 'error'
-          gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1)
-          console.log("上传文件错误:", error);
-          upPropress.value = index + 1
-          resolve("200")
-        })
-      }
-    })
+        fileApi
+          .uploadFile(`${filePath.value}/${uploadFile.name}`, {
+            message: "Upload From FileHub",
+            content: event!.target.result.split("base64,")[1],
+          })
+          .then((res: any) => {
+            console.log("上传文件返回:", res);
+            if (res.status === 201) {
+              uploadFileRaw.uploading = false;
+              uploadFileRaw.path = res.data.content.path;
+              uploadFileRaw.sha = res.data.content.sha;
+              uploadFileRaw.openLink =
+                uploadType === "picture"
+                  ? `${uStore.fileCdn}${res.data.content.path}`
+                  : `${uStore.gitIoCdn}/${res.data.content.path}`;
+              uploadFileRaw.downLink =
+                uploadType === "picture"
+                  ? `${uStore.fileCdn}${res.data.content.path}`
+                  : `${uStore.gitIoCdn}/${res.data.content.path}`;
+              uploadType === "picture" &&
+                imgPreList.push(`${uStore.fileCdn}${res.data.content.path}`);
+              console.log("上传文件结果:", res, imgPreList);
+            } else {
+              ElMessage.error("上传失败:" + res.data.message);
+              gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1);
+            }
+            upPropress.value = index + 1;
+            resolve("200");
+          })
+          .catch((error) => {
+            uploadFileRaw.sha = "error";
+            gitFileList.splice(gitFileList.indexOf(uploadFileRaw), 1);
+            console.log("上传文件错误:", error);
+            upPropress.value = index + 1;
+            resolve("200");
+          });
+      };
+    });
   }
   // for上传完所有文件之后
   console.log("for上传完所有文件之后", fileList);
-  upPropress.value = 0
-  fileList.length = 0
-}
+  upPropress.value = 0;
+  fileList.length = 0;
+};
 
-let upTimer: number | null
+let upTimer: number | null;
 
 // 上传文件回调事件
 const handleUploadChange = (uploadFile: any, uploadFiles: any) => {
   let fileSize = Number(uploadFile.size / 1024 / 1024);
-  console.log('handleUploadChange----', fileSize, uploadFile)
+  console.log("handleUploadChange----", fileSize, uploadFile);
   if (fileSize > 25) {
-    ElMessage.error('上传的文件大小不能超过25MB！')
+    ElMessage.error("上传的文件大小不能超过25MB！");
     // ElMessage({ message: '文件大小不能超过25MB!。', type: 'warning' })
-    return false
+    return false;
   }
-  fileList = uploadFiles
-  upTimer && clearTimeout(upTimer)
+  fileList = uploadFiles;
+  upTimer && clearTimeout(upTimer);
   upTimer = setTimeout(() => {
-    upTimer = null
-    console.log('防抖 高频触发后n秒内只会执行一次  再次触发重新计时')
-    startUpFiles() //说明此时change了所有文件了 可以上传了
-  }, 800)
-  console.log('gitFileList-----', gitFileList)
-}
+    upTimer = null;
+    console.log("防抖 高频触发后n秒内只会执行一次  再次触发重新计时");
+    startUpFiles(); //说明此时change了所有文件了 可以上传了
+  }, 800);
+  console.log("gitFileList-----", gitFileList);
+};
 
 // 复制链接
 const copyLink = (file?: any) => {
-  console.log("rightClickItem----", file)
-  navigator.clipboard.writeText(file.openLink ? file.openLink : rightClickItem.openLink).then(() => {
-    ElMessage({
-      message: '复制成功，快去分享吧',
-      type: 'success',
-    })
-  })
-}
+  console.log("rightClickItem----", file);
+  navigator.clipboard
+    .writeText(file.openLink ? file.openLink : rightClickItem.openLink)
+    .then(() => {
+      ElMessage({
+        message: "复制成功，快去分享吧",
+        type: "success",
+      });
+    });
+};
 
 // 分享资源
 const shareFile = (file?: any) => {
-  const curFile = file.openLink ? file : rightClickItem
+  const curFile = file.openLink ? file : rightClickItem;
   console.log("分享资源----", file, rightClickItem, curFile);
   ElMessageBox.confirm(
-    '分享成功后会在资源广场展示(所有人可见)，是否继续?',
-    '分享到资源广场',
+    "分享成功后会在资源广场展示(所有人可见)，是否继续?",
+    "分享到资源广场",
     {
-      confirmButtonText: '确认',
+      confirmButtonText: "确认",
       confirmButtonClass: "confirm-btn",
-      cancelButtonText: '取消',
-      type: 'info',
+      cancelButtonText: "取消",
+      type: "info",
       center: true,
     }
   )
     .then(() => {
       const fileInfo = {
-        "body": `${curFile.openLink}`,
-        "title": `[share]FileHub:${curFile.name}FileHub:${curFile.type}FileHub:${curFile.size}`
-      }
-      fileApi.shareFile(fileInfo).then(res => {
-        console.log("分享成功", res);
-        ElMessage({
-          message: '分享成功，审核通过后会在资源广场展示',
-          type: 'success',
+        body: `${curFile.openLink}`,
+        title: `[share]FileHub:${curFile.name}FileHub:${curFile.type}FileHub:${curFile.size}`,
+      };
+      fileApi
+        .shareFile(fileInfo)
+        .then((res) => {
+          console.log("分享成功", res);
+          ElMessage({
+            message: "分享成功，审核通过后会在资源广场展示",
+            type: "success",
+          });
         })
-      }).catch(err => {
-        console.log("分享失败: ", err);
-      })
+        .catch((err) => {
+          console.log("分享失败: ", err);
+        });
     })
     .catch((e) => {
       ElMessage({
-        type: 'info',
-        message: '分享失败' + e,
-      })
-    })
-}
+        type: "info",
+        message: "分享失败" + e,
+      });
+    });
+};
 
 // 删除多个文件
 const deleteMoreFile = () => {
   console.log("删除多个文件");
-  ElMessageBox.confirm(
-    '确定删除选中的文件吗?',
-    '删除多个文件',
-    {
-      confirmButtonText: '确定',
-      confirmButtonClass: "confirm-btn",
-      cancelButtonText: '取消',
-      type: 'warning',
-      center: true,
-    }
-  )
+  ElMessageBox.confirm("确定删除多个文件吗?", "删除多个文件", {
+    confirmButtonText: "确定",
+    confirmButtonClass: "confirm-btn",
+    cancelButtonText: "取消",
+    type: "warning",
+    center: true,
+  })
     .then(async () => {
       for (let index = 0; index < gitFileList.length; index++) {
         const file = gitFileList[index];
         if (file.selected) {
-          await fileApi.delFile(file.path, {
-            "message": "delete from FileHub",
-            "sha": file.sha
-          }).then(res => {
-            console.log("删除返回:", res);
-            ElMessage({
-              message: `${file.name}删除成功`,
-              type: 'success',
+          await fileApi
+            .delFile(file.path, {
+              message: "delete from FileHub",
+              sha: file.sha,
             })
-            file.name = ""
-          }).catch(err => {
-            console.log("删除错误:", err);
-          })
+            .then((res) => {
+              console.log("删除返回:", res);
+              ElMessage({
+                message: `${file.name}删除成功`,
+                type: "success",
+              });
+              file.name = "";
+            })
+            .catch((err) => {
+              console.log("删除错误:", err);
+            });
         }
       }
-      getFileList()
+      getFileList();
     })
     .catch(() => {
       ElMessage({
-        type: 'info',
-        message: 'Delete canceled',
-      })
-    })
-}
+        type: "info",
+        message: "Delete canceled",
+      });
+    });
+};
 
 // 重命名
 const renameFile = () => {
   console.log("重命名资源");
-  ElMessage.error('由于Github api暂时不支持重命名，所以延期开发...')
-}
+  ElMessage.error("由于Github api暂时不支持重命名，所以延期开发...");
+};
 
 // 下载
 const downFile = async (file?: any, downPath?: string) => {
-  var fileURL = file.openLink ? file.openLink : rightClickItem.openLink
-  const basePath = await path.downloadDir() + `/${file.name ? file.name : rightClickItem.name}`;
-  let selPath = downPath || await dialog.save({
-    title: `保存文件: ${file.name ? file.name : rightClickItem.name}`,
-    defaultPath: basePath,
-    filters: [{
-      name: '*',
-      extensions: ['*']
-    }]
-  });
+  var fileURL = file.openLink ? file.openLink : rightClickItem.openLink;
+  const basePath =
+    (await path.downloadDir()) +
+    `/${file.name ? file.name : rightClickItem.name}`;
+  let selPath =
+    downPath ||
+    (await dialog.save({
+      title: `保存文件: ${file.name ? file.name : rightClickItem.name}`,
+      defaultPath: basePath,
+      filters: [
+        {
+          name: "*",
+          extensions: ["*"],
+        },
+      ],
+    }));
   console.log("selPath----", selPath);
   if (selPath && !downPath) {
-    fileStore.setDownNum(fileStore.downNum += 1)
+    fileStore.setDownNum((fileStore.downNum += 1));
   }
   // 开始发送下载请求
-  selPath && fileURL && fileApi.downFile(fileURL).then(async res => {
-    console.log("downRes----", res);
-    writeBinaryFile({ contents: res.data as any, path: `${selPath}` })
-      .then(res => {
-        ElMessage({
-          message: `${file.name ? file.name : rightClickItem.name}保存成功`,
-          type: 'success',
-        })
-      }).catch(err => {
-        ElMessage.error('文件保存失败:' + err)
-      }).finally(() => {
-        fileStore.setDownDone(fileStore.downDone += 1)
+  selPath &&
+    fileURL &&
+    fileApi
+      .downFile(fileURL)
+      .then(async (res) => {
+        console.log("downRes----", res);
+        writeBinaryFile({ contents: res.data as any, path: `${selPath}` })
+          .then((res) => {
+            ElMessage({
+              message: `${file.name ? file.name : rightClickItem.name}保存成功`,
+              type: "success",
+            });
+          })
+          .catch((err) => {
+            ElMessage.error("文件保存失败:" + err);
+          })
+          .finally(() => {
+            fileStore.setDownDone((fileStore.downDone += 1));
+          });
       })
-  }).catch(err => {
-    console.log("文件下载失败--")
-    ElMessage.error('文件保存失败:' + err)
-    fileStore.setDownNum(fileStore.downNum -= 1)
-  })
-}
+      .catch((err) => {
+        console.log("文件下载失败--");
+        ElMessage.error("文件保存失败:" + err);
+        fileStore.setDownNum((fileStore.downNum -= 1));
+      });
+};
 
 // 多文件下载
 const downMoreFile = async () => {
-  fileStore.setDownNum(fileStore.downNum += selectedNum.value)
+  fileStore.setDownNum((fileStore.downNum += selectedNum.value));
   console.log("selectedNum------", selectedNum.value);
   for (let index = 0; index < gitFileList.length; index++) {
     const file = gitFileList[index];
     if (file.selected) {
-      const basePath = await path.downloadDir() + `${file.name}`;
-      downFile(file, basePath)
+      const basePath = (await path.downloadDir()) + `${file.name}`;
+      downFile(file, basePath);
     }
   }
-}
+};
 
 // 详情
 const infoFile = () => {
   console.log("详情资源");
   ElMessageBox.alert(
-    `<div style="min-width: 300px; text-align: left;"><strong>名称：</strong>${rightClickItem.name}</div>
-     <div style="min-width: 300px; text-align: left;"><strong>类型：</strong>${fileTypes[rightClickItem.type]}</div>
-     <div style="min-width: 300px; text-align: left;"><strong>位置：</strong>${rightClickItem.path}</div>
-     <div style="min-width: 300px; text-align: left;"><strong>大小：</strong>${rightClickItem.size}</div>`,
-    '文件详情',
+    `<div style="min-width: 300px; text-align: left;"><strong>名称：</strong>${
+      rightClickItem.name
+    }</div>
+     <div style="min-width: 300px; text-align: left;"><strong>类型：</strong>${
+       fileTypes[rightClickItem.type]
+     }</div>
+     <div style="min-width: 300px; text-align: left;"><strong>位置：</strong>${
+       rightClickItem.path
+     }</div>
+     <div style="min-width: 300px; text-align: left;"><strong>大小：</strong>${
+       rightClickItem.size
+     }</div>`,
+    "文件详情",
     {
       dangerouslyUseHTMLString: true,
-      confirmButtonText: '确定',
+      confirmButtonText: "确定",
       confirmButtonClass: "confirm-btn",
       center: true,
     }
-  )
-}
+  );
+};
 
 // 删除资源
 const deleteFile = (file?: any) => {
   console.log("删除资源");
-  const curFile = file.openLink ? file : rightClickItem
-  ElMessageBox.confirm(
-    '确定删除文件吗?',
-    '删除文件',
-    {
-      confirmButtonText: '确定',
-      confirmButtonClass: "confirm-btn",
-      cancelButtonText: '取消',
-      type: 'warning',
-      center: true,
-    }
-  )
+  const curFile = file.openLink ? file : rightClickItem;
+  ElMessageBox.confirm("确定删除文件吗?", "删除文件", {
+    confirmButtonText: "确定",
+    confirmButtonClass: "confirm-btn",
+    cancelButtonText: "取消",
+    type: "warning",
+    center: true,
+  })
     .then(() => {
-      fileApi.delFile(curFile.path, {
-        "message": "delete from FileHub",
-        "sha": curFile.sha
-      }).then((res: any) => {
-        console.log("删除成功", res)
-        if (res.status === 200) {
-          ElMessage({
-            message: '删除成功',
-            type: 'success',
-          })
-          gitFileList.splice(gitFileList.indexOf(curFile), 1)
-        } else {
-          ElMessage.error('删除失败:' + res.data.message)
-        }
-      }).catch((e) => {
-        console.log("删除错误：", e);
-        ElMessage.error('删除失败:' + e)
-      })
+      fileApi
+        .delFile(curFile.path, {
+          message: "delete from FileHub",
+          sha: curFile.sha,
+        })
+        .then((res: any) => {
+          console.log("删除成功", res);
+          if (res.status === 200) {
+            ElMessage({
+              message: "删除成功",
+              type: "success",
+            });
+            gitFileList.splice(gitFileList.indexOf(curFile), 1);
+          } else {
+            ElMessage.error("删除失败:" + res.data.message);
+          }
+        })
+        .catch((e) => {
+          console.log("删除错误：", e);
+          ElMessage.error("删除失败:" + e);
+        });
     })
     .catch(() => {
       ElMessage({
-        type: 'info',
-        message: 'Delete 失败',
-      })
-    })
-}
+        type: "info",
+        message: "Delete 失败",
+      });
+    });
+};
 
 // 删除文件夹
 const deleteFoler = (foler?: any) => {
   // 仅删除.gitkeep文件，如果文件夹中存在别的文件，需要手动删除，然后文件夹自然会被删除
   console.log("删除文件夹:");
-  const curFile = foler.openLink ? foler : rightClickItem
+  const curFile = foler.openLink ? foler : rightClickItem;
   ElMessageBox.confirm(
-    '确定删除文件夹吗?需先手动删除里面的内容！',
-    '删除文件夹',
+    "确定删除文件夹吗?需先手动删除里面的内容！",
+    "删除文件夹",
     {
-      confirmButtonText: '确定',
+      confirmButtonText: "确定",
       confirmButtonClass: "confirm-btn",
-      cancelButtonText: '取消',
-      type: 'warning',
+      cancelButtonText: "取消",
+      type: "warning",
       center: true,
     }
   )
     .then(() => {
       // 先获取.gitkeep文件的sha，然后再删除
-      fileApi.getFiles(curFile.path + '/.gitkeep')
-        .then(getRes => {
+      fileApi
+        .getFiles(curFile.path + "/.gitkeep")
+        .then((getRes) => {
           console.log("获取到的文件是:", getRes);
           if (getRes.status === 200) {
-            const folerSha = (getRes.data as any).sha
-            const folerPath = (getRes.data as any).path
-            fileApi.delFile(folerPath, {
-              "message": "delete from FileHub",
-              "sha": folerSha
-            }).then((res: any) => {
-              console.log("删除成功", res)
-              if (res.status === 200) {
-                ElMessage({
-                  message: '需要手动删除文件夹中的所有内容',
-                  type: 'success',
-                })
-                getFileList()
-              } else {
-                ElMessage.error('删除失败:' + res.data.message)
-              }
-            }).catch((e) => {
-              console.log("需要手动删除文件夹中的所有内容", e);
-              ElMessage.error('删除失败:' + e)
-            })
+            const folerSha = (getRes.data as any).sha;
+            const folerPath = (getRes.data as any).path;
+            fileApi
+              .delFile(folerPath, {
+                message: "delete from FileHub",
+                sha: folerSha,
+              })
+              .then((res: any) => {
+                console.log("删除成功", res);
+                if (res.status === 200) {
+                  ElMessage({
+                    message: "需要手动删除文件夹中的所有内容",
+                    type: "success",
+                  });
+                  getFileList();
+                } else {
+                  ElMessage.error("删除失败:" + res.data.message);
+                }
+              })
+              .catch((e) => {
+                console.log("需要手动删除文件夹中的所有内容", e);
+                ElMessage.error("删除失败:" + e);
+              });
           } else {
             console.log("没有获取到gitkeep", getRes);
             ElMessage({
-              message: '需要手动删除文件夹中的所有内容',
-              type: 'success',
-            })
+              message: "需要手动删除文件夹中的所有内容",
+              type: "success",
+            });
           }
-        }).catch(err => {
-          console.log("获取文件错误：", err);
         })
+        .catch((err) => {
+          console.log("获取文件错误：", err);
+        });
     })
     .catch(() => {
       ElMessage({
-        type: 'info',
-        message: 'Delete 失败',
-      })
-    })
-}
+        type: "info",
+        message: "Delete 失败",
+      });
+    });
+};
 
 // 新建文件夹
 const newDir = () => {
   console.log("新建文件夹");
-  ElMessageBox.prompt('', '新建文件夹', {
-    confirmButtonText: '确定',
+  ElMessageBox.prompt("", "新建文件夹", {
+    confirmButtonText: "确定",
     confirmButtonClass: "confirm-btn",
-    cancelButtonText: '取消',
+    cancelButtonText: "取消",
     inputPlaceholder: "请输入文件夹名称",
-    inputPattern:
-      /^[a-zA-Z0-9\u4E00-\u9FA5_]+$/,
-    inputErrorMessage: '文件夹名称不规范: 只能用中英文/数字/下划线组合',
+    inputPattern: /^[a-zA-Z0-9\u4E00-\u9FA5_]+$/,
+    inputErrorMessage: "文件夹名称不规范: 只能用中英文/数字/下划线组合",
     center: true,
   })
     .then(({ value }) => {
-      fileApi.uploadFile(`${filePath.value}/${value}/.gitkeep`, {
-        "message": "Creat From FileHub",
-        "content": ""
-      }).then((res: any) => {
-        console.log("上传文件结果:", res);
-        getFileList(null)
-        ElMessage({
-          type: 'success',
-          message: `文件夹创建成功`,
+      fileApi
+        .uploadFile(`${filePath.value}/${value}/.gitkeep`, {
+          message: "Creat From FileHub",
+          content: "",
         })
-      }).catch(err => {
-        console.log("创建错误：", err)
-      })
+        .then((res: any) => {
+          console.log("上传文件结果:", res);
+          getFileList(null);
+          ElMessage({
+            type: "success",
+            message: `文件夹创建成功`,
+          });
+        })
+        .catch((err) => {
+          console.log("创建错误：", err);
+        });
     })
     .catch(() => {
       ElMessage({
-        type: 'info',
-        message: 'Input canceled',
-      })
-    })
-}
+        type: "info",
+        message: "Input canceled",
+      });
+    });
+};
 
 // 上传文件
 const startUpload = () => {
-  const uploadBox = document.querySelector('div.el-upload-dragger') as HTMLDivElement
-  console.log('开始上传文件', uploadBox)
-  uploadBox.click()
-}
+  const uploadBox = document.querySelector(
+    "div.el-upload-dragger"
+  ) as HTMLDivElement;
+  console.log("开始上传文件", uploadBox);
+  uploadBox.click();
+};
 
 // 搜索
-const search = ref('')
+const search = ref("");
 
 // 布局格式：true网格 false列表
-let showStyle = ref(localStorage.getItem('fileStyle') || 'grid')
+let showStyle = ref(localStorage.getItem("fileStyle") || "grid");
 const switchStyle = () => {
-  showStyle.value = showStyle.value === 'grid' ? 'table' : 'grid'
-  localStorage.setItem('fileStyle', showStyle.value)
-}
+  showStyle.value = showStyle.value === "grid" ? "table" : "grid";
+  localStorage.setItem("fileStyle", showStyle.value);
+};
 
 // 所有文件下拉
-const filterFile = ref('all')
+const filterFile = ref("all");
 
 const options = [
   {
-    value: 'all',
-    label: '所有',
+    value: "all",
+    label: "所有",
   },
   {
-    value: 'picture',
-    label: '图片',
+    value: "picture",
+    label: "图片",
   },
   {
-    value: 'video',
-    label: '视频',
+    value: "video",
+    label: "视频",
   },
   {
-    value: 'music',
-    label: '音频',
+    value: "music",
+    label: "音频",
   },
   {
-    value: 'document',
-    label: '文档',
+    value: "document",
+    label: "文档",
   },
   {
-    value: 'web',
-    label: '网址',
+    value: "web",
+    label: "网址",
   },
   {
-    value: 'other',
-    label: '其他',
+    value: "other",
+    label: "其他",
   },
-]
+];
 
 // 过滤
 const filterFun = () => {
-  gitFileList.length = 0
-  gitFileList.push(...gitSoureList.filter(file => {
-    if (filterFile.value === 'all') {
-      return true
-    } else if (filterFile.value === file.type) {
-      return true
-    }
-  }))
-}
+  gitFileList.length = 0;
+  gitFileList.push(
+    ...gitSoureList.filter((file) => {
+      if (filterFile.value === "all") {
+        return true;
+      } else if (filterFile.value === file.type) {
+        return true;
+      }
+    })
+  );
+};
 
 // 搜索内容
 const searchFun = () => {
-  gitFileList.length = 0
-  gitFileList.push(...gitSoureList.filter(file => {
-    return search.value ? file.name.includes(search.value) : true
-  }))
-}
+  gitFileList.length = 0;
+  gitFileList.push(
+    ...gitSoureList.filter((file) => {
+      return search.value ? file.name.includes(search.value) : true;
+    })
+  );
+};
 
 // 文件类型映射
-const fileTypes = {
-  foler: '文件夹',
-  video: '视频',
-  picture: '图片',
-  music: '音频',
-  document: '文档',
-  other: '其他',
-}
+const fileTypes: any = {
+  foler: "文件夹",
+  video: "视频",
+  picture: "图片",
+  music: "音频",
+  document: "文档",
+  other: "其他",
+};
 
 // 维护一个图片列表，用于图片预览
-const imgPreList: string[] = []
+const imgPreList: string[] = [];
 
 // 根据类型和文件名返回真实的文件类型
 const getType = (fileType: string, curFile: any) => {
-  if (fileType === 'dir') {
-    return 'foler'
+  if (fileType === "dir") {
+    return "foler";
   } else {
     const fileLast = curFile.name
-      .substring(curFile.name.lastIndexOf('.') + 1)
-      .toUpperCase()
-    if (['PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'ICO', "WEBP"].includes(fileLast)) {
+      .substring(curFile.name.lastIndexOf(".") + 1)
+      .toUpperCase();
+    if (
+      ["PNG", "JPG", "JPEG", "GIF", "BMP", "ICO", "WEBP"].includes(fileLast)
+    ) {
       // 图片格式: 加入图片预览列表
-      curFile.path && imgPreList.push(`${uStore.fileCdn}${curFile.path}`)
-      return 'picture'
+      curFile.path && imgPreList.push(`${uStore.fileCdn}${curFile.path}`);
+      return "picture";
     } else if (
-      ['AVI', 'WMV', 'MP4', 'MOV', 'RMVB', 'RM', 'FLV', '3GP', "M3U8"].includes(
+      ["AVI", "WMV", "MP4", "MOV", "RMVB", "RM", "FLV", "3GP", "M3U8"].includes(
         fileLast
       )
     ) {
       // 视频格式
-      return 'video'
-    } else if (['WAV', 'MP3', 'WMA', 'M4A'].includes(fileLast)) {
+      return "video";
+    } else if (["WAV", "MP3", "WMA", "M4A"].includes(fileLast)) {
       // 音乐格式
-      return 'music'
+      return "music";
     } else if (
       [
-        'DOC',
-        'WPS',
-        'XLS',
-        'PPT',
-        'HTML',
-        'XLSX',
-        'DOCX',
-        'TXT',
-        'CSV',
+        "DOC",
+        "WPS",
+        "XLS",
+        "PPT",
+        "HTML",
+        "XLSX",
+        "DOCX",
+        "TXT",
+        "CSV",
       ].includes(fileLast)
     ) {
       // 文档格式
-      return 'document'
+      return "document";
     } else {
       // 其他格式
-      return 'other'
+      return "other";
     }
   }
-}
-
+};
 
 // 发送请求获取根目录文件内容
-let gitSoureList: fileRes[] = []
-let gitFileList: fileRes[] = reactive([])
+let gitSoureList: fileRes[] = [];
+let gitFileList: fileRes[] = reactive([]);
 const getFileList = (path?: string | null) => {
-  loading.value = true
+  loading.value = true;
   // 清空图片预览和文件列表
-  imgPreList.length = 0
-  gitFileList.length = 0
-  path ? filePath.value = path : ""
-  path && backPath.push(path)
-  fileApi.getFiles(filePath.value).then((fileRes) => {
-    console.log("fileRes------", fileRes)
-    gitFileList.push(...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
-      // 是不是链接资源
-      if (cur.name.indexOf("¿") !== -1) {
-        const linkInfo = cur.name.replaceAll("¿", "/").replace("Α", ":").split("¡")
-        // console.log("是链接资源-------", cur, linkInfo);
-        options.find(f => f.label === linkInfo[2])?.value as string === 'picture' && imgPreList.push(linkInfo[0])
-        pre.push({
-          name: linkInfo[1].includes('.') ? linkInfo[1] : linkInfo[1] + linkInfo[0].substring(linkInfo[0].lastIndexOf('.')),
-          path: cur.path,
-          type: options.find(f => f.label === linkInfo[2])?.value as string,
-          size: "未知",
-          sha: cur.sha,
-          openLink: linkInfo[0],
-          downLink: linkInfo[0],
-          htmlLink: cur.html_url,
-          creatTime: '2021-08-22',
-          selected: false,
-          showTips: false,
-          uploading: false,
-        })
-      } else {
-        var fileType = getType(cur.type, cur)
-        cur.name !== '.gitkeep' && pre.push({
-          name: cur.name,
-          path: cur.path,
-          type: fileType,
-          size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
-          sha: cur.sha,
-          openLink: fileType === 'picture' ? `${uStore.fileCdn}${cur.path}` : `${uStore.gitIoCdn}/${cur.path}`,
-          downLink: fileType === 'picture' ? `${uStore.fileCdn}${cur.path}` : `${uStore.gitIoCdn}/${cur.path}`,
-          htmlLink: cur.html_url,
-          creatTime: '2021-08-22',
-          selected: false,
-          showTips: false,
-          uploading: false,
-        })
-      }
-      return pre
-    }, []))
-    gitSoureList = JSON.parse(JSON.stringify(gitFileList))
-    console.log("gitFileList--------", gitFileList, gitSoureList);
-    loading.value = false
-  }).catch((error) => {
-    console.log("获取root数据出错", error);
-    loading.value = false
-  })
-}
-// 初始化文件内容
-getFileList(null)
+  imgPreList.length = 0;
+  gitFileList.length = 0;
+  path ? (filePath.value = path) : "";
+  path && backPath.push(path);
+  fileApi
+    .getFiles(filePath.value)
+    .then((fileRes) => {
+      console.log("fileRes------", fileRes);
+      gitFileList.push(
+        ...(fileRes.data as any).reduce((pre: fileRes[], cur: any) => {
+          // 是不是链接资源
+          if (cur.name.indexOf("¿") !== -1) {
+            const linkInfo = cur.name
+              .replaceAll("¿", "/")
+              .replace("Α", ":")
+              .split("¡");
+            // console.log("是链接资源-------", cur, linkInfo);
+            (options.find((f) => f.label === linkInfo[2])?.value as string) ===
+              "picture" && imgPreList.push(linkInfo[0]);
+            pre.push({
+              name: linkInfo[1].includes(".")
+                ? linkInfo[1]
+                : linkInfo[1] +
+                  linkInfo[0].substring(linkInfo[0].lastIndexOf(".")),
+              path: cur.path,
+              type: options.find((f) => f.label === linkInfo[2])
+                ?.value as string,
+              size: "未知",
+              sha: cur.sha,
+              openLink: linkInfo[0],
+              downLink: linkInfo[0],
+              htmlLink: cur.html_url,
+              creatTime: "2021-08-22",
+              selected: false,
+              showTips: false,
+              uploading: false,
+            });
+          } else {
+            var fileType = getType(cur.type, cur);
+            cur.name !== ".gitkeep" &&
+              pre.push({
+                name: cur.name,
+                path: cur.path,
+                type: fileType,
+                size: (cur.size / 1024 / 1024).toFixed(2).toString() + "M",
+                sha: cur.sha,
+                openLink:
+                  fileType === "picture"
+                    ? `${uStore.fileCdn}${cur.path}`
+                    : `${uStore.gitIoCdn}/${cur.path}`,
+                downLink:
+                  fileType === "picture"
+                    ? `${uStore.fileCdn}${cur.path}`
+                    : `${uStore.gitIoCdn}/${cur.path}`,
+                htmlLink: cur.html_url,
+                creatTime: "2021-08-22",
+                selected: false,
+                showTips: false,
+                uploading: false,
+              });
+          }
+          return pre;
+        }, [])
+      );
+      gitSoureList = JSON.parse(JSON.stringify(gitFileList));
+      console.log("gitFileList--------", gitFileList, gitSoureList);
+      loading.value = false;
+    })
+    .catch((error) => {
+      console.log("获取root数据出错", error);
+      loading.value = false;
+    });
+};
 
+// 监听文件列表选中状态变化，如果全部选中，则多选框选中
+watch(gitFileList, () => {
+  const sel = gitFileList.every((item) => {
+    return item.selected;
+  });
+  console.log("文件选中状态变化", sel);
+  if (gitFileList.length > 0) {
+    checkAll.value = sel;
+  }
+});
+
+onMounted(() => {
+  // 初始化文件内容
+  getFileList(null);
+});
 </script>
 
 <style scoped>
@@ -1332,7 +1705,6 @@ $column-gap: 16px;
   position: absolute;
 }
 
-
 .dropdown-icon {
   padding: 4px 10px;
   text-align: center;
@@ -1367,7 +1739,6 @@ $column-gap: 16px;
     }
   }
 }
-
 
 .tools-box {
   display: flex;

@@ -10,7 +10,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/theme-chalk/dark/css-vars.css' //这句是暗黑模式切换
 import '@/style/theme.css'
 import '@/style/index.scss'
-import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
+import zhCN from 'element-plus/dist/locale/zh-cn'
 import i18n from './lang/index'
 import VueGtag from 'vue-gtag'
 import './utils/update'
@@ -22,7 +22,7 @@ app.use(createPinia())
 
 // 使用elementUi
 app.use(ElementPlus, {
-    locale: zhLocale,
+    locale: zhCN,
 })
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

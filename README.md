@@ -8,17 +8,17 @@
 
 ##### Windows 安装包
 
-Github 下载链接: [下载地址一](https://Sjj1024.github.io/FileHub/root/Filehub/FileHub_0.0.1_x64_zh-CN.msi)  
+Github 下载链接: [下载地址一](https://1024huijia.github.io/FileHub/root/filehub/FileHub_0.0.2_x64_zh-CN.msi)  
 蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/ipnKO14uwf2f)
 
 ##### Mac 电脑安装包
 
-Github 下载链接: [下载地址一](https://Sjj1024.github.io/FileHub/root/Filehub/FileHub_0.0.1_x64.dmg)  
+Github 下载链接: [下载地址一](https://1024huijia.github.io/FileHub/root/filehub/FileHub_0.0.2_x64.dmg)  
 蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/ipnKO14uwf2f)
 
 ##### Linux 安装包
 
-Github 下载链接: [下载地址一](https://Sjj1024.github.io/FileHub/root/Filehub/file-hub_0.0.1_amd64.deb)  
+Github 下载链接: [下载地址一](https://1024huijia.github.io/FileHub/root/filehub/file-hub_0.0.2_amd64.deb)  
 蓝奏云下载链接：[下载地址二](https://wwlu.lanzouq.com/ipnKO14uwf2f)
 
 ## 软件功能介绍
@@ -136,8 +136,20 @@ pnpm tauri build
 
 # TODO:
 
-1.多语言配置，等最后再集成吧 2.集成 ChatGPT 3.开发文章管理 4.开发网站管理
+1.多语言配置，等最后再集成吧  
+2.集成 ChatGPT   
+3.开发文章管理  
+4.开发网站管理  
 
 # 20230717：Done
 
-1.资源分享页面按钮控制， 2.搜索 Issue 内容：并进行分页 3.资源分享页面分页展示 4.下载文件 5.多文件下载 6.软件自动更新 7.其他页面的 demo 样式 8.暗黑亮白模式样式适配: chatgpt 模式 9.更改 token，登陆时更改，设置页面更改 10.用户名和密码记住功能
+1.资源分享页面按钮控制，   
+.搜索 Issue 内容：并进行分页   
+3.资源分享页面分页展示   
+4.下载文件   
+5.多文件下载   
+6.软件自动更新   
+7.其他页面的 demo 样式   
+8.暗黑亮白模式样式适配: chatgpt 模式   
+9.更改 token，登陆时更改，设置页面更改   
+10.用户名和密码记住功能  

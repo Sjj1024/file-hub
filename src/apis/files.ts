@@ -69,12 +69,6 @@ export default {
             method: 'get',
         })
     },
-    updateShare(issue_number: string, body: any) {
-        return http(`/repos/Sjj1024/DataHub/issues/${issue_number}`, {
-            method: 'PATCH',
-            body: body,
-        })
-    },
     searchShare(
         keyWord: string = 'FileHub',
         lable: string = '+label:share',

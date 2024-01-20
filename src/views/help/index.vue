@@ -4,24 +4,25 @@
       <h3>项目介绍：<a href="https://github.com/Sjj1024/s-hub" target="_blank" class="alink">Github主页</a></h3>
       <span>
         FileHub是一个依托Github
-        Api开发的开源免费文件系统软件，功能类似百度云，但没有百度云的会员限制。主要用作图床和网络文件存储。其他附加功能并不是本软件的核心功能，但是就是想集成进去，因为可能是我个人常用的功能。有问题请<a href="https://github.com/Sjj1024/s-hub/issues" target="_blank" class="alink">提交Issue</a>。如果对你有帮助，可以请我喝个咖啡：
+        Api开发的开源免费文件系统软件，功能类似百度云，但没有百度云的会员限制。主要用作图床和网络文件存储。其他附加功能并不是本软件的核心功能，但是就是想集成进去，因为可能是我个人常用的功能。有问题请<a
+          href="https://github.com/Sjj1024/s-hub/issues" target="_blank" class="alink">提交Issue</a>。如果对你有帮助，可以请我喝个咖啡：
       </span><br />
       <span class="praise">
         <span class="pay-box">
           <div>微信赞赏码</div>
-          <img class="pay-code" :src="codeInfo.wxPayCode" alt="">
+          <img class="pay-code" :src="codeInfo.wxPayCode">
         </span>
         <span class="pay-box">
           <div>支付宝打赏</div>
-          <img class="pay-code" :src="codeInfo.aliPayCode" alt="">
+          <img class="pay-code" :src="codeInfo.aliPayCode">
         </span>
         <span class="pay-box">
           <div>QQ交流群</div>
-          <img class="pay-code" :src="codeInfo.qqChatCode" alt="">
+          <img class="pay-code" :src="codeInfo.qqChatCode">
         </span>
         <span class="pay-box">
           <div>微信交流群</div>
-          <img class="pay-code" :src="codeInfo.wxChatCode" alt="">
+          <img class="pay-code" :src="codeInfo.wxChatCode">
         </span>
       </span>
     </div>
@@ -51,14 +52,30 @@
 </template>
 
 <script setup lang='ts'>
+import { onMounted } from 'vue'
+import CommApi from "@/apis/common"
 
 const codeInfo = {
   "wxPayCode": localStorage.getItem("wxPayCode") || "https://sjj1024.github.io/DataHub/FileData/config/wx.webp",
   "aliPayCode": localStorage.getItem("aliPayCode") || "https://sjj1024.github.io/DataHub/FileData/config/zf.webp",
   "qqChatCode": localStorage.getItem("qqChatCode") || "https://sjj1024.github.io/DataHub/FileData/config/qq.webp",
   "wxChatCode": localStorage.getItem("wxChatCode") || "https://sjj1024.github.io/DataHub/FileData/config/wxq.webp"
-}
+};
 
+// 自动生成payjs的支付码：0.1元
+onMounted(() => {
+  console.log("onMounted");
+  const data = {
+    body: "payjs收款测试",
+    out_trade_no: "1699601458",
+    total_fee: "10",
+    mchid: "1593541201",
+    sign: "F6987C896F199229D40D0DE521427F5D"
+  }
+  CommApi.getPayQrCode(data).then((res: any) => {
+    console.log("请求到的二维码是：", res);
+  })
+})
 </script>
 
 <style scoped lang='scss'>

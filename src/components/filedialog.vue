@@ -1,6 +1,14 @@
 <template>
-  <el-dialog v-model="centerDialogVisible" :title="file.name" width="100%" center top="0" fullscreen class="file-dialog"
-    @close="closeDialog">
+  <el-dialog
+    v-model="centerDialogVisible"
+    :title="file.name"
+    width="100%"
+    center
+    top="0"
+    fullscreen
+    class="file-dialog"
+    @close="closeDialog"
+  >
     <template #header>
       <div class="dialog-header" data-tauri-drag-region>
         {{ file.name }}
@@ -19,7 +27,12 @@
       <!-- 根据文件类型展示不同的内容 -->
       <el-carousel-item v-if="file.type === 'picture'">
         <div class="img-box">
-          <img :src="file.openLink" object-fit="contain" alt="" class="img-dialog">
+          <img
+            :src="file.openLink"
+            object-fit="contain"
+            alt=""
+            class="img-dialog"
+          />
         </div>
       </el-carousel-item>
       <el-carousel-item v-show="file.type === 'video' || file.type === 'music'">
@@ -48,14 +61,14 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue'
-import type { fileRes } from "@/utils/useTypes"
-import Hls from 'hls.js';
+import { ref } from "vue";
+import type { fileRes } from "@/utils/useTypes";
+import Hls from "hls.js";
 import Flv from "flv.js";
-import '@/utils/webtorrent.min.js';
-import DPlayer from 'dplayer';
-import { appWindow } from '@tauri-apps/api/window'
-import musicBg from '@/assets/image/musicBg.gif'
+import "@/utils/webtorrent.min.js";
+import DPlayer from "dplayer";
+import { appWindow } from "@tauri-apps/api/window";
+import musicBg from "@/assets/image/musicBg.gif";
 /**
  * 可以用于播放的视频
  * https://stream.mux.com/UZMwOY6MgmhFNXLbSFXAuPKlRPss5XNA.m3u8
@@ -63,80 +76,84 @@ import musicBg from '@/assets/image/musicBg.gif'
  * https://play.fenyucn.com/m/t/vmmTDC4FVjoUVAhd3djXwzIlh1D0bRrwxT40-ROidyTZ4RvCWsIKKIH6raNkLMlTCvPkqaXffF6tJHSI7T60EQQRgpRWkJUT6wlSLehuF-r0-tbUasC0b5_9y-BqDJxP.m3u8
  * https://sjj1024.github.io/FileHub/root/IronMan.mp4
  * https://static.smartisanos.cn/common/video/t1-ui.mp4
- * 
+ *
  */
 
-const centerDialogVisible = ref(false)
+const centerDialogVisible = ref(false);
 
-let file = ref({
+let file: any = ref({
   name: "",
   path: "",
   type: "",
   size: "",
-  openLink: '',
-  downLink: '',
+  openLink: "",
+  downLink: "",
   htmlLink: "",
-  creatTime: '',
+  creatTime: "",
   selected: false,
   showTips: false,
   uploading: false,
-})
+});
 
-let imgPreList: string[] = []
+let imgPreList: string[] = [];
 
 // 查找图片的索引
-let preImgIndex = ref(0)
+let preImgIndex = ref(0);
 
 // 设施视频配置：预览图自动播放等
-let dplayer: { seek: (t: number) => void, destroy: () => void, on: (e: string, c: any) => void } | null = null
+let dplayer: {
+  seek: (t: number) => void;
+  destroy: () => void;
+  on: (e: string, c: any) => void;
+} | null = null;
 const setVideoInit = (file: fileRes) => {
   console.log("setVideoInit-----", file);
   setTimeout(() => {
-    if (file.openLink.includes('mp4')) {
+    if (file.openLink.includes("mp4")) {
       dplayer = new DPlayer({
-        container: document.getElementById('dplayer'),
+        container: document.getElementById("dplayer"),
         screenshot: false,
         fullScreen: false,
-        lang: 'zh-cn', // zh-cn // en
+        lang: "zh-cn", // zh-cn // en
         video: {
           url: file.openLink,
-          type: 'mp4'
-        }
+          type: "mp4",
+        },
       });
-    } else if (file.openLink.includes('flv')) {
+    } else if (file.openLink.includes("flv")) {
       dplayer = new DPlayer({
-        container: document.getElementById('dplayer'),
+        container: document.getElementById("dplayer"),
         screenshot: false,
         video: {
           url: file.openLink,
-          type: 'customFlv',
+          type: "customFlv",
           customType: {
             customFlv: function (video: any, player: any) {
               const flvPlayer = Flv.createPlayer({
-                type: 'flv',
+                type: "flv",
                 url: file.openLink,
               });
               flvPlayer.attachMediaElement(video);
               flvPlayer.load();
-            }
-          }
-        }
+            },
+          },
+        },
       });
-    } else if (file.openLink.includes('m3u8')) {
+    } else if (file.openLink.includes("m3u8")) {
       dplayer = new DPlayer({
-        container: document.getElementById('dplayer'),
+        container: document.getElementById("dplayer"),
         screenshot: false,
         video: {
           url: file.openLink,
-          type: 'customHls',
+          type: "customHls",
           customType: {
             customHls: function (video: any, player: any) {
               const hls = new Hls(); //实例化Hls  用于解析m3u8
               hls.loadSource(file.openLink);
               hls.attachMedia(video);
-            }
-          }
-        }
+            },
+          },
+        },
       });
     }
     // 支持磁力链接播放：TODO
@@ -174,88 +191,95 @@ const setVideoInit = (file: fileRes) => {
     console.log("dplayer--------", dplayer);
     dplayer?.on("fullscreen", function () {
       console.log("全屏模式------");
-      appWindow.toggleMaximize()
-    })
+      appWindow.toggleMaximize();
+    });
     dplayer?.on("fullscreen_cancel", function () {
       console.log("取消全屏模式------");
-      appWindow.toggleMaximize()
-    })
-  }, 1)
-}
-
+      appWindow.toggleMaximize();
+    });
+  }, 1);
+};
 
 const setMusicInit = (file: fileRes) => {
   console.log("setMusicInit-----", file);
   setTimeout(() => {
     dplayer = new DPlayer({
-      container: document.getElementById('dplayer'),
+      container: document.getElementById("dplayer"),
       screenshot: false,
       fullScreen: false,
-      lang: 'zh-cn', // zh-cn // en
+      lang: "zh-cn", // zh-cn // en
       video: {
         url: file.openLink,
-        type: 'mp3'
-      }
+        type: "mp3",
+      },
     });
     // 设置音乐背景随机
     // const bg = `url(${randomBg[Math.floor((Math.random() * randomBg.length))]})`;
     const bg = `url(${musicBg})`;
-    (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
-    (document.querySelector('div#dplayer div.dplayer-video-wrap') as HTMLDivElement).style.backgroundImage = bg;
+    (
+      document.querySelector(
+        "div#dplayer div.dplayer-video-wrap"
+      ) as HTMLDivElement
+    ).style.backgroundImage = bg;
+    (
+      document.querySelector(
+        "div#dplayer div.dplayer-video-wrap"
+      ) as HTMLDivElement
+    ).style.backgroundImage = bg;
     // 隐藏全屏按钮
-    (document.querySelector('div#dplayer div.dplayer-full') as HTMLDivElement).style.display = 'none';
-    (document.querySelector('div#dplayer') as HTMLDivElement).style.height = '100%'
-  }, 1)
-}
+    (
+      document.querySelector("div#dplayer div.dplayer-full") as HTMLDivElement
+    ).style.display = "none";
+    (document.querySelector("div#dplayer") as HTMLDivElement).style.height =
+      "100%";
+  }, 1);
+};
 
-const showFileDialog = (imgList: [], f: fileRes) => {
+const showFileDialog = (imgList: [], f: any) => {
   // 弹窗
-  centerDialogVisible.value = true
+  centerDialogVisible.value = true;
   // 赋值
   for (const key in f) {
     if (Object.prototype.hasOwnProperty.call(f, key)) {
-      file.value[key] = f[key]
+      file.value[key] = f[key];
     }
   }
-  if (f.type === 'picture') {
-    imgPreList = imgList
-    preImgIndex.value = imgPreList.indexOf(f.openLink)
+  if (f.type === "picture") {
+    imgPreList = imgList;
+    preImgIndex.value = imgPreList.indexOf(f.openLink);
   } else {
     // 如果播放器存在，先销毁，以解决播放控制实现隐藏bug
     if (dplayer) {
-      dplayer.destroy()
+      dplayer.destroy();
     }
-    if (f.type === 'video') {
-      setVideoInit(f)
+    if (f.type === "video") {
+      setVideoInit(f);
     } else {
-      setMusicInit(f)
+      setMusicInit(f);
     }
   }
   console.log("videoBox-----", file);
-}
+};
 
 // 关闭弹窗时候的回调函数
 const closeDialog = () => {
   // console.log("关闭弹窗-------", mediaPlayer.value.player);
   // 播放器暂停:如果是视频暂停，如果是音乐，就背景播放
-  if (file.value.type === 'video' && dplayer) {
-    dplayer.destroy()
+  if (file.value.type === "video" && dplayer) {
+    dplayer.destroy();
   } else {
     console.log("音乐播放器后台播放");
   }
-
-}
+};
 
 defineExpose({
-  showFileDialog
-})
-
+  showFileDialog,
+});
 </script>
 
 
 <style lang="scss">
 .file-dialog {
-
   .dialog-header {
     color: white;
     cursor: pointer;
@@ -285,7 +309,6 @@ defineExpose({
     background-repeat: no-repeat;
     background-size: cover;
   }
-
 
   // .dplayer-full {
   //   display: none;

@@ -124,12 +124,11 @@ const linkOpt = [
 
 const handlerCdn = (val: string) => {
   // userStore.setFileCdn(val)
-  console.log("设置的fileCdn是:", val);
+  console.log("设置的fileCdn模板是:", val);
   const resCdn = val.replace("{{owner}}", userStore.gitName).replace("{{repo}}", userStore.gitRepo).replace("{{branch}}", userStore.gitBranch).replace("{{path}}", "")
   console.log("真正的cdn值：", resCdn);
   userStore.setFileCdn(resCdn)
   console.log("设置后的cdn值是:", userStore.fileCdn);
-
 }
 
 const autoLink = ref(false)

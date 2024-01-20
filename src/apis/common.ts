@@ -40,4 +40,14 @@ export default {
             }
         )
     },
+    // 获取支付二维码
+    getPayQrCode(body: any) {
+        return http('https://payjs.cn/api/native', {
+            method: 'post',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+            body,
+        })
+    },
 }
